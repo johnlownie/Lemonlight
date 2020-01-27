@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { hasLifecycleHook } from '@angular/compiler/src/lifecycle_reflector';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Lemonlight';
+  navbarOpen = false;
+
+  toggleNavbar() {
+    this.navbarOpen = !this.navbarOpen;
+  }
 }
