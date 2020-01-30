@@ -1,0 +1,33 @@
+.wrapper {
+    padding: 50px;
+}
+
+.row {
+    margin: 0;
+}
+
+form {
+    width: 100%;
+}
+
+form .row {
+    margin-bottom: 1rem;
+}
+
+form .seperator {
+    border-top: 1px solid #ccc;
+    margin: 40px 0;
+}
+
+form input {
+    background: #555;
+    border-color: #555;
+    border-radius: 0;
+    color: #fff;
+}
+
+form input:focus {
+    background: #181719;
+    border-radius: 0;
+    box-shadow: 0 0 0 0.2rem rgba(59, 158, 46, 0.25);
+}

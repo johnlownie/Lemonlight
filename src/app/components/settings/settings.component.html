@@ -1,3 +1,50 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <h5>Network Settings</h5>
 </nav>
+
+<div class="wrapper">
+    <form>
+        <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Team Number:</label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" id="inputEmail3">
+            </div>
+        </div>
+
+        <div class="seperator row"></div>
+
+        <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">IP Address Assignment:</label>
+            <div class="col-sm-5 col-form-label">
+                <div class="form-check form-check-inline mr-5">
+                    <input class="form-check-input" type="radio" id="inlineCheckbox1" value="option1" checked="checked">
+                    <label class="form-check-label" for="inlineCheckbox1">Automatic</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="inlineCheckbox2" value="option2">
+                    <label class="form-check-label" for="inlineCheckbox2">Static</label>
+                </div>           
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">IP Address:</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="inputPassword3" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+            </div>
+        </div>             
+        <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Netmask:</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="inputPassword3" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+            </div>
+        </div>             
+        <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Gateway:</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="inputPassword3" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+            </div>
+        </div>             
+
+        <div class="seperator row"></div>
+    </form>
+</div>

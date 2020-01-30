@@ -1,0 +1,28 @@
+.wrapper {
+    padding: 50px;
+}
+
+.row {
+    margin: 0;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #000;
+}
+
+.nav-tabs .nav-item {
+    color: #fff;
+}
+
+.nav-tabs .nav-item.active {
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom-color: #66bf0c;
+    color: #66bf0c;
+}
+
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+    border-color: transparent;
+    /* border-bottom-color: #66bf0c; */
+    color: #66bf0c;
+}
