@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-input',
@@ -7,19 +7,46 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InputComponent implements OnInit {
 
-  blue_balance = 25;
+  exposure: number = 101;
+  redBalance: number = 66;
+  blueBalance: number = 13;
 
   constructor() { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
-  getBlueBalance() {
-    return this.blue_balance;
+  @Output() exposureChange = new EventEmitter();
+  @Output() redBalanceChange = new EventEmitter();
+  @Output() blueBalanceChange = new EventEmitter();
+  
+  @Input()
+  getExposure() {
+    return this.exposure;
+  }
+    
+  @Input()
+  getRedBalance() {
+    return this.redBalance;
   }
   
-  setBlueBalance(blue_balance) {
-    this.blue_balance = blue_balance;
+  @Input()
+  getBlueBalance() {
+    return this.blueBalance;
+  }
+
+  setExposureBalance(exposure: number) {
+    this.exposure = exposure;
+    this.exposureChange.emit(this.exposure);
+  }
+
+  setRedBalance(redBalance: number) {
+    this.redBalance = redBalance;
+    this.redBalanceChange.emit(this.redBalance);
+  }
+
+  setBlueBalance(blueBalance: number) {
+    this.blueBalance = blueBalance;
+    this.blueBalanceChange.emit(this.blueBalance);
   }
 
 }

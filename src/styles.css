@@ -49,3 +49,7 @@ form input:focus, form input.form-control:focus, form select:focus, form select.
     box-shadow: 0 0 0 0.2rem rgba(59, 158, 46, 0.25);
     color: #fff;
 }
+
+form .custom-range:focus {
+    background: transparent;
+}

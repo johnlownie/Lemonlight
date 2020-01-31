@@ -7,10 +7,11 @@ import { hasLifecycleHook } from '@angular/compiler/src/lifecycle_reflector';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Lemonlight';
+  title: string = 'Lemonlight';
   navbarOpen = false;
 
   toggleNavbar() {
     this.navbarOpen = !this.navbarOpen;
   }
+
 }
