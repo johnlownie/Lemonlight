@@ -7,9 +7,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InputComponent implements OnInit {
 
+  blue_balance = 25;
+
   constructor() { }
 
   ngOnInit() {
+  }
+
+  getBlueBalance() {
+    return this.blue_balance;
+  }
+  
+  setBlueBalance(blue_balance) {
+    this.blue_balance = blue_balance;
   }
 
 }

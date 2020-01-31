@@ -1,1 +1,53 @@
-<p>input works!</p>
+<form>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Pipline Type</label>
+        <div class="col-sm-6">
+            <select class="form-control"><option>Lemonlight Standard</option></select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Source Image</label>
+        <div class="col-sm-6">
+            <select class="form-control"><option>Camera</option></select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">LEDs</label>
+        <div class="col-sm-6">
+            <select class="form-control"><option>Off</option><option>On</option></select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Orientation</label>
+        <div class="col-sm-6">
+            <select class="form-control"><option>Normal</option><option>Mirrored</option></select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Exposure (ms)</label>
+        <div class="col-sm-2">
+            <input id="exposure-text" type="text" class="form-control">
+        </div>
+        <div class="col-sm-7 offset-sm-1 col-form-label">
+            <input id="exposure-slider" type="range" class="custom-range" min="1" max="255">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Red Balance</label>
+        <div class="col-sm-2">
+            <input id="red-balance-text" type="text" class="form-control">
+        </div>
+        <div class="col-sm-7 offset-sm-1 col-form-label">
+            <input id="red-balance-slider" type="range" class="custom-range" min="1" max="255">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Blue Balance</label>
+        <div class="col-sm-2">
+            <input id="blue-balance-text" name="blue-balance-text" type="text" class="form-control" (change)="setBlueBalance(blue-balance-text.value)">
+        </div>
+        <div class="col-sm-7 offset-sm-1 col-form-label">
+            <input id="blue-balance-slider" name="blue-balance-slider" type="range" class="custom-range" min="1" max="255" (change)="setBlueBalance(blue-balance-slider.value)">
+        </div>
+    </div>
+</form>
