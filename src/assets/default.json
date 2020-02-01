@@ -1,0 +1,21 @@
+{
+    "settings": {
+        "teamNumber": "5024",
+        "ipAssignment": "automatic",
+        "ipAddress": "192.168.24.80",
+        "netmask": "255.255.255.0",
+        "gateway": "192.168.24.1"
+    },
+    "camera": {
+        "input": {
+            "pipelineType": "Lemonlight Standard",
+            "sourceImage": "Camera",
+            "leds": "Off",
+            "orientation": "Normal",
+            "exposure": "0",
+            "redBalance": "50",
+            "blueBalance": "50"
+        }
+    }
+
+}

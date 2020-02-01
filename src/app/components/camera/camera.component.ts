@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PipelineService } from 'src/app/services/pipeline.service';
 
 @Component({
   selector: 'app-camera',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CameraComponent implements OnInit {
 
-  constructor() { }
+  streamUrl: string = "localhost:5801/video_feed";
+
+  constructor(private pipelineService : PipelineService) { }
 
   ngOnInit() {
+    this.pipelineService.getJSON().subscribe(data => {
+      this.streamUrl = "http://" + data.settings.ipAddress + "/video_feed";
+    });
   }
 
   tx: number = -14.74;

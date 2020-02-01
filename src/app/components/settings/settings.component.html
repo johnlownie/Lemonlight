@@ -7,7 +7,7 @@
         <div class="form-group row">
             <label for="inputEmail3" class="col-sm-2 col-form-label">Team Number:</label>
             <div class="col-sm-3">
-                <input type="number" class="form-control" id="inputEmail3">
+                <input name="teamNumber" [(ngModel)]="teamNumber" type="text" class="form-control">
             </div>
         </div>
 
@@ -29,19 +29,19 @@
         <div class="form-group row">
             <label for="inputPassword3" class="col-sm-2 col-form-label">IP Address:</label>
             <div class="col-sm-5">
-                <input type="text" class="form-control" id="inputPassword3" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                <input name="ipAddress" [(ngModel)]="ipAddress" type="text" class="form-control" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
             </div>
         </div>             
         <div class="form-group row">
             <label for="inputPassword3" class="col-sm-2 col-form-label">Netmask:</label>
             <div class="col-sm-5">
-                <input type="text" class="form-control" id="inputPassword3" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                <input name="netmask" [(ngModel)]="netmask" type="text" class="form-control" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
             </div>
         </div>             
         <div class="form-group row">
             <label for="inputPassword3" class="col-sm-2 col-form-label">Gateway:</label>
             <div class="col-sm-5">
-                <input type="text" class="form-control" id="inputPassword3" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                <input name="gateway" [(ngModel)]="gateway" type="text" class="form-control" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
             </div>
         </div>             
 

@@ -29,10 +29,10 @@
     </div>
 
     <div class="col-sm-4">
-        <h4>http://lemonlight-local:5800</h4>
+        <h4>{{ streamUrl }}</h4>
 
         <div class="streaming-frame">
-            <img src="{{ url_for('video_feed') }}">
+            <img src="http://192.168.24.80:5801/video_feed" style="width: 100%">
         </div>
  
         <form>
