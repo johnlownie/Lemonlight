@@ -1,1 +1,67 @@
-<p>thresholding works!</p>
+<form>
+    <div class="row"><h2><span>Magic Wands</span></h2></div>
+
+    <div class="form-group row">
+        <button class="btn btn-light btn-dark">Eyedropper</button>
+        <button class="btn btn-light btn-dark">Include Pixel</button>
+        <button class="btn btn-light btn-dark">Ignore Pixel</button>
+    </div>
+    
+    <div class="seperator row"></div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Hue</label>
+        <div class="col-sm-1">
+            <input name="minHue" [(ngModel)]="minHue" type="text" class="form-control">
+        </div>
+        <div class="col-sm-6 offset-sm-1 col-form-label">
+            <ion-range-slider type="double" [from]="minHue" [to]="maxHue" min="0" max="179" hide_from_to="true"></ion-range-slider>
+        </div>
+        <div class="col-sm-1 offset-sm-1">
+            <input name="maxHue" [(ngModel)]="maxHue" type="text" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Saturation</label>
+        <div class="col-sm-1">
+            <input name="minSaturation" [(ngModel)]="minSaturation" type="text" class="form-control">
+        </div>
+        <div class="col-sm-6 offset-sm-1 col-form-label">
+            <ion-range-slider type="double" [from]="minSaturation" [to]="maxSaturation" min="0" max="255" hide_from_to="true"></ion-range-slider>
+        </div>
+        <div class="col-sm-1 offset-sm-1">
+            <input name="maxSaturation" [(ngModel)]="maxSaturation" type="text" class="form-control">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Value</label>
+        <div class="col-sm-1">
+            <input name="minValue" [(ngModel)]="minValue" type="text" class="form-control">
+        </div>
+        <div class="col-sm-6 offset-sm-1 col-form-label">
+            <ion-range-slider type="double" [from]="minValue" [to]="maxValue" min="0" max="255" hide_from_to="true"></ion-range-slider>
+        </div>
+        <div class="col-sm-1 offset-sm-1">
+            <input name="maxValue" [(ngModel)]="maxValue" type="text" class="form-control">
+        </div>
+   </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Erosion Steps</label>
+        <div class="col-sm-1">
+            <input name="erosion" [(ngModel)]="erosion" type="text" class="form-control">
+        </div>
+        <div class="col-sm-6 offset-sm-1 col-form-label">
+            <ion-range-slider [from]="erosion" min="0" max="5" hide_min_max="true"></ion-range-slider>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Dialation Steps</label>
+        <div class="col-sm-1">
+            <input name="dialation" [(ngModel)]="dialation" type="text" class="form-control">
+        </div>
+        <div class="col-sm-6 offset-sm-1 col-form-label">
+            <ion-range-slider [from]="dialation" min="0" max="5" hide_min_max="true"></ion-range-slider>
+        </div>
+    </div>
+</form>

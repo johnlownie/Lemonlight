@@ -53,3 +53,33 @@ form input:focus, form input.form-control:focus, form select:focus, form select.
 form .custom-range:focus {
     background: transparent;
 }
+
+/* Range Sliders */
+.irs-single, .irs-min, .irs-max {
+    display: none;
+}
+
+.irs--round {
+    margin-top: -25px;
+}
+
+.irs--round .irs-line {
+    background-color: #555;
+}
+
+.irs--round .irs-bar {
+    background-color: #cadb2d;
+}
+
+.irs--round .irs-handle {
+    background-color: #212121;
+    border: 3px solid #cadb2d;
+    height: 16px;
+    top: 30px;
+    width: 16px;
+}
+
+.irs--round .irs-handle.state_hover, .irs--round .irs-handle:hover {
+    background-color: #212121;
+    cursor: pointer;
+}

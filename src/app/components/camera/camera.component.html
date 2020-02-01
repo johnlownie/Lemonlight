@@ -29,6 +29,30 @@
     </div>
 
     <div class="col-sm-4">
-        Streaming Frame
+        <h4>http://lemonlight-local:5800</h4>
+
+        <div class="streaming-frame">
+
+        </div>
+
+        
+        
+        <form>
+            <div class="form-group text-center"><button class="btn btn-dark">Take Snapshot</button></div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Show:</label>
+                <div class="col-sm-9">
+                    <select class="form-control"><option>Color</option><option>Threshhold</option></select>
+                </div>
+            </div>
+
+            <div class="form-group row data">
+                <div class="col-sm-3"><span>tx: </span>{{ tx }}&deg;</div>
+                <div class="col-sm-3"><span>ty: </span>{{ ty }}&deg;</div>
+                <div class="col-sm-3"><span>ta: </span>{{ ta }}&#37;</div>
+                <div class="col-sm-3"><span>tl: </span>{{ tl }}</div>
+            </div>
+        </form>
     </div>
 </div>

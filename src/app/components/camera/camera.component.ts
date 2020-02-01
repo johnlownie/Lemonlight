@@ -12,4 +12,8 @@ export class CameraComponent implements OnInit {
   ngOnInit() {
   }
 
+  tx: number = -14.74;
+  ty: number = -0.16;
+  ta: number = 0.699;
+  tl: number = 3.5;
 }

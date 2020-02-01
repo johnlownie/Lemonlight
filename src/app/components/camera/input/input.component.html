@@ -20,34 +20,34 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Orientation</label>
         <div class="col-sm-6">
-            <select class="form-control"><option>Normal</option><option>Mirrored</option></select>
+            <select class="form-control"><option>Normal</option><option>Upside-Down</option></select>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Exposure (ms)</label>
         <div class="col-sm-2">
-            <input id="exposure-text" name="exposure" [(ngModel)]="exposure" type="text" class="form-control">
+            <input name="exposure" [(ngModel)]="exposure" type="text" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <input name="exposure-slider" [(ngModel)]="exposure" type="range" class="custom-range" min="1" max="255">
+            <ion-range-slider [from]="exposure" min="1" max="255" hide_min_max="true"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Red Balance</label>
         <div class="col-sm-2">
-            <input id="red-balance-text" name="redBalance" [(ngModel)]="redBalance" type="text" class="form-control">
+            <input name="redBalance" [(ngModel)]="redBalance" type="text" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <input name="red-balance-slider" [(ngModel)]="redBalance" type="range" class="custom-range" min="1" max="255">
+            <ion-range-slider [from]="redBalance" min="1" max="255" hide_min_max="true"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Blue Balance</label>
         <div class="col-sm-2">
-            <input type="text" name="blueBalance" [(ngModel)]="blueBalance" class="form-control">
+            <input name="blueBalance" [(ngModel)]="blueBalance" type="text" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <input name="blue-balance-slider" [(ngModel)]="blueBalance" type="range" class="custom-range" min="1" max="255">
+            <ion-range-slider [from]="blueBalance" min="1" max="255" hide_min_max="true"></ion-range-slider>
         </div>
     </div>
 </form>
