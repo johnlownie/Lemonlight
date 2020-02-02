@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { PipelineService } from 'src/app/services/pipeline.service';
+import { NetworkService } from 'src/app/services/network.service';
 
 @Component({
   selector: 'app-settings',
@@ -13,7 +13,7 @@ export class SettingsComponent implements OnInit {
   netmask: number = 0;
   gateway: number = 0;
 
-  constructor(private pipelineService : PipelineService) { }
+  constructor(private pipelineService : NetworkService) { }
 
   ngOnInit() {
     this.pipelineService.getJSON().subscribe(data => {

@@ -1,0 +1,9 @@
+{
+    "settings": {
+        "teamNumber": "5024",
+        "ipAssignment": "automatic",
+        "ipAddress": "192.168.24.80",
+        "netmask": "255.255.255.0",
+        "gateway": "192.168.24.1"
+    }
+}
