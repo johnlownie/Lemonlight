@@ -8,6 +8,16 @@
             "exposure": "0",
             "redBalance": "50",
             "blueBalance": "50"
+        },
+        "thresholding": {
+            "hue_lower": "0",
+            "hue_upper": "255",
+            "saturation_lower": "0",
+            "saturation_upper": "255",
+            "value_lower": "0",
+            "value_upper": "255",
+            "erosion": "0",
+            "dilation": "0"
         }
     }
 }

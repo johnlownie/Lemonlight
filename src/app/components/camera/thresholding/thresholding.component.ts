@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PipelineService } from 'src/app/services/pipeline.service';
 
 @Component({
   selector: 'app-thresholding',
@@ -7,20 +8,77 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ThresholdingComponent implements OnInit {
 
-  minHue: number = 0;
-  minSaturation: number = 0;
-  minValue: number = 0;
+  initialMinHue: number;
+  initialMinSaturation: number;
+  initialMinValue: number;
 
-  maxHue: number = 255;
-  maxSaturation: number = 255;
-  maxValue: number = 255;
+  initialMaxHue: number;
+  initialMaxSaturation: number;
+  initialMaxValue: number;
 
-  erosion: number = 0;
-  dialation: number = 0;
+  minHue: number;
+  minSaturation: number;
+  minValue: number;
 
-  constructor() { }
+  maxHue: number;
+  maxSaturation: number;
+  maxValue: number;
+
+  initialErosion: number;
+  erosion: number;
+
+  initialDilation: number;
+  dilation: number;
+
+  constructor(private pipelineService : PipelineService) { }
 
   ngOnInit() {
+    this.pipelineService.getJSON().subscribe(data => {
+      this.initialMinHue = data.camera.thresholding.hue_lower;
+      this.initialMinSaturation = data.camera.thresholding.saturation_lower;
+      this.initialMinValue = data.camera.thresholding.value_lower;
+
+      this.minHue = this.initialMinHue;
+      this.minSaturation = this.initialMinSaturation;
+      this.minValue = this.initialMinValue;
+
+      this.initialMaxHue = data.camera.thresholding.hue_upper;
+      this.initialMaxSaturation = data.camera.thresholding.saturation_upper;
+      this.initialMaxValue = data.camera.thresholding.value_upper;
+
+      this.maxHue = this.initialMaxHue;
+      this.maxSaturation = this.initialMaxSaturation;
+      this.maxValue = this.initialMaxValue;
+
+      this.initialErosion = data.camera.thresholding.erosion;
+      this.initialDilation = data.camera.thresholding.dilation;
+      
+      this.erosion = this.initialErosion;
+      this.dilation = this.initialErosion;
+    });
+  }
+
+  setHue(event) {
+    this.minHue = event.from;
+    this.maxHue = event.to;
+  }
+
+  setSaturation(event) {
+    this.minSaturation = event.from;
+    this.maxSaturation = event.to;
+  }
+
+  setValue(event) {
+    this.minValue = event.from;
+    this.maxValue = event.to;
+  }
+
+  setErosion(event) {
+    this.erosion = event.from;
+  }
+
+  setDilation(event) {
+    this.dilation = event.from;
   }
 
 }

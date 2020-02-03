@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { PipelineService } from 'src/app/services/pipeline.service';
 
 @Component({
   selector: 'app-input',
@@ -7,46 +8,37 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 })
 export class InputComponent implements OnInit {
 
-  exposure: number = 101;
-  redBalance: number = 66;
-  blueBalance: number = 13;
-
-  constructor() { }
-
-  ngOnInit() { }
-
-  @Output() exposureChange = new EventEmitter();
-  @Output() redBalanceChange = new EventEmitter();
-  @Output() blueBalanceChange = new EventEmitter();
+  initialExposure: number;
+  initialRedBalance: number;
+  initialBlueBalance: number;
   
-  @Input()
-  getExposure() {
-    return this.exposure;
-  }
-    
-  @Input()
-  getRedBalance() {
-    return this.redBalance;
-  }
-  
-  @Input()
-  getBlueBalance() {
-    return this.blueBalance;
+  exposure: number;
+  redBalance: number;
+  blueBalance: number;
+
+  constructor(private pipelineService : PipelineService) { }
+
+  ngOnInit() {
+    this.pipelineService.getJSON().subscribe(data => {
+      this.initialExposure = data.camera.input.exposure;
+      this.initialRedBalance = data.camera.input.redBalance;
+      this.initialBlueBalance = data.camera.input.blueBalance;
+      
+      this.exposure = this.initialExposure;
+      this.redBalance = this.initialRedBalance;
+      this.blueBalance = this.initialBlueBalance;
+    });
   }
 
-  setExposureBalance(exposure: number) {
-    this.exposure = exposure;
-    this.exposureChange.emit(this.exposure);
+  setExposure(event) {
+    this.exposure = event.from;
   }
 
-  setRedBalance(redBalance: number) {
-    this.redBalance = redBalance;
-    this.redBalanceChange.emit(this.redBalance);
+  setRedBalance(event) {
+    this.redBalance = event.from;
   }
 
-  setBlueBalance(blueBalance: number) {
-    this.blueBalance = blueBalance;
-    this.blueBalanceChange.emit(this.blueBalance);
+  setBlueBalance(event) {
+    this.blueBalance = event.from;
   }
-
 }

@@ -29,7 +29,7 @@
             <input name="exposure" [(ngModel)]="exposure" type="text" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="exposure" min="1" max="255" hide_min_max="true"></ion-range-slider>
+            <ion-range-slider [from]="initialExposure" min="1" max="255" hide_min_max="true" (onChange)="setExposure($event)"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
@@ -38,7 +38,7 @@
             <input name="redBalance" [(ngModel)]="redBalance" type="text" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="redBalance" min="1" max="255" hide_min_max="true"></ion-range-slider>
+            <ion-range-slider [from]="initialRedBalance" min="1" max="255" hide_min_max="true" (onChange)="setRedBalance($event)"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
@@ -47,7 +47,7 @@
             <input name="blueBalance" [(ngModel)]="blueBalance" type="text" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="blueBalance" min="1" max="255" hide_min_max="true"></ion-range-slider>
+            <ion-range-slider [from]="initialBlueBalance" min="1" max="255" hide_min_max="true" (onChange)="setBlueBalance($event)"></ion-range-slider>
         </div>
     </div>
 </form>

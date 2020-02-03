@@ -1,0 +1,31 @@
+.row h2 {
+    border-bottom: 1px solid #ccc; 
+    font-size: 1.3em;
+    line-height: 0.1em;
+    margin: 10px 0 20px;
+    padding-left: 40px;
+    width: 100%; 
+ } 
+ 
+ .row h2 span { 
+     background:#212121; 
+     padding:0 10px; 
+ }
+
+ .btn {
+     background-color: #181719;
+     border-radius: 0;
+     border-color: #181719;
+ }
+
+ .btn:hover, .btn:focus {
+     background-color: #343a40;
+ }
+
+.form-group label {
+    padding-left: 0;
+}
+
+.form-group .col-sm-1:last-child {
+    padding-right: 0;
+}

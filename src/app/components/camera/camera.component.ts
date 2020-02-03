@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PipelineService } from 'src/app/services/pipeline.service';
+import { NetworkService } from 'src/app/services/network.service';
 
 @Component({
   selector: 'app-camera',
@@ -10,10 +10,10 @@ export class CameraComponent implements OnInit {
 
   streamUrl: string = "localhost:5801/video_feed";
 
-  constructor(private pipelineService : PipelineService) { }
+  constructor(private networkService : NetworkService) { }
 
   ngOnInit() {
-    this.pipelineService.getJSON().subscribe(data => {
+    this.networkService.getJSON().subscribe(data => {
       this.streamUrl = "http://" + data.settings.ipAddress + "/video_feed";
     });
   }
