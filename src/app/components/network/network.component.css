@@ -1,3 +1,13 @@
 .settings-wrapper {
     padding: 50px;
 }
+
+/* .custom-control-label::before {
+    background-color: darkorange;
+} */
+
+/* .custom-control-input:checked ~ .custom-control-label::before {
+    color: #66bf0d;
+    border-color: #66bf0d;
+    background-color: #66bf0d;
+  } */

@@ -13,7 +13,7 @@ export class PipelineComponent implements OnInit {
   constructor(private networkService : NetworkService) { }
 
   ngOnInit() {
-    this.networkService.getJSON().subscribe(data => {
+    this.networkService.getSettings().subscribe(data => {
       this.streamUrl = "http://" + data.settings.ipAddress + "/video_feed";
     });
   }
