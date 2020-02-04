@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { CameraComponent } from './components/camera/camera.component';
-import { SettingsComponent } from './components/settings/settings.component';
+import { PipelineComponent } from './components/pipeline/pipeline.component';
+import { NetworkComponent } from './components/network/network.component';
 
 
 const routes: Routes = [
-  { path: 'camera', component: CameraComponent },
-  { path: 'settings', component: SettingsComponent },
+  { path: 'camera', component: PipelineComponent },
+  { path: 'settings', component: NetworkComponent },
   { path: '', redirectTo: '/camera', pathMatch: 'full' }
 ];
 

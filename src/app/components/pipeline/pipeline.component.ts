@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { NetworkService } from 'src/app/services/network.service';
 
 @Component({
-  selector: 'app-camera',
-  templateUrl: './camera.component.html',
-  styleUrls: ['./camera.component.css']
+  selector: 'app-pipeline',
+  templateUrl: './pipeline.component.html',
+  styleUrls: ['./pipeline.component.css']
 })
-export class CameraComponent implements OnInit {
+export class PipelineComponent implements OnInit {
 
   streamUrl: string = "localhost:5801/video_feed";
 

@@ -1,0 +1,37 @@
+{
+    "networks": [
+        {
+            "id": 1,
+            "teamNumber": "5024",
+            "ipAssignment": 0,
+            "ipAddress": "192.168.24.80",
+            "netmask": "255.255.255.0",
+            "gateway": "192.168.24.1"
+        }        
+    ],
+    "pipelines": [
+        {
+            "id": 1,
+            "name": "Default",
+            "input": {
+                "pipelineType": "Lemonlight Standard",
+                "sourceImage": "Camera",
+                "leds": "Off",
+                "orientation": "Normal",
+                "exposure": "0",
+                "redBalance": "50",
+                "blueBalance": "50"
+            },
+            "thresholding": {
+                "hue_lower": "0",
+                "hue_upper": "255",
+                "saturation_lower": "0",
+                "saturation_upper": "255",
+                "value_lower": "0",
+                "value_upper": "255",
+                "erosion": "0",
+                "dilation": "0"
+            }
+        }
+    ]
+}
