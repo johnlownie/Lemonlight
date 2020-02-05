@@ -1,5 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <h5>Pipeline</h5>
+    <h5>
+        Pipeline: <select name="pipelines" class="form-control" [(ngModel)]="selectedPipeline">
+            <option *ngFor="let p of pipelines" [ngValue]="p">{{p.name}}</option>
+        </select>
+    </h5>
 </nav>
 
 <div class="camera-wrapper row">

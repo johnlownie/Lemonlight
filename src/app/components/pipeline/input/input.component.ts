@@ -19,10 +19,10 @@ export class InputComponent implements OnInit {
   constructor(private pipelineService : PipelineService) { }
 
   ngOnInit() {
-    this.pipelineService.getJSON().subscribe(data => {
-      this.initialExposure = data.camera.input.exposure;
-      this.initialRedBalance = data.camera.input.redBalance;
-      this.initialBlueBalance = data.camera.input.blueBalance;
+    this.pipelineService.getDefaultPipeline().subscribe(data => {
+      this.initialExposure = data.input.exposure;
+      this.initialRedBalance = data.input.redBalance;
+      this.initialBlueBalance = data.input.blueBalance;
       
       this.exposure = this.initialExposure;
       this.redBalance = this.initialRedBalance;

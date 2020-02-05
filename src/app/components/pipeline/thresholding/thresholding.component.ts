@@ -33,25 +33,25 @@ export class ThresholdingComponent implements OnInit {
   constructor(private pipelineService : PipelineService) { }
 
   ngOnInit() {
-    this.pipelineService.getJSON().subscribe(data => {
-      this.initialMinHue = data.camera.thresholding.hue_lower;
-      this.initialMinSaturation = data.camera.thresholding.saturation_lower;
-      this.initialMinValue = data.camera.thresholding.value_lower;
+    this.pipelineService.getDefaultPipeline().subscribe(data => {
+      this.initialMinHue = data.thresholding.hue_lower;
+      this.initialMinSaturation = data.thresholding.saturation_lower;
+      this.initialMinValue = data.thresholding.value_lower;
 
       this.minHue = this.initialMinHue;
       this.minSaturation = this.initialMinSaturation;
       this.minValue = this.initialMinValue;
 
-      this.initialMaxHue = data.camera.thresholding.hue_upper;
-      this.initialMaxSaturation = data.camera.thresholding.saturation_upper;
-      this.initialMaxValue = data.camera.thresholding.value_upper;
+      this.initialMaxHue = data.thresholding.hue_upper;
+      this.initialMaxSaturation = data.thresholding.saturation_upper;
+      this.initialMaxValue = data.thresholding.value_upper;
 
       this.maxHue = this.initialMaxHue;
       this.maxSaturation = this.initialMaxSaturation;
       this.maxValue = this.initialMaxValue;
 
-      this.initialErosion = data.camera.thresholding.erosion;
-      this.initialDilation = data.camera.thresholding.dilation;
+      this.initialErosion = data.thresholding.erosion;
+      this.initialDilation = data.thresholding.dilation;
       
       this.erosion = this.initialErosion;
       this.dilation = this.initialErosion;

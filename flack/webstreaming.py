@@ -23,10 +23,9 @@ lock = threading.Lock()
 # initialize a flask object
 app = Flask(__name__,static_url_path='')
 
-# initialize the video stream and allow the camera sensor to
-# warmup
-#vs = VideoStream(usePiCamera=1).start()
-vs = VideoStream(src=0).start()
+# initialize the video stream and allow the camera sensor to warmup
+vs = VideoStream(usePiCamera=1).start()
+# vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
 @app.route("/")
