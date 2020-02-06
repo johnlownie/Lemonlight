@@ -39,9 +39,13 @@ i, span {
     z-index: 1;
 }
 
+#sidebar.active .sidebar-header {
+    padding: 20px 0;
+}
+
 #sidebar.active, #sidebar.active .sidebar-footer {
-    min-width: 80px;
-    max-width: 80px;
+    min-width: 50px;
+    max-width: 50px;
     text-align: center;
 }
 

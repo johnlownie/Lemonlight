@@ -4,6 +4,32 @@
 
 .navbar {
     filter: drop-shadow(rgb(0, 0, 0) 0px 0px 5px);
+    padding: 0 1rem;
+}
+
+.navbar h5 {
+    display: inline;
+    font-size: 1.17rem;
+    padding-right: 20px;
+}
+
+.navbar select {
+    display: inline;
+    margin-right: 20px;
+    width: auto;
+}
+
+.navbar .btn {
+    background-color: #181719;
+    border-color: #555;
+    font-size: 14px;
+    height: 24px;
+    margin-right: 10px;
+    padding: 0 7px;
+}
+
+.navbar .btn i {
+    color: #ccc;
 }
 
 .nav-tabs {

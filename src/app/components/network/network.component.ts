@@ -8,21 +8,33 @@ import { NetworkService } from 'src/app/services/network.service';
 })
 export class NetworkComponent implements OnInit {
 
-  teamNumber: number = 0;
-  ipAssignment: number = 1;
-  ipAddress: number = 0;
-  netmask: number = 0;
-  gateway: number = 0;
+  teamNumber: number;
+  streamRate: string;
+  streamResolution: string;
+  
+  ipAssignment: number;
+  ipAddress: number;
+  netmask: number;
+  gateway: number;
+
+  hostname: string;
+  preview: string;
 
   constructor(private networkService : NetworkService) { }
 
   ngOnInit() {
     this.networkService.getSettings().subscribe(data => {
       this.teamNumber = data.teamNumber;
+      this.streamRate = data.streamRate;
+      this.streamResolution = data.streamResolution;
+      
       // this.ipAssignment = data.ipAssignment;
       this.ipAddress = data.ipAddress;
       this.netmask = data.netmask;
       this.gateway = data.gateway;
+
+      this.hostname = data.hostname;
+      this.preview = data.preview;
     });
   }
 }
