@@ -1,13 +1,20 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <h5>
-        Pipeline: <select name="pipelines" class="form-control" [(ngModel)]="selectedPipeline">
-            <option *ngFor="let p of pipelines" [ngValue]="p">{{p.name}}</option>
-        </select>
-    </h5>
+    <form>
+        <h5>
+            Pipeline: <select name="pipelines" class="form-control" [(ngModel)]="selectedPipeline">
+                <option *ngFor="let p of pipelines" [ngValue]="p">{{p.name}}</option>
+            </select>
+        </h5>
+        <input type="text" placeholder="Pipeline_Name"/>
+        <button type="button" class="btn"><i class="fas fa-edit"></i></button>
+        <button type="button" class="btn"><i class="fas fa-download"></i></button>
+        <button type="button" class="btn"><i class="fas fa-upload"></i></button>
+        <button type="button" class="btn"><i class="fas fa-star"></i></button>
+    </form>
 </nav>
 
 <div class="camera-wrapper row">
-    <div class="col-sm-8">
+    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
         <nav>
             <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
                 <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Input</a>
@@ -32,7 +39,7 @@
         </div>
     </div>
 
-    <div class="col-sm-4">
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6">
         <h4>{{ streamUrl }}</h4>
 
         <div class="streaming-frame">
