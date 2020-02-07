@@ -1,30 +1,36 @@
 <form>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Pipline Type</label>
-        <div class="col-sm-6">
-            <select class="form-control"><option>Lemonlight Standard</option></select>
+        <label class="col-xs-12 col-sm-2 col-form-label">Pipline Type</label>
+        <div class="col-9">
+            <select class="col-6 form-control"><option>Lemonlight Standard</option></select>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Source Image</label>
+        <label class="col-xs-12 col-sm-2 col-form-label">Source Image</label>
         <div class="col-sm-6">
             <select class="form-control"><option>Camera</option></select>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">LEDs</label>
+        <label class="col-xs-12 col-sm-2 col-form-label">Resolution</label>
+        <div class="col-sm-6">
+            <select class="form-control"><option>320x240 90fps</option></select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 col-form-label">LEDs</label>
         <div class="col-sm-6">
             <select class="form-control"><option>Off</option><option>On</option></select>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Orientation</label>
+        <label class="col-xs-12 col-sm-2 col-form-label">Orientation</label>
         <div class="col-sm-6">
             <select class="form-control"><option>Normal</option><option>Upside-Down</option></select>
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Exposure (ms)</label>
+        <label class="col-xs-12 col-sm-2 col-form-label">Exposure (ms)</label>
         <div class="col-sm-2">
             <input name="exposure" [(ngModel)]="exposure" type="text" class="form-control">
         </div>
@@ -33,7 +39,16 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Red Balance</label>
+        <label class="col-xs-12 col-sm-2 col-form-label">Black Level Offset</label>
+        <div class="col-sm-2">
+            <input name="exposure" [(ngModel)]="blackLevel" type="text" class="form-control">
+        </div>
+        <div class="col-sm-7 offset-sm-1 col-form-label">
+            <ion-range-slider [from]="initialBlackLevel" min="1" max="255" hide_min_max="true" (onChange)="setBlackLevel($event)"></ion-range-slider>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 col-form-label">Red Balance</label>
         <div class="col-sm-2">
             <input name="redBalance" [(ngModel)]="redBalance" type="text" class="form-control">
         </div>
@@ -42,7 +57,7 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Blue Balance</label>
+        <label class="col-xs-12 col-sm-2 col-form-label">Blue Balance</label>
         <div class="col-sm-2">
             <input name="blueBalance" [(ngModel)]="blueBalance" type="text" class="form-control">
         </div>
