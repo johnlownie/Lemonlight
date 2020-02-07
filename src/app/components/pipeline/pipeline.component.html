@@ -12,55 +12,57 @@
     </form>
 </nav>
 
-<div class="camera-wrapper row">
-    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
-        <nav>
-            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Input</a>
-                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Thresholding</a>
-                <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Contour Filtering</a>
-                <a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="false">Output</a>
-            </div>
-        </nav>
-        <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                <app-input></app-input>
-            </div>
-            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                <app-thresholding></app-thresholding>
-            </div>
-            <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                <app-contour-filtering></app-contour-filtering>
-            </div>
-            <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                <app-output></app-output>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6">
-        <h4>{{ streamUrl }}</h4>
-
-        <div class="streaming-frame">
-            <img src="http://192.168.24.80:5801/video_feed" style="width: 100%">
-        </div>
- 
-        <form>
-            <div class="form-group text-center"><button class="btn btn-dark">Take Snapshot</button></div>
-
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Show:</label>
-                <div class="col-sm-9">
-                    <select class="form-control"><option>Color</option><option>Threshhold</option></select>
+<div class="content-wrapper">
+    <div class="section row">
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
+            <nav>
+                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Input</a>
+                    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Thresholding</a>
+                    <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Contour Filtering</a>
+                    <a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="false">Output</a>
+                </div>
+            </nav>
+            <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <app-input></app-input>
+                </div>
+                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <app-thresholding></app-thresholding>
+                </div>
+                <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                    <app-contour-filtering></app-contour-filtering>
+                </div>
+                <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                    <app-output></app-output>
                 </div>
             </div>
-
-            <div class="form-group row data">
-                <div class="col-sm-3"><span>tx: </span>{{ tx }}&deg;</div>
-                <div class="col-sm-3"><span>ty: </span>{{ ty }}&deg;</div>
-                <div class="col-sm-3"><span>ta: </span>{{ ta }}&#37;</div>
-                <div class="col-sm-3"><span>tl: </span>{{ tl }}</div>
+        </div>
+        
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-6">
+            <h4>{{ streamUrl }}</h4>
+            
+            <div class="streaming-frame">
+                <img src="http://192.168.24.80:5801/video_feed" style="width: 100%">
             </div>
-        </form>
+            
+            <form>
+                <div class="form-group text-center"><button class="btn btn-dark">Take Snapshot</button></div>
+                
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Show:</label>
+                    <div class="col-sm-9">
+                        <select class="form-control"><option>Color</option><option>Threshhold</option></select>
+                    </div>
+                </div>
+                
+                <div class="form-group row data">
+                    <div class="col-sm-3"><span>tx: </span>{{ tx }}&deg;</div>
+                    <div class="col-sm-3"><span>ty: </span>{{ ty }}&deg;</div>
+                    <div class="col-sm-3"><span>ta: </span>{{ ta }}&#37;</div>
+                    <div class="col-sm-3"><span>tl: </span>{{ tl }}</div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
