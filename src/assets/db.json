@@ -5,10 +5,10 @@
             "teamNumber": "5024",
             "streamRate": "Normal",
             "streamResolution": "320x240",
-            "ipAssignment": 0,
-            "ipAddress": "192.168.24.80",
-            "netmask": "255.255.255.0",
-            "gateway": "192.168.24.1",
+            "ipAssignment": false,
+            "ipAddress": "localhost",
+            "netmask": "",
+            "gateway": "",
             "hostname": "",
             "preview": ""
         }        

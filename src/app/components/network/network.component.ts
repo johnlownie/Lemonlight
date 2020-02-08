@@ -12,7 +12,7 @@ export class NetworkComponent implements OnInit {
   streamRate: string;
   streamResolution: string;
   
-  ipAssignment: number;
+  ipAssignment: boolean;
   ipAddress: number;
   netmask: number;
   gateway: number;
@@ -28,7 +28,7 @@ export class NetworkComponent implements OnInit {
       this.streamRate = data.streamRate;
       this.streamResolution = data.streamResolution;
       
-      // this.ipAssignment = data.ipAssignment;
+      this.ipAssignment = data.ipAssignment;
       this.ipAddress = data.ipAddress;
       this.netmask = data.netmask;
       this.gateway = data.gateway;

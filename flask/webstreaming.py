@@ -1,5 +1,4 @@
-# USAGE
-# python webstreaming.py --ip 0.0.0.0 --port 8000
+#!/usr/bin/env python
 
 # import the necessary packages
 import threading
@@ -13,20 +12,17 @@ from imutils.video import VideoStream
 from flask import Response
 from flask import Flask
 from flask import render_template
+from flask_socketio import SocketIO
 
 # initialize the output frame and a lock used to ensure thread-safe
-# exchanges of the output frames (useful for multiple browsers/tabs
-# are viewing tthe stream)
+# exchanges of the output frames (useful for multiple browsers/tabs are viewing tthe stream)
 outputFrame = None
 lock = threading.Lock()
 
 # initialize a flask object
 app = Flask(__name__,static_url_path='')
-
-# initialize the video stream and allow the camera sensor to warmup
-vs = VideoStream(usePiCamera=1).start()
-# vs = VideoStream(src=0).start()
-time.sleep(2.0)
+app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
+socketio = SocketIO(app)
 
 @app.route("/")
 def index():
@@ -34,8 +30,18 @@ def index():
     return render_template("index.html")
 
 def detect_motion(frameCount):
+    print("Starting video thread")
     # grab global references to the video stream, output frame, and lock variables
     global vs, outputFrame, lock
+
+    # initialize the video stream and allow the camera sensor to warmup
+    if args["webcam"] is True:
+        vs = VideoStream(src=0).start()
+    else:
+        vs = VideoStream(usePiCamera=1).start()
+
+    # let camera warmup
+    time.sleep(2.0)
 
     # initialize the motion detector and the total number of frames read thus far
     # md = SingleMotionDetector(accumWeight=0.1)
@@ -72,6 +78,9 @@ def detect_motion(frameCount):
         with lock:
             outputFrame = frame.copy()
 
+    # release the video stream pointer
+    vs.stop()
+
 def generate():
     # grab global references to the output frame and lock variables
     global outputFrame, lock
@@ -100,6 +109,15 @@ def video_feed():
     # type (mime type)
     return Response(generate(), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
+def messageReceived(methods=['GET', 'POST']):
+    print('Message was received!!')
+
+# @app.route("/ws")
+@socketio.on('new-message')
+def handle_my_custom_event(json, methods=['GET', 'POST']):
+    print('Received: ' + str(json))
+    sockets.emit('My response', json, callback=messageReceived)
+
 # check to see if this is the main thread of execution
 if __name__ == '__main__':
     # construct the argument parser and parse command line arguments
@@ -107,6 +125,7 @@ if __name__ == '__main__':
     ap.add_argument("-i", "--ip", type=str, required=True, help="ip address of the device")
     ap.add_argument("-o", "--port", type=int, required=True, help="ephemeral port number of the server (1024 to 65535)")
     ap.add_argument("-f", "--frame-count", type=int, default=32, help="# of frames used to construct the background model")
+    ap.add_argument("-w", "--webcam", action="store_true", help="use webcam as the video source")
     args = vars(ap.parse_args())
 
     # start a thread that will perform motion detection
@@ -115,7 +134,7 @@ if __name__ == '__main__':
     t.start()
 
     # start the flask app
-    app.run(host=args["ip"], port=args["port"], debug=True, threaded=True, use_reloader=False)
+    print("Starting flask app")
+    # socketio.run(app, host=args["ip"], port=args["port"], debug=True, threaded=True, use_reloader=False)
+    socketio.run(app, host=args["ip"], port=args["port"], debug=True)
 
-# release the video stream pointer
-vs.stop()

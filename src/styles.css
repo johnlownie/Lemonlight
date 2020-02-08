@@ -57,6 +57,10 @@ form input:focus, form input.form-control:focus, form select:focus, form select.
     color: #fff;
 }
 
+.form-control:disabled {
+    background-color: #555;
+}
+
 form .custom-range:focus {
     background: transparent;
 }

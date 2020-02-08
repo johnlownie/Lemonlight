@@ -5,7 +5,7 @@
 <div class="settings-wrapper">
     <form>
         <div class="form-group row">
-            <label for="inputEmail3" class="col-sm-2 col-form-label">Team Number:</label>
+            <label for="teamNumber" class="col-sm-2 col-form-label">Team Number:</label>
             <div class="col-sm-3">
                 <input name="teamNumber" [(ngModel)]="teamNumber" type="text" class="form-control">
             </div>
@@ -17,31 +17,31 @@
             <label class="col-sm-2 col-form-label">IP Address Assignment:</label>
             <div class="col-sm-5 col-form-label">
                 <div class="custom-control custom-radio custom-control-inline mr-5">
-                    <input id="automatic" name="ipAssignment" class="custom-control-input btn-warning" type="radio" value="0" [(ngModel)]="ipAssignment">
+                    <input id="automatic" name="ipAssignment" class="custom-control-input btn-warning" type="radio" [value]="true" [(ngModel)]="ipAssignment">
                     <label class="custom-control-label" for="automatic">Automatic</label>
                 </div>
                 <div class="custom-control custom-radio custom-control-inline">
-                    <input id="static" name="ipAssignment" class="custom-control-input" type="radio" value="1" [(ngModel)]="ipAssignment">
+                    <input id="static" name="ipAssignment" class="custom-control-input" type="radio" [value]="false" [(ngModel)]="ipAssignment">
                     <label class="custom-control-label" for="static">Static</label>
                 </div>           
             </div>
         </div>
         <div class="form-group row">
-            <label for="inputPassword3" class="col-sm-2 col-form-label">IP Address:</label>
+            <label for="ipAddress" class="col-sm-2 col-form-label">IP Address:</label>
             <div class="col-sm-5">
-                <input name="ipAddress" [(ngModel)]="ipAddress" type="text" class="form-control" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                <input name="ipAddress" [(ngModel)]="ipAddress" type="text" class="form-control" [disabled]="ipAssignment" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
             </div>
         </div>             
         <div class="form-group row">
-            <label for="inputPassword3" class="col-sm-2 col-form-label">Netmask:</label>
+            <label for="netmask" class="col-sm-2 col-form-label">Netmask:</label>
             <div class="col-sm-5">
-                <input name="netmask" [(ngModel)]="netmask" type="text" class="form-control" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                <input name="netmask" [(ngModel)]="netmask" type="text" class="form-control" [disabled]="ipAssignment" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
             </div>
         </div>             
         <div class="form-group row">
-            <label for="inputPassword3" class="col-sm-2 col-form-label">Gateway:</label>
+            <label for="gateway" class="col-sm-2 col-form-label">Gateway:</label>
             <div class="col-sm-5">
-                <input name="gateway" [(ngModel)]="gateway" type="text" class="form-control" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                <input name="gateway" [(ngModel)]="gateway" type="text" class="form-control" [disabled]="ipAssignment" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
             </div>
         </div>             
 

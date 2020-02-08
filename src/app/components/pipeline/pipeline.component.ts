@@ -13,13 +13,14 @@ export class PipelineComponent implements OnInit {
 
   pipelines: Pipeline[] = [];
   selectedPipeline: number;
-  streamUrl: string = "localhost:5801/video_feed";
+  streamUrl: string;
 
   constructor(private networkService : NetworkService, private pipelineService : PipelineService) { }
 
   ngOnInit() {
     this.networkService.getSettings().subscribe(data => {
-      this.streamUrl = "http://" + data.ipAddress + "/video_feed";
+      console.log("setting stream: " + data.ipAddress);
+      this.streamUrl = "http://" + data.ipAddress + ":5801/video_feed";
     });
 
     this.pipelineService.getPipelines().subscribe(data => {

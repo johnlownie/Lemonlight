@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "server": "json-server --watch ./src/assets/db.json"    
+    "server": "json-server --watch ./src/assets/db.json"
   },
   "private": true,
   "dependencies": {
@@ -28,6 +28,7 @@
     "ng2-ion-range-slider": "^2.0.0",
     "popper.js": "^1.16.1",
     "rxjs": "~6.4.0",
+    "socket-io": "^1.0.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },
