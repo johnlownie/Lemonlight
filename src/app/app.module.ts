@@ -15,7 +15,6 @@ import { OutputComponent } from './components/pipeline/output/output.component';
 
 import { PipelineService } from './services/pipeline.service';
 import { NetworkService } from './services/network.service';
-import { WebsocketService } from './services/websocket.service';
 import { ChatService } from './services/chat.service';
 
 @NgModule({
@@ -38,7 +37,6 @@ import { ChatService } from './services/chat.service';
   providers: [
     PipelineService,
     NetworkService,
-    WebsocketService,
     ChatService
   ],
   bootstrap: [AppComponent]

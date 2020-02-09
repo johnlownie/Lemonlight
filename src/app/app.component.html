@@ -7,7 +7,6 @@
         <ul class="list-unstyled components">
             <li><a routerLink="camera" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" data-toggle="collapse" aria-expanded="false"><i class="fas fa-video"></i><span>Camera</span></a></li>
             <li><a routerLink="settings" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" data-toggle="collapse" aria-expanded="false"><i class="fas fa-cog"></i><span>Settings</span></a></li>
-            <li><button class="btn btn-primary" (click)="sendMsg()">Send Message</button></li>
         </ul>
         <ul class="sidebar-footer list-unstyled">
             <li><a id="sidebarCollapse" (click)="toggleNavbar()"><i class="fas" [ngClass]="navbarOpen ? 'fa-chevron-left' : 'fa-chevron-right'"></i></a></li>

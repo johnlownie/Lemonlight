@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { hasLifecycleHook } from '@angular/compiler/src/lifecycle_reflector';
 import { ChatService } from './services/chat.service';
 
 @Component({
@@ -9,25 +8,27 @@ import { ChatService } from './services/chat.service';
 })
 export class AppComponent {
   title: string = 'Lemonlight';
-  navbarOpen = false;
+  navbarOpen: boolean = false;
+  message: string;
+  messages: string[] = [];
 
   constructor(private chatService: ChatService) {
-    // chatService.messages.subscribe(msg => {
-      // console.log(msg);
-    // });
   }
 
-  private message = {
-    author: "John Lownie",
-    message: "This is a test message"
-  };
+  ngOnInit() {
+    this.chatService
+      .getMessages()
+      .subscribe((message: string) => {
+        this.messages.push(message);
+      });
+  }
 
-  sendMsg() {
+  sendMessage() {
     console.log("New message from client to websocket: ", this.message);
-    this.chatService.sendMessage("Hello, world!");
-    // this.chatService.messages.next(this.message);
-    this.message.message = "";
+    this.chatService.sendMessage(this.message);
+    this.message = '';
   }
+
   toggleNavbar() {
     this.navbarOpen = !this.navbarOpen;
   }

@@ -24,5 +24,5 @@ def handle_my_custom_event(json, methods=['GET', 'POST']):
 
 # check to see if this is the main thread of execution
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, port=5802, debug=True)
 

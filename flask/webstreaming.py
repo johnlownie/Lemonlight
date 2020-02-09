@@ -9,9 +9,7 @@ import time
 import cv2
 
 from imutils.video import VideoStream
-from flask import Response
-from flask import Flask
-from flask import render_template
+from flask import Flask, Response, render_template
 from flask_socketio import SocketIO
 
 # initialize the output frame and a lock used to ensure thread-safe
@@ -22,12 +20,7 @@ lock = threading.Lock()
 # initialize a flask object
 app = Flask(__name__,static_url_path='')
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
-socketio = SocketIO(app)
-
-@app.route("/")
-def index():
-    # return the rendered template
-    return render_template("index.html")
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 def detect_motion(frameCount):
     print("Starting video thread")
@@ -103,20 +96,23 @@ def generate():
         # yield the output frame in the byte format
         yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
 
+@app.route("/")
+def index():
+    # return the rendered template
+    return render_template("index.html")
+    
 @app.route("/video_feed")
 def video_feed():
-    # return the response generated along with the specific media
-    # type (mime type)
+    # return the response generated along with the specific media type (mime type)
     return Response(generate(), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 def messageReceived(methods=['GET', 'POST']):
     print('Message was received!!')
 
-# @app.route("/ws")
 @socketio.on('new-message')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print('Received: ' + str(json))
-    sockets.emit('My response', json, callback=messageReceived)
+    socketio.emit('My response', json, callback=messageReceived)
 
 # check to see if this is the main thread of execution
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NetworkService } from 'src/app/services/network.service';
 import { PipelineService } from 'src/app/services/pipeline.service';
+import { ChatService } from 'src/app/services/chat.service';
 
 import { Pipeline } from 'src/app/models/pipeline';
 
@@ -14,8 +15,11 @@ export class PipelineComponent implements OnInit {
   pipelines: Pipeline[] = [];
   selectedPipeline: number;
   streamUrl: string;
+  message: any;
 
-  constructor(private networkService : NetworkService, private pipelineService : PipelineService) { }
+  showOptions: string[] = ["Colour", "Threshold"];
+
+  constructor(private networkService : NetworkService, private pipelineService : PipelineService, private chatService: ChatService) { }
 
   ngOnInit() {
     this.networkService.getSettings().subscribe(data => {
@@ -27,6 +31,12 @@ export class PipelineComponent implements OnInit {
       this.pipelines.push(data);
       console.log(this.pipelines);
     })
+  }
+
+  setShow(event) {
+    console.log(event.target.value);
+    this.message = { component: "show", setting: event.target.value };
+    this.chatService.sendMessage(this.message)
   }
 
   tx: number = -14.74;
