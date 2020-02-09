@@ -12,9 +12,9 @@ export class AppComponent {
   navbarOpen = false;
 
   constructor(private chatService: ChatService) {
-    chatService.messages.subscribe(msg => {
-      console.log(msg);
-    });
+    // chatService.messages.subscribe(msg => {
+      // console.log(msg);
+    // });
   }
 
   private message = {

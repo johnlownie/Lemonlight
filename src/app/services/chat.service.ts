@@ -16,12 +16,12 @@ export interface Message {
   providedIn: 'root'
 })
 export class ChatService {
-  private url = 'http://localhost:8765';
+  private url = 'http://localhost:5000';
   private socket;
   
   public messages: Subject<Message>;
 
-  constructor(wsService: WebsocketService) {
+  constructor() {
     this.socket = io(this.url);
 
     // this.messages = <Subject<Message>>wsService.connect(CHAT_URL).pipe(map(

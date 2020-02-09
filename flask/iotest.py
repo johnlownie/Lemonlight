@@ -7,7 +7,7 @@ from flask_socketio import SocketIO
 # initialize a flask object
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route("/")
 def index():
@@ -20,7 +20,7 @@ def messageReceived(methods=['GET', 'POST']):
 @socketio.on('new-message')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print('Received: ' + str(json))
-    sockets.emit('My response', json, callback=messageReceived)
+    socketio.emit('My response', json, callback=messageReceived)
 
 # check to see if this is the main thread of execution
 if __name__ == '__main__':
