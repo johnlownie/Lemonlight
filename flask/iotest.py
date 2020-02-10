@@ -20,9 +20,9 @@ def messageReceived(methods=['GET', 'POST']):
 @socketio.on('new-message')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print('Received: ' + str(json))
-    socketio.emit('My response', json, callback=messageReceived)
+    # socketio.emit('ack-response', json, callback=messageReceived)
 
 # check to see if this is the main thread of execution
 if __name__ == '__main__':
-    socketio.run(app, port=5802, debug=True)
+    socketio.run(app, port=5801, debug=True)
 

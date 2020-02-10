@@ -16,6 +16,7 @@ export class PipelineComponent implements OnInit {
   selectedPipeline: number;
   streamUrl: string;
   message: any;
+  messages: string[] = [];
 
   showOptions: string[] = ["Colour", "Threshold"];
 
@@ -30,13 +31,17 @@ export class PipelineComponent implements OnInit {
     this.pipelineService.getPipelines().subscribe(data => {
       this.pipelines.push(data);
       console.log(this.pipelines);
-    })
+    });
+
+    this.chatService.getMessages().subscribe((message: string) => {
+      this.messages.push(message);
+    });
   }
 
   setShow(event) {
     console.log(event.target.value);
     this.message = { component: "show", setting: event.target.value };
-    this.chatService.sendMessage(this.message)
+    this.chatService.sendMessage(this.message);
   }
 
   tx: number = -14.74;

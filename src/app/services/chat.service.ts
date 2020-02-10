@@ -6,7 +6,7 @@ import * as io from 'socket.io-client';
   providedIn: 'root'
 })
 export class ChatService {
-  private url = 'http://localhost:5801;
+  private url = 'http://localhost:5801';
   private socket;
   
   constructor() {
@@ -14,13 +14,15 @@ export class ChatService {
   }
   
   public sendMessage(message: any) {
+    console.log("Emitting: " + message);
     this.socket.emit('new-message', message);
   }
 
   public getMessages = () => {
     return Observable.create((observer) => {
-      this.socket.on('new-message', (message) => {
-        observer.next(message);
+      this.socket.on('ack-response', (msg) => {
+        console.log(msg);
+        observer.next(msg);
       });
     });
   }
