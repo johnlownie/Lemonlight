@@ -24,7 +24,7 @@
                 "resolution": "320x240 90fps",
                 "leds": "Off",
                 "orientation": "Normal",
-                "exposure": 1,
+                "exposure": 4,
                 "blackLevel": 1,
                 "redBalance": 50,
                 "blueBalance": 50

@@ -35,7 +35,7 @@
             <input name="exposure" [(ngModel)]="exposure" type="text" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="initialExposure" min="1" max="255" hide_min_max="true" (onChange)="setExposure($event)"></ion-range-slider>
+            <ion-range-slider [from]="initialExposure" min="1" max="13" hide_min_max="true" (onChange)="setExposure($event)"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">

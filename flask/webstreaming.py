@@ -56,12 +56,18 @@ upperValue = 255
 erosion = 0
 dilate = 0
 
-# initialize the video stream and allow the camera sensor to warmup
+# initialize the video stream
 # if args["webcam"] is True:
 vs = VideoStream(src=0).start()
-fps = FPS().start()
 # else:
     # vs = VideoStream(usePiCamera=1).start()
+
+# set manual exposure and intial value
+vs.stream.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0)
+vs.stream.set(cv2.CAP_PROP_EXPOSURE, -4)
+
+# start the frame counter
+fps = FPS().start()
 
 # let camera warmup
 time.sleep(2.0)
@@ -74,12 +80,11 @@ def set_component(json_data):
     component = loaded['component']
     value = loaded['value']
 
-    print("Setting: " + component + " - Value: " + value)
-    
     if component == 'videoFeed':
-        videoFeed = value
+        videoFeed = value.lower()
     elif component == 'exposure':
         exposure = int(value)
+        vs.stream.set(cv2.CAP_PROP_EXPOSURE, -exposure)
     elif component == 'blackLevel':
         blackLevel = int(value)
     elif component == 'redBalance':
@@ -107,14 +112,13 @@ def set_component(json_data):
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, videoFeed, frame, grayed, blurred, hsv, mask, erosion, dilate, outputFrame, lock
+    global vs, videoFeed, frame, grayed, blurred, hsv, mask, erosion, dilate, outputFrame, lock, width, height
 
     # loop over frames from the video stream
     while True:
         # read the next frame from the video stream, resize it, convert the frame to grayscale, and blur it
         frame = vs.read()
         frame = imutils.resize(frame, width=width, height=height)
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(frame, (5, 5), 0)
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
@@ -123,9 +127,16 @@ def grab_frame():
         mask = cv2.erode(mask, None, iterations=erosion)
         mask = cv2.dilate(mask, None, iterations=dilate)
 
+        # find the contours in the mask
+        cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = imutils.grab_contours(cnts)
+
+        # draw a center line on the frame
+        cv2.line(frame, (width, 0), (width, height), (255, 255, 255), 1)
+
         # grab the current timestamp and draw it on the frame
-        timestamp = datetime.datetime.now()
-        cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        # timestamp = datetime.datetime.now()
+        # cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
         # acquire the lock, set the output frame, and release the lock
         with lock:
@@ -164,7 +175,6 @@ def index():
 @app.route("/video_feed")
 def video_feed():
     # return the response generated along with the specific media type (mime type)
-    print('Feeding video...')
     return Response(generate(), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 def messageReceived(methods=['GET', 'POST']):
@@ -172,7 +182,6 @@ def messageReceived(methods=['GET', 'POST']):
 
 @socketio.on('new-message')
 def handle_my_custom_event(json_data, methods=['GET', 'POST']):
-    print('Received: ' + str(json_data))
     set_component(json_data)
     # socketio.emit('ack-response', json, callback=messageReceived)
 
