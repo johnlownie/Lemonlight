@@ -71,6 +71,16 @@
     width: 100%;
 }
 
+.sliding {
+    border: 2px solid #95e4ea;
+}
+
+.highlight {
+    -moz-box-shadow:    0 0 5px 5px #95e4ea;
+    -webkit-box-shadow: 0 0 5px 5px #95e4ea;
+    box-shadow:         0 0 5px 5px #95e4ea;
+}
+
 .data span {
     color: #517d38;
 }

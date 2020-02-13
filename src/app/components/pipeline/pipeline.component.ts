@@ -17,6 +17,7 @@ export class PipelineComponent implements OnInit {
   streamUrl: string;
   message: any;
   messages: string[] = [];
+  isStyleSliderSet: boolean;
 
   showOptions: string[] = ["Colour", "Threshold"];
 
@@ -36,6 +37,8 @@ export class PipelineComponent implements OnInit {
     this.chatService.getMessages().subscribe((message: string) => {
       this.messages.push(message);
     });
+
+    this.pipelineService.isStyleSliderSet.subscribe(isStyleSliderSet => this.isStyleSliderSet = isStyleSliderSet);
   }
 
   setFeed(event: any) {

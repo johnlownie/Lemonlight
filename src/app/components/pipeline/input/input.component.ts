@@ -47,6 +47,10 @@ export class InputComponent implements OnInit {
     });
   }
 
+  toggleStyle() {
+    this.pipelineService.toggleSliderStyle();
+  }
+  
   setExposure(event) {
     this.exposure = event.from;
     this.chatService.setComponent("exposure", event.from);

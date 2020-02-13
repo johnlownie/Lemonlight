@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PipelineService {
+
+  private styleSlider = new BehaviorSubject<boolean>(false);
+  isStyleSliderSet = this.styleSlider.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -22,4 +25,8 @@ export class PipelineService {
     return this.getPipeline(1);
   }
 
+  public toggleSliderStyle() {
+    this.styleSlider.next(!this.styleSlider.value);
+    console.log("Toggled slider: " + this.styleSlider.value);
+  }
 }

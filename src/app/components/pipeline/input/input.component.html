@@ -32,37 +32,37 @@
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Exposure (ms)</label>
         <div class="col-sm-2">
-            <input name="exposure" [(ngModel)]="exposure" type="text" class="form-control">
+            <input name="exposure" [(ngModel)]="exposure" type="number" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="initialExposure" min="1" max="13" hide_min_max="true" (onChange)="setExposure($event)"></ion-range-slider>
+            <ion-range-slider [from]="initialExposure" min="1" max="13" hide_min_max="true" (onChange)="setExposure($event)" (mousedown)="toggleStyle()" (mouseup)="toggleStyle()"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Black Level Offset</label>
         <div class="col-sm-2">
-            <input name="blackLevel" [(ngModel)]="blackLevel" type="text" class="form-control">
+            <input name="blackLevel" [(ngModel)]="blackLevel" type="number" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="initialBlackLevel" min="1" max="255" hide_min_max="true" (onChange)="setBlackLevel($event)"></ion-range-slider>
+            <ion-range-slider [from]="initialBlackLevel" min="1" max="255" hide_min_max="true" (onChange)="setBlackLevel($event)" (mousedown)="toggleStyle()" (mouseup)="toggleStyle()"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Red Balance</label>
         <div class="col-sm-2">
-            <input name="redBalance" [(ngModel)]="redBalance" type="text" class="form-control">
+            <input name="redBalance" [(ngModel)]="redBalance" type="number" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="initialRedBalance" min="1" max="255" hide_min_max="true" (onChange)="setRedBalance($event)"></ion-range-slider>
+            <ion-range-slider [from]="initialRedBalance" min="1" max="255" hide_min_max="true" (onChange)="setRedBalance($event)" (mousedown)="toggleStyle()" (mouseup)="toggleStyle()"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Blue Balance</label>
         <div class="col-sm-2">
-            <input name="blueBalance" [(ngModel)]="blueBalance" type="text" class="form-control">
+            <input name="blueBalance" [(ngModel)]="blueBalance" type="number" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="initialBlueBalance" min="1" max="255" hide_min_max="true" (onChange)="setBlueBalance($event)"></ion-range-slider>
+            <ion-range-slider [from]="initialBlueBalance" min="1" max="255" hide_min_max="true" (onChange)="setBlueBalance($event)" (mousedown)="toggleStyle()" (mouseup)="toggleStyle()"></ion-range-slider>
         </div>
     </div>
 </form>
