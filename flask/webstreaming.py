@@ -5,6 +5,7 @@ import threading
 import argparse
 import datetime
 import imutils
+import json
 import logging
 import numpy as np
 import time
@@ -66,8 +67,12 @@ fps = FPS().start()
 time.sleep(2.0)
 
 # set commponent value
-def set_component(component, value):
-    global videoFeed, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue
+def set_component(json_data):
+    global videoFeed, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate
+
+    loaded = json.loads(json_data)
+    component = loaded['component']
+    value = loaded['value']
 
     print("Setting: " + component + " - Value: " + value)
     
@@ -166,9 +171,9 @@ def messageReceived(methods=['GET', 'POST']):
     print('Message was received!!')
 
 @socketio.on('new-message')
-def handle_my_custom_event(json, methods=['GET', 'POST']):
-    print('Received: ' + str(json))
-    set_component(json["component"], json["value"])
+def handle_my_custom_event(json_data, methods=['GET', 'POST']):
+    print('Received: ' + str(json_data))
+    set_component(json_data)
     # socketio.emit('ack-response', json, callback=messageReceived)
 
 # check to see if this is the main thread of execution

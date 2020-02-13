@@ -38,11 +38,9 @@ export class PipelineComponent implements OnInit {
     });
   }
 
-  setFeed(event) {
-    console.log(event.target.value);
-    let feed: string = event.target.value;
-    this.message = { component: "videoFeed", value: feed.toLowerCase() };
-    this.chatService.sendMessage(this.message);
+  setFeed(event: any) {
+    let feedValue: string = event.target.value;
+    this.chatService.setComponent('videoFeed', feedValue);
   }
 
   tx: number = -14.74;

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PipelineService } from 'src/app/services/pipeline.service';
+import { ChatService } from 'src/app/services/chat.service';
 
 @Component({
   selector: 'app-thresholding',
@@ -30,7 +31,7 @@ export class ThresholdingComponent implements OnInit {
   initialDilation: number;
   dilation: number;
 
-  constructor(private pipelineService : PipelineService) { }
+  constructor(private pipelineService : PipelineService, private chatService: ChatService) { }
 
   ngOnInit() {
     this.pipelineService.getDefaultPipeline().subscribe(data => {
@@ -58,27 +59,35 @@ export class ThresholdingComponent implements OnInit {
     });
   }
 
-  setHue(event) {
+  setHue(event: any) {
     this.minHue = event.from;
     this.maxHue = event.to;
+    this.chatService.setComponent('lowerHue', event.from);
+    this.chatService.setComponent('upperHue', event.to);
   }
 
-  setSaturation(event) {
+  setSaturation(event: any) {
     this.minSaturation = event.from;
     this.maxSaturation = event.to;
+    this.chatService.setComponent('lowerSaturation', event.from);
+    this.chatService.setComponent('upperSaturation', event.to);
   }
 
-  setValue(event) {
+  setValue(event: any) {
     this.minValue = event.from;
     this.maxValue = event.to;
+    this.chatService.setComponent('lowerValue', event.from);
+    this.chatService.setComponent('upperValue', event.to);
   }
 
-  setErosion(event) {
+  setErosion(event: any) {
     this.erosion = event.from;
+    this.chatService.setComponent('erosion', event.from);
   }
 
-  setDilation(event) {
+  setDilation(event: any) {
     this.dilation = event.from;
+    this.chatService.setComponent('dilate', event.from);
   }
 
 }
