@@ -17,14 +17,15 @@
         {
             "id": 1,
             "name": "Default",
+            "feed": "Colour",
             "input": {
                 "pipelineType": "Lemonlight Standard",
                 "sourceImage": "Camera",
                 "resolution": "320x240 90fps",
                 "leds": "Off",
                 "orientation": "Normal",
-                "exposure": 0,
-                "blackLevel": 0,
+                "exposure": 1,
+                "blackLevel": 1,
                 "redBalance": 50,
                 "blueBalance": 50
             },

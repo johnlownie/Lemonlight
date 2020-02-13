@@ -41,7 +41,7 @@
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Black Level Offset</label>
         <div class="col-sm-2">
-            <input name="exposure" [(ngModel)]="blackLevel" type="text" class="form-control">
+            <input name="blackLevel" [(ngModel)]="blackLevel" type="text" class="form-control">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
             <ion-range-slider [from]="initialBlackLevel" min="1" max="255" hide_min_max="true" (onChange)="setBlackLevel($event)"></ion-range-slider>

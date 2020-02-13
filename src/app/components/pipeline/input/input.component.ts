@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { PipelineService } from 'src/app/services/pipeline.service';
+import { ChatService } from 'src/app/services/chat.service';
 
 @Component({
   selector: 'app-input',
@@ -24,7 +25,7 @@ export class InputComponent implements OnInit {
   redBalance: number;
   blueBalance: number;
 
-  constructor(private pipelineService : PipelineService) { }
+  constructor(private pipelineService : PipelineService, private chatService: ChatService) { }
 
   ngOnInit() {
     this.pipelineService.getDefaultPipeline().subscribe(data => {
@@ -46,19 +47,29 @@ export class InputComponent implements OnInit {
     });
   }
 
+  sendMessage(key: string, value: string) {
+    let message = {"key": key, "value": value }
+    console.log("New message from client to websocket: ", message);
+    this.chatService.sendMessage(JSON.stringify(message));
+  }
+
   setExposure(event) {
     this.exposure = event.from;
+    this.sendMessage("exposure", event.from);
   }
-
+  
   setBlackLevel(event) {
     this.blackLevel = event.from;
+    this.sendMessage("blackLevel", event.from);
   }
-
+  
   setRedBalance(event) {
     this.redBalance = event.from;
+    this.sendMessage("redBalance", event.from);
   }
-
+  
   setBlueBalance(event) {
     this.blueBalance = event.from;
+    this.sendMessage("blueBalance", event.from);
   }
 }

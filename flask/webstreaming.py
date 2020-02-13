@@ -5,10 +5,12 @@ import threading
 import argparse
 import datetime
 import imutils
+import logging
+import numpy as np
 import time
 import cv2
 
-from imutils.video import VideoStream
+from imutils.video import FPS, VideoStream
 from flask import Flask, Response, render_template
 from flask_socketio import SocketIO
 
@@ -19,30 +21,102 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # initialize the output frame and a lock used to ensure thread-safe
 # exchanges of the output frames (useful for multiple browsers/tabs are viewing tthe stream)
-outputFrame = None
 lock = threading.Lock()
-source = "Colour"
+
+# initialize frame holders
+width = 320
+height = 240
+frame   = np.zeros(shape=(height, width, 3), dtype=np.uint8)
+grayed  = np.zeros(shape=(height, width, 3), dtype=np.uint8)
+blurred = np.zeros(shape=(height, width, 3), dtype=np.uint8)
+hsv     = np.zeros(shape=(height, width, 3), dtype=np.uint8)
+mask    = np.zeros(shape=(height, width, 3), dtype=np.uint8)
+outputFrame = np.zeros(shape=(height, width, 3), dtype=np.uint8)
+
+# set up logging
+logging.basicConfig(level=logging.DEBUG)
+
+# Frame variables
+videoFeed = "colour"
+
+# Input variables
+exposure = 0
+blackLevel = 0
+redBalance = 0
+blueBalance = 0
+
+# Threshold variables
+lowerHue = 0
+lowerSaturation = 0
+lowerValue = 0
+upperHue = 255
+upperSaturation = 255
+upperValue = 255
+erosion = 0
+dilate = 0
 
 # initialize the video stream and allow the camera sensor to warmup
 # if args["webcam"] is True:
 vs = VideoStream(src=0).start()
+fps = FPS().start()
 # else:
     # vs = VideoStream(usePiCamera=1).start()
 
 # let camera warmup
 time.sleep(2.0)
 
+# set commponent value
+def set_component(component, value):
+    global videoFeed, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue
+
+    print("Setting: " + component + " - Value: " + value)
+    
+    if component == 'videoFeed':
+        videoFeed = value
+    elif component == 'exposure':
+        exposure = int(value)
+    elif component == 'blackLevel':
+        blackLevel = int(value)
+    elif component == 'redBalance':
+        redBalance = int(value)
+    elif component == 'blueBalance':
+        blueBalance = int(value)
+    elif component == 'lowerHue':
+        lowerHue = int(value)
+    elif component == 'lowerSaturation':
+        lowerSaturation = int(value)
+    elif component == 'lowerValue':
+        lowerValue = int(value)
+    elif component == 'upperHue':
+        upperHue = int(value)
+    elif component == 'upperSaturation':
+        upperSaturation = int(value)
+    elif component == 'upperValue':
+        upperValue = int(value)
+    elif component == 'erosion':
+        erosion = int(value)
+    elif component == 'dilate':
+        dilate = int(value)
+    else:
+        print("No component set")
+
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, outputFrame, source, lock
+    global vs, videoFeed, frame, grayed, blurred, hsv, mask, erosion, dilate, outputFrame, lock
 
     # loop over frames from the video stream
     while True:
         # read the next frame from the video stream, resize it, convert the frame to grayscale, and blur it
         frame = vs.read()
-        frame = imutils.resize(frame, width=400)
+        frame = imutils.resize(frame, width=width, height=height)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        blurred = cv2.GaussianBlur(gray, (7, 7), 0)
+        blurred = cv2.GaussianBlur(frame, (5, 5), 0)
+        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+
+        # create a mask, dilate and erode it
+        mask = cv2.inRange(hsv, (lowerHue, lowerSaturation, lowerValue), (upperHue, upperSaturation, upperValue))
+        mask = cv2.erode(mask, None, iterations=erosion)
+        mask = cv2.dilate(mask, None, iterations=dilate)
 
         # grab the current timestamp and draw it on the frame
         timestamp = datetime.datetime.now()
@@ -50,10 +124,10 @@ def grab_frame():
 
         # acquire the lock, set the output frame, and release the lock
         with lock:
-            if source == "Colour":
+            if videoFeed == "colour":
                 outputFrame = frame.copy()
             else:
-                outputFrame = gray.copy()
+                outputFrame = mask.copy()
 
 def generate():
     # grab global references to the output frame and lock variables
@@ -68,7 +142,7 @@ def generate():
                 continue
 
             # encode the frame in JPEG format
-            (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+            (flag, encodedImage) = cv2.imencode(".jpg", outputFrame )
 
             # ensure the frame was successfully encoded
             if not flag:
@@ -85,6 +159,7 @@ def index():
 @app.route("/video_feed")
 def video_feed():
     # return the response generated along with the specific media type (mime type)
+    print('Feeding video...')
     return Response(generate(), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 def messageReceived(methods=['GET', 'POST']):
@@ -92,9 +167,8 @@ def messageReceived(methods=['GET', 'POST']):
 
 @socketio.on('new-message')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
-    global source
     print('Received: ' + str(json))
-    source = json["setting"]
+    set_component(json["component"], json["value"])
     # socketio.emit('ack-response', json, callback=messageReceived)
 
 # check to see if this is the main thread of execution
