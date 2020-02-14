@@ -46,7 +46,7 @@ var IonRangeSliderComponent = (function () {
     IonRangeSliderComponent.prototype.initSlider = function () {
         var that = this;
         jQuery(this.inputElem).ionRangeSlider({
-            skin: round,
+            skin: "round",
             min: that.min,
             max: that.max,
             from: that.from,
