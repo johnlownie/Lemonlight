@@ -11,6 +11,7 @@ export class NetworkService {
   constructor(private http: HttpClient) { }
 
   public getSettings(): Observable<any> {
+    console.log("Returning settings: " + environment.apiUrl);
     return this.http.get(environment.apiUrl + "/networks/1");
   }
 }

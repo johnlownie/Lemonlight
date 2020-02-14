@@ -14,6 +14,7 @@ export class PipelineService {
   constructor(private http: HttpClient) { }
 
   public getPipelines(): Observable<any> {
+    console.log("Returning pipelines: " + environment.apiUrl);
     return this.http.get(environment.apiUrl + "/pipelines");
   }
 
