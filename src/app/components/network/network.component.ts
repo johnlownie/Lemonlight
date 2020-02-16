@@ -8,17 +8,17 @@ import { ApiService } from 'src/app/services/api.service';
 })
 export class NetworkComponent implements OnInit {
 
-  teamNumber: number = 0;
-  streamRate: string;
-  streamResolution: string;
+  private teamNumber: number = 0;
+  private streamRate: string;
+  private streamResolution: string;
   
-  ipAssignment: boolean = true;
-  ipAddress: number;
-  netmask: number;
-  gateway: number;
+  private ipAssignment: boolean = true;
+  private ipAddress: number;
+  private netmask: number;
+  private gateway: number;
 
-  hostname: string;
-  preview: string;
+  private hostname: string;
+  private preview: string;
 
   constructor(private apiService : ApiService) { }
 

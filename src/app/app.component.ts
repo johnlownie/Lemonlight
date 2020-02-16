@@ -19,8 +19,10 @@ export class AppComponent {
   }
 
   ngOnInit() {
+    console.log("Starting blocking...");
     this.blockUI.start();
     setTimeout(() => {
+      console.log("Finished blocking.");
       this.blockUI.stop();
     }, 2500);
 
