@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { BlockUIModule } from 'ng-block-ui';
 import { IonRangeSliderModule } from 'ng2-ion-range-slider';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -13,8 +14,8 @@ import { ThresholdingComponent } from './components/pipeline/thresholding/thresh
 import { ContourFilteringComponent } from './components/pipeline/contour-filtering/contour-filtering.component';
 import { OutputComponent } from './components/pipeline/output/output.component';
 
+import { ApiService } from './services/api.service';
 import { PipelineService } from './services/pipeline.service';
-import { NetworkService } from './services/network.service';
 import { ChatService } from './services/chat.service';
 
 @NgModule({
@@ -32,11 +33,12 @@ import { ChatService } from './services/chat.service';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    BlockUIModule.forRoot(),
     IonRangeSliderModule
   ],
   providers: [
+    ApiService,
     PipelineService,
-    NetworkService,
     ChatService
   ],
   bootstrap: [AppComponent]

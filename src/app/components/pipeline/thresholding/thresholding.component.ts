@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PipelineService } from 'src/app/services/pipeline.service';
+import { ApiService } from 'src/app/services/api.service';
 import { ChatService } from 'src/app/services/chat.service';
 
 @Component({
@@ -31,10 +31,10 @@ export class ThresholdingComponent implements OnInit {
   initialDilation: number;
   dilation: number;
 
-  constructor(private pipelineService : PipelineService, private chatService: ChatService) { }
+  constructor(private apiService : ApiService, private chatService: ChatService) { }
 
   ngOnInit() {
-    this.pipelineService.getDefaultPipeline().subscribe(data => {
+    this.apiService.getDefaultPipeline().subscribe(data => {
       this.initialMinHue = data.thresholding.hue_lower;
       this.initialMinSaturation = data.thresholding.saturation_lower;
       this.initialMinValue = data.thresholding.value_lower;

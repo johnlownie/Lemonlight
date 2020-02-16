@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { NetworkService } from 'src/app/services/network.service';
+import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { ApiService } from 'src/app/services/api.service';
 import { PipelineService } from 'src/app/services/pipeline.service';
 import { ChatService } from 'src/app/services/chat.service';
 
@@ -12,24 +13,28 @@ import { Pipeline } from 'src/app/models/pipeline';
 })
 export class PipelineComponent implements OnInit {
 
+  @BlockUI() blockUI: NgBlockUI;
   pipelines: Pipeline[] = [];
   selectedPipeline: number;
   streamUrl: string;
   message: any;
   messages: string[] = [];
   isStyleSliderSet: boolean;
+  isApiConnected: boolean;
 
   showOptions: string[] = ["Colour", "Threshold"];
 
-  constructor(private networkService : NetworkService, private pipelineService : PipelineService, private chatService: ChatService) { }
+  constructor(private apiService : ApiService, private pipelineService : PipelineService, private chatService: ChatService) { }
 
   ngOnInit() {
-    this.networkService.getSettings().subscribe(data => {
+    this.apiService.isConnected.subscribe(isConnected => this.isApiConnected = isConnected);
+
+    this.apiService.getSettings().subscribe(data => {
       console.log("setting stream: " + data.ipAddress);
       this.streamUrl = "http://" + data.ipAddress + ":5801/video_feed";
     });
 
-    this.pipelineService.getPipelines().subscribe(data => {
+    this.apiService.getPipelines().subscribe(data => {
       this.pipelines.push(data);
       console.log(this.pipelines);
     });

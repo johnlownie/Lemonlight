@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { PipelineService } from 'src/app/services/pipeline.service';
+import { ApiService } from 'src/app/services/api.service';
 import { ChatService } from 'src/app/services/chat.service';
 
 @Component({
@@ -25,10 +25,10 @@ export class InputComponent implements OnInit {
   redBalance: number;
   blueBalance: number;
 
-  constructor(private pipelineService : PipelineService, private chatService: ChatService) { }
+  constructor(private apiService : ApiService, private chatService: ChatService) { }
 
   ngOnInit() {
-    this.pipelineService.getDefaultPipeline().subscribe(data => {
+    this.apiService.getDefaultPipeline().subscribe(data => {
       this.pipelineType = data.input.pipelineType;
       this.sourceImage = data.input.sourceImage;
       this.resolution = data.input.resolution;
@@ -48,7 +48,7 @@ export class InputComponent implements OnInit {
   }
 
   toggleStyle() {
-    this.pipelineService.toggleSliderStyle();
+    // this.pipelineService.toggleSliderStyle();
   }
   
   setExposure(event) {

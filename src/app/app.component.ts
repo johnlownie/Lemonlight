@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { BlockUI, NgBlockUI } from 'ng-block-ui';
+
 import { ChatService } from 'src/app/services/chat.service';
 
 @Component({
@@ -7,6 +9,7 @@ import { ChatService } from 'src/app/services/chat.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  @BlockUI() blockUI: NgBlockUI;
   title: string = 'Lemonlight';
   navbarOpen: boolean = false;
   message: string;
@@ -16,6 +19,11 @@ export class AppComponent {
   }
 
   ngOnInit() {
+    this.blockUI.start();
+    setTimeout(() => {
+      this.blockUI.stop();
+    }, 2500);
+
     this.chatService
       .getMessages()
       .subscribe((message: string) => {

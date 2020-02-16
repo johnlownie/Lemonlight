@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { NetworkService } from 'src/app/services/network.service';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-network',
@@ -8,11 +8,11 @@ import { NetworkService } from 'src/app/services/network.service';
 })
 export class NetworkComponent implements OnInit {
 
-  teamNumber: number;
+  teamNumber: number = 0;
   streamRate: string;
   streamResolution: string;
   
-  ipAssignment: boolean;
+  ipAssignment: boolean = true;
   ipAddress: number;
   netmask: number;
   gateway: number;
@@ -20,10 +20,10 @@ export class NetworkComponent implements OnInit {
   hostname: string;
   preview: string;
 
-  constructor(private networkService : NetworkService) { }
+  constructor(private apiService : ApiService) { }
 
   ngOnInit() {
-    this.networkService.getSettings().subscribe(data => {
+    this.apiService.getSettings().subscribe(data => {
       this.teamNumber = data.teamNumber;
       this.streamRate = data.streamRate;
       this.streamResolution = data.streamResolution;

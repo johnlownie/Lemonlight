@@ -63,8 +63,8 @@ vs = VideoStream(src=0).start()
     # vs = VideoStream(usePiCamera=1).start()
 
 # set manual exposure and intial value
-vs.stream.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0)
-vs.stream.set(cv2.CAP_PROP_EXPOSURE, -4)
+# vs.stream.set(cv2.CAP_PROP_AUTO_EXPOSURE, 0)
+# vs.stream.set(cv2.CAP_PROP_EXPOSURE, -4)
 
 # start the frame counter
 fps = FPS().start()
@@ -79,6 +79,8 @@ def set_component(json_data):
     loaded = json.loads(json_data)
     component = loaded['component']
     value = loaded['value']
+
+    print("C: %s - V: %s".format(component, value))
 
     if component == 'videoFeed':
         videoFeed = value.lower()
