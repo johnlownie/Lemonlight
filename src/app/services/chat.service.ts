@@ -2,15 +2,16 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from "rxjs";
 import * as io from 'socket.io-client';
 
+import { ApiService } from 'src/app/services/api.service';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private url = 'http://localhost:5801';
   private socket: any;
   
-  constructor() {
-    this.socket = io(this.url);
+  constructor(private apiService : ApiService) {
+    this.socket = io(apiService.getStreamUrl());
   }
   
   public setComponent(key: string, value: any) {

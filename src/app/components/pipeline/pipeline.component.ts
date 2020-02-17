@@ -28,11 +28,8 @@ export class PipelineComponent implements OnInit {
 
   ngOnInit() {
     this.apiService.isConnected.subscribe(isConnected => this.isApiConnected = isConnected);
-
-    this.apiService.getSettings().subscribe(data => {
-      console.log("setting stream: " + data.ipAddress);
-      this.streamUrl = "http://" + data.ipAddress + ":5801/video_feed";
-    });
+    
+    this.streamUrl = this.apiService.getStreamUrl();
 
     this.apiService.getPipelines().subscribe(data => {
       this.pipelines.push(data);

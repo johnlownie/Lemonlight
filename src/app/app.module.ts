@@ -14,6 +14,7 @@ import { ThresholdingComponent } from './components/pipeline/thresholding/thresh
 import { ContourFilteringComponent } from './components/pipeline/contour-filtering/contour-filtering.component';
 import { OutputComponent } from './components/pipeline/output/output.component';
 
+import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from './services/api.service';
 import { PipelineService } from './services/pipeline.service';
 import { ChatService } from './services/chat.service';
@@ -37,6 +38,7 @@ import { ChatService } from './services/chat.service';
     IonRangeSliderModule
   ],
   providers: [
+    CookieService,
     ApiService,
     PipelineService,
     ChatService

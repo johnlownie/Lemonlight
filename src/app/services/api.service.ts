@@ -9,10 +9,11 @@ import { CookieService } from 'ngx-cookie-service';
 })
 export class ApiService {
 
-  private apiUrl: string;
-  private teamNumber: string;
-  private ipAssignment: boolean;
-  private ipAddress: string;
+  private apiUrl: string = "http://frcvision.local:3000";
+  private streamUrl: string = "http://frcvision.local:5801/video_feed";
+  private teamNumber: string = "0000";
+  private ipAssignment: boolean = true;
+  private ipAddress: string = "";
 
   private connected = new BehaviorSubject<boolean>(false);
   isConnected = this.connected.asObservable();
@@ -20,11 +21,13 @@ export class ApiService {
   constructor(private cookeService: CookieService, private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.teamNumber = this.cookeService.get('team-number');
-    this.ipAssignment = this.cookeService.get('ip-assignment') == "true";
-    this.ipAddress = this.cookeService.get('ip-address');
+    try {
+      this.teamNumber = this.cookeService.get('team-number');
+      this.ipAssignment = this.cookeService.get('ip-assignment') == "true";
+      this.ipAddress = this.cookeService.get('ip-address');
+      this.setApiUrl();
+    } catch(e) {}
 
-    this.setApiUrl();
   }
   
   private setApiUrl() {
@@ -34,6 +37,10 @@ export class ApiService {
   private handleError(error) {
     this.connected.next(false);
     return throwError(`Error: ${error.status}`);
+  }
+
+  public getStreamUrl() {
+    return this.streamUrl;
   }
 
   public getSettings(): Observable<any> {
