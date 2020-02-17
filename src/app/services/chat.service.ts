@@ -11,7 +11,7 @@ export class ChatService {
   private socket: any;
   
   constructor(private apiService : ApiService) {
-    this.socket = io(apiService.getStreamUrl());
+    this.socket = io(apiService.getSocketUrl());
   }
   
   public setComponent(key: string, value: any) {

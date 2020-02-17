@@ -31,7 +31,7 @@
             },
             "thresholding": {
                 "hue_lower": 0,
-                "hue_upper": 255,
+                "hue_upper": 179,
                 "saturation_lower": 0,
                 "saturation_upper": 255,
                 "value_lower": 0,

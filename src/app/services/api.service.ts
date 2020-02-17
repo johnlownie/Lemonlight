@@ -9,8 +9,10 @@ import { CookieService } from 'ngx-cookie-service';
 })
 export class ApiService {
 
-  private apiUrl: string = "http://frcvision.local:3000";
-  private streamUrl: string = "http://frcvision.local:5801/video_feed";
+  private host: string = "http://localhost"
+  private apiUrl: string = this.host + ":3000";
+  private socketUrl: string = this.host + ":5801";
+  private streamUrl: string = this.socketUrl + "/video_feed";
   private teamNumber: string = "0000";
   private ipAssignment: boolean = true;
   private ipAddress: string = "";
@@ -37,6 +39,10 @@ export class ApiService {
   private handleError(error) {
     this.connected.next(false);
     return throwError(`Error: ${error.status}`);
+  }
+
+  public getSocketUrl() {
+    return this.socketUrl;
   }
 
   public getStreamUrl() {

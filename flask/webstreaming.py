@@ -80,13 +80,13 @@ def set_component(json_data):
     component = loaded['component']
     value = loaded['value']
 
-    print("C: %s - V: %s".format(component, value))
+    print("C: {} - V: {}".format(component, value))
 
     if component == 'videoFeed':
         videoFeed = value.lower()
     elif component == 'exposure':
         exposure = int(value)
-        vs.stream.set(cv2.CAP_PROP_EXPOSURE, -exposure)
+        vs.stream.set(cv2.CAP_PROP_EXPOSURE, exposure - 12)
     elif component == 'blackLevel':
         blackLevel = int(value)
     elif component == 'redBalance':
