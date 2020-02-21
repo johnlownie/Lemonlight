@@ -21,6 +21,8 @@ export class ApiService {
 
   private host: string = "http://localhost"
   private apiUrl: string = this.host + ":3000";
+  private pipelineUrl: string = this.apiUrl + "/pipelines/";
+  private networkUrl: string = this.apiUrl + "/networks/";
   private socketUrl: string = this.host + ":5801";
   private streamUrl: string = this.socketUrl + "/video_feed";
   private teamNumber: string = "0000";
@@ -60,12 +62,12 @@ export class ApiService {
   }
 
   public addPipeline(pipeline: Pipeline): Observable<Pipeline> {
-    return this.http.post<Pipeline>(this.apiUrl + "/pipeline", pipeline, httpOptions)
+    return this.http.post<Pipeline>(this.pipelineUrl, pipeline, httpOptions)
       .pipe(catchError(this.handleError('addPipeline', pipeline)));
   }
 
   public deletePipeline(id: any, pipeline: Pipeline): Observable<Pipeline> {
-    return this.http.delete<Pipeline>(this.apiUrl + "/pipeline/" + id, httpOptions)
+    return this.http.delete<Pipeline>(this.pipelineUrl + id, httpOptions)
       .pipe(catchError(this.handleError('deletePipeline', pipeline)));
   }
   public getSocketUrl() {
@@ -77,17 +79,17 @@ export class ApiService {
   }
 
   public getSettings(): Observable<any> {
-    return this.http.get<Network>(this.apiUrl + "/networks/1")
+    return this.http.get<Network>(this.networkUrl + "1")
       .pipe(retry(1), catchError(this.handleError<Network>('getSettings')));
   }
 
   public getPipelines(): Observable<any> {
-    return this.http.get<Pipeline[]>(this.apiUrl + "/pipelines")
+    return this.http.get<Pipeline[]>(this.pipelineUrl)
       .pipe(retry(1), catchError(this.handleError<Pipeline[]>('getPipelines', [])));
   }
 
   public getPipeline(id: number): Observable<any> {
-    return this.http.get<Pipeline>(this.apiUrl + "/pipelines/" + id)
+    return this.http.get<Pipeline>(this.pipelineUrl + id)
       .pipe(retry(1), catchError(this.handleError<Pipeline>('getPipeline')));
   }
 
@@ -97,7 +99,7 @@ export class ApiService {
   }
 
   public updatePipeline(id: any, pipeline: Pipeline): Observable<Pipeline> {
-    return this.http.put<Pipeline>(this.apiUrl + "/pipeline/" + id, pipeline, httpOptions)
+    return this.http.put<Pipeline>(this.pipelineUrl + id, pipeline, httpOptions)
       .pipe(catchError(this.handleError('updatePipeline', pipeline)));
   }
 }
