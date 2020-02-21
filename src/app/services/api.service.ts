@@ -59,6 +59,15 @@ export class ApiService {
     this.apiUrl = "http://" + (this.ipAssignment ? "10." + this.teamNumber.slice(0, 1) + "." + this.teamNumber.slice(2, 3) + ".11" : this.ipAddress ) + ":3000";
   }
 
+  public addPipeline(pipeline: Pipeline): Observable<Pipeline> {
+    return this.http.post<Pipeline>(this.apiUrl + "/pipeline", pipeline, httpOptions)
+      .pipe(catchError(this.handleError('addPipeline', pipeline)));
+  }
+
+  public deletePipeline(id: any, pipeline: Pipeline): Observable<Pipeline> {
+    return this.http.delete<Pipeline>(this.apiUrl + "/pipeline/" + id, httpOptions)
+      .pipe(catchError(this.handleError('deletePipeline', pipeline)));
+  }
   public getSocketUrl() {
     return this.socketUrl;
   }
@@ -85,5 +94,10 @@ export class ApiService {
   public getDefaultPipeline(): Observable<any> {
     return this.getPipeline(1)
       .pipe(retry(1), catchError(this.handleError));
+  }
+
+  public updatePipeline(id: any, pipeline: Pipeline): Observable<Pipeline> {
+    return this.http.put<Pipeline>(this.apiUrl + "/pipeline/" + id, pipeline, httpOptions)
+      .pipe(catchError(this.handleError('updatePipeline', pipeline)));
   }
 }
