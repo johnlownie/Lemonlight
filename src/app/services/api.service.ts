@@ -74,12 +74,12 @@ export class ApiService {
 
   public getPipelines(): Observable<any> {
     return this.http.get<Pipeline[]>(this.apiUrl + "/pipelines")
-      .pipe(retry(1), catchError(this.handleError));
+      .pipe(retry(1), catchError(this.handleError<Pipeline[]>('getPipelines', [])));
   }
 
   public getPipeline(id: number): Observable<any> {
-    return this.http.get(this.apiUrl + "/pipelines/" + id)
-      .pipe(retry(1), catchError(this.handleError));
+    return this.http.get<Pipeline>(this.apiUrl + "/pipelines/" + id)
+      .pipe(retry(1), catchError(this.handleError<Pipeline>('getPipeline')));
   }
 
   public getDefaultPipeline(): Observable<any> {
