@@ -52,6 +52,64 @@ form .col-form-label {
     font-weight: 500;
 }
 
+form .select2 {
+    padding: .375rem 0;
+}
+
+form .select2-container--lemonlight .select2-selection--single {
+    background: #181719;
+    border: 1px solid #555;
+    border-radius: 0;
+}
+
+form .select2-container--lemonlight {
+    width: 100% !important;
+}
+
+form .select2-container--lemonlight .select2-selection--single .select2-selection__rendered {
+    color: #fff;
+}
+
+.select2-container--lemonlight .select2-results__option--highlighted[aria-selected] {
+    background-color: #999;
+    border-radius: 0;
+    color: #fff;
+}
+     
+span.select2-selection--single[aria-expanded=true] {
+    /* border-color: rgb(202, 219, 45) !important; */
+    border-radius: 2px;
+    box-shadow: 0 0 0 0.1rem rgba(202, 219, 45, 0.5);
+}
+
+.select2-dropdown {
+    background: transparent !important;
+    border: none !important;
+}
+
+.select2-results ul li {
+    background-color: #555;
+    color: #fff;
+}
+
+.select2-selection__rendered {
+    padding-top: 2px;
+}
+
+.select2-selection--single:before {
+    content: "";
+    position: absolute;
+    right: 7px;
+    top: 42%;
+    border-top: 5px solid #888;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+}
+
+.select2-container--lemonlight *:focus {
+    outline: none;
+}
+
 form input, form input.form-control, form select, form select.form-control {
     background: #181719;
     border-color: #555;

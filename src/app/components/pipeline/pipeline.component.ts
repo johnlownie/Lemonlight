@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { Select2OptionData } from 'ng2-select2';
+
+
 import { ApiService } from 'src/app/services/api.service';
 import { PipelineService } from 'src/app/services/pipeline.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -22,7 +25,8 @@ export class PipelineComponent implements OnInit {
   isStyleSliderSet: boolean;
   isApiConnected: boolean;
 
-  showOptions: string[] = ["Colour", "Threshold"];
+  showOptions: Array<Select2OptionData> = [{id: 'colour', text: 'Colour'}, {id: 'threshold', text: 'Threshold'}];
+  options: Select2Options = { minimumResultsForSearch: -1, theme: 'lemonlight' };
 
   constructor(private apiService : ApiService, private pipelineService : PipelineService, private chatService: ChatService) { }
 
@@ -44,7 +48,7 @@ export class PipelineComponent implements OnInit {
   }
 
   setFeed(event: any) {
-    let feedValue: string = event.target.value;
+    let feedValue: string = event.value;
     this.chatService.setComponent('videoFeed', feedValue);
   }
 

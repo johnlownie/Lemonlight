@@ -13,6 +13,7 @@ import { InputComponent } from './components/pipeline/input/input.component';
 import { ThresholdingComponent } from './components/pipeline/thresholding/thresholding.component';
 import { ContourFilteringComponent } from './components/pipeline/contour-filtering/contour-filtering.component';
 import { OutputComponent } from './components/pipeline/output/output.component';
+import { Select2Module } from 'ng2-select2';
 
 import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from './services/api.service';
@@ -35,6 +36,7 @@ import { ChatService } from './services/chat.service';
     FormsModule,
     HttpClientModule,
     BlockUIModule.forRoot(),
+    Select2Module,
     IonRangeSliderModule
   ],
   providers: [

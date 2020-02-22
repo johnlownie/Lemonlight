@@ -134,7 +134,13 @@ def grab_frame():
         cnts = imutils.grab_contours(cnts)
 
         # draw a center line on the frame
-        cv2.line(frame, (width, 0), (width, height), (255, 255, 255), 1)
+        # cv2.line(frame, (width, 0), (width, height), (255, 255, 255), 1)
+        # timestamp = datetime.datetime.now()
+        # cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+
+        cv2.putText(frame, "FPS: {:.2f}".format(fps.fps()), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        cv2.putText(mask, "FPS: {:.2f}".format(fps.fps()), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+
 
         # grab the current timestamp and draw it on the frame
         # timestamp = datetime.datetime.now()
@@ -146,6 +152,9 @@ def grab_frame():
                 outputFrame = frame.copy()
             else:
                 outputFrame = mask.copy()
+
+        # update the frame counter
+        fps.update()
 
 def generate():
     # grab global references to the output frame and lock variables
@@ -208,3 +217,4 @@ if __name__ == '__main__':
 
 # release the video stream pointer
 vs.stop()
+fps.stop()

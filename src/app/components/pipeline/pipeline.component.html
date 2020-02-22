@@ -54,7 +54,7 @@
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label">Show:</label>
                         <div class="col-sm-9">
-                            <select class="form-control" (change)="setFeed($event)"><option *ngFor="let opt of showOptions">{{ opt }}</option></select>
+                            <select2 class="select2" [data]="showOptions" (valueChanged)="setFeed($event)" [cssImport]="true" [options]="options"></select2>
                         </div>
                     </div>
                     
