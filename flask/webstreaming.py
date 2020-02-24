@@ -11,6 +11,7 @@ import numpy as np
 import time
 import cv2
 import os
+import glob
 
 from imutils.video import FPS, VideoStream
 from flask import Flask, Response, render_template
@@ -43,6 +44,7 @@ logging.basicConfig(level=logging.DEBUG)
 videoFeed = "colour"
 
 # Input variables
+sourceImage = "camera"
 exposure = 0
 blackLevel = 0
 redBalance = 0
@@ -80,7 +82,7 @@ time.sleep(2.0)
 
 # set commponent value
 def set_component(json_data):
-    global videoFeed, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate
+    global sourceImage, videoFeed, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate
 
     loaded = json.loads(json_data)
     component = loaded['component']
@@ -88,7 +90,9 @@ def set_component(json_data):
 
     print("C: {} - V: {}".format(component, value))
 
-    if component == 'videoFeed':
+    if component == 'sourceImage':
+        sourceImage = value.lower()
+    elif component == 'videoFeed':
         videoFeed = value.lower()
     elif component == 'exposure':
         exposure = int(value)
@@ -122,7 +126,7 @@ def set_component(json_data):
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, videoFeed, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, width, height, takeSnapshot
+    global vs, sourceImage, videoFeed, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, width, height, takeSnapshot
         
 
     # loop over frames from the video stream
@@ -179,6 +183,10 @@ def save_frame():
 
     print("Taking snapshot")
     cv2.imwrite(os.path.join(imagePath, "snapshot" + time.strftime("%Y%m%d-%H%M%S") + ".jpg"), sized)
+
+def load_frame():
+    snapshots = glob.glob(imagePath + '/*')
+    snapshot = max(snapshots, key=os.path.getctime)
 
 def generate():
     # grab global references to the output frame and lock variables

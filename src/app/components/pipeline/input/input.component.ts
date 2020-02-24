@@ -56,6 +56,11 @@ export class InputComponent implements OnInit {
     // this.pipelineService.toggleSliderStyle();
   }
   
+  setSource(event) {
+    let sourceImage: string = event.value;
+    this.chatService.setComponent("sourceImage", sourceImage);
+  }
+
   setExposure(event) {
     this.exposure = event.from;
     this.chatService.setComponent("exposure", event.from);
