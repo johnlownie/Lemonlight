@@ -51,6 +51,10 @@ export class PipelineComponent implements OnInit {
     let feedValue: string = event.value;
     this.chatService.setComponent('videoFeed', feedValue);
   }
+  
+  takeSnapshot() {
+    this.chatService.setComponent('takeSnapshot', false);
+  }
 
   tx: number = -14.74;
   ty: number = -0.16;

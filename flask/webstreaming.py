@@ -10,6 +10,7 @@ import logging
 import numpy as np
 import time
 import cv2
+import os
 
 from imutils.video import FPS, VideoStream
 from flask import Flask, Response, render_template
@@ -28,11 +29,12 @@ lock = threading.Lock()
 width = 320
 height = 240
 frame   = np.zeros(shape=(height, width, 3), dtype=np.uint8)
-grayed  = np.zeros(shape=(height, width, 3), dtype=np.uint8)
+resized = np.zeros(shape=(height, width, 3), dtype=np.uint8)
 blurred = np.zeros(shape=(height, width, 3), dtype=np.uint8)
 hsv     = np.zeros(shape=(height, width, 3), dtype=np.uint8)
 mask    = np.zeros(shape=(height, width, 3), dtype=np.uint8)
 outputFrame = np.zeros(shape=(height, width, 3), dtype=np.uint8)
+min_area = 100
 
 # set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -55,6 +57,10 @@ upperSaturation = 255
 upperValue = 255
 erosion = 0
 dilate = 0
+
+# Actions
+takeSnapshot = False
+imagePath = 'D:/jet/projects/python/Lemonlight/flask/snapshots'
 
 # initialize the video stream
 # if args["webcam"] is True:
@@ -109,19 +115,22 @@ def set_component(json_data):
         erosion = int(value)
     elif component == 'dilate':
         dilate = int(value)
+    elif component == 'takeSnapshot':
+        save_frame()
     else:
         print("No component set")
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, videoFeed, frame, grayed, blurred, hsv, mask, erosion, dilate, outputFrame, lock, width, height
+    global vs, videoFeed, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, width, height, takeSnapshot
+        
 
     # loop over frames from the video stream
     while True:
         # read the next frame from the video stream, resize it, convert the frame to grayscale, and blur it
         frame = vs.read()
-        frame = imutils.resize(frame, width=width, height=height)
-        blurred = cv2.GaussianBlur(frame, (5, 5), 0)
+        resized = imutils.resize(frame, width=width, height=height)
+        blurred = cv2.GaussianBlur(resized, (5, 5), 0)
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
         # create a mask, dilate and erode it
@@ -132,15 +141,21 @@ def grab_frame():
         # find the contours in the mask
         cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cnts = imutils.grab_contours(cnts)
+        hull = []
+
+        for i in range(len(cnts)):
+            hull.append(cv2.convexHull(cnts[i], False))
+
+        for i in range(len(cnts)):
+            cv2.drawContours(resized, hull, i, (0, 255, 255), 4, 8)
 
         # draw a center line on the frame
         # cv2.line(frame, (width, 0), (width, height), (255, 255, 255), 1)
         # timestamp = datetime.datetime.now()
         # cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
-        cv2.putText(frame, "FPS: {:.2f}".format(fps.fps()), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
-        cv2.putText(mask, "FPS: {:.2f}".format(fps.fps()), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
-
+        cv2.putText(resized, "FPS: {:.2f}".format(fps.fps()), (10, resized.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        cv2.putText(mask, "FPS: {:.2f}".format(fps.fps()), (10, mask.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
         # grab the current timestamp and draw it on the frame
         # timestamp = datetime.datetime.now()
@@ -149,12 +164,21 @@ def grab_frame():
         # acquire the lock, set the output frame, and release the lock
         with lock:
             if videoFeed == "colour":
-                outputFrame = frame.copy()
+                outputFrame = resized.copy()
             else:
                 outputFrame = mask.copy()
 
         # update the frame counter
         fps.update()
+
+def save_frame():
+    global vs, width, height
+
+    img = vs.read()
+    sized = imutils.resize(img, width=width, height=height)
+
+    print("Taking snapshot")
+    cv2.imwrite(os.path.join(imagePath, "snapshot" + time.strftime("%Y%m%d-%H%M%S") + ".jpg"), sized)
 
 def generate():
     # grab global references to the output frame and lock variables
