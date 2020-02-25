@@ -56,28 +56,7 @@ export class InputComponent implements OnInit {
     // this.pipelineService.toggleSliderStyle();
   }
   
-  setSource(event) {
-    let sourceImage: string = event.value;
-    this.chatService.setComponent("sourceImage", sourceImage);
-  }
-
-  setExposure(event) {
-    this.exposure = event.from;
-    this.chatService.setComponent("exposure", event.from);
-  }
-  
-  setBlackLevel(event) {
-    this.blackLevel = event.from;
-    this.chatService.setComponent("blackLevel", event.from);
-  }
-  
-  setRedBalance(event) {
-    this.redBalance = event.from;
-    this.chatService.setComponent("redBalance", event.from);
-  }
-  
-  setBlueBalance(event) {
-    this.blueBalance = event.from;
-    this.chatService.setComponent("blueBalance", event.from);
+  setComponent(component: string, value: any) {
+    this.chatService.setComponent(component, value);
   }
 }

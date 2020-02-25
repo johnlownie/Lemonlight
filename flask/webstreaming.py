@@ -83,7 +83,7 @@ time.sleep(2.0)
 
 # set commponent value
 def set_component(json_data):
-    global sourceImage, videoFeed, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate
+    global sourceImage, videoFeed, width, height, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate
 
     loaded = json.loads(json_data)
     component = loaded['component']
@@ -93,8 +93,8 @@ def set_component(json_data):
 
     if component == 'sourceImage':
         sourceImage = value.lower()
-    elif component == 'videoFeed':
-        videoFeed = value.lower()
+    elif component == 'resolution':
+        (width, height) = value.split("x")
     elif component == 'exposure':
         exposure = int(value)
         vs.stream.set(cv2.CAP_PROP_EXPOSURE, exposure - 12)
@@ -120,6 +120,8 @@ def set_component(json_data):
         erosion = int(value)
     elif component == 'dilate':
         dilate = int(value)
+    elif component == 'videoFeed':
+        videoFeed = value.lower()
     elif component == 'takeSnapshot':
         save_snapshot()
     else:
@@ -127,7 +129,7 @@ def set_component(json_data):
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, sourceImage, videoFeed, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, width, height, snapshotFile
+    global vs, sourceImage, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, snapshotFile
         
 
     # loop over frames from the video stream
