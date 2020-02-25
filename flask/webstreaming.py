@@ -63,6 +63,7 @@ dilate = 0
 # Actions
 takeSnapshot = False
 imagePath = 'D:/jet/projects/python/Lemonlight/flask/snapshots'
+snapshotFile = os.path.join(imagePath, "default.jpg")
 
 # initialize the video stream
 # if args["webcam"] is True:
@@ -120,19 +121,28 @@ def set_component(json_data):
     elif component == 'dilate':
         dilate = int(value)
     elif component == 'takeSnapshot':
-        save_frame()
+        save_snapshot()
     else:
         print("No component set")
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, sourceImage, videoFeed, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, width, height, takeSnapshot
+    global vs, sourceImage, videoFeed, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, width, height, snapshotFile
         
 
     # loop over frames from the video stream
     while True:
-        # read the next frame from the video stream, resize it, convert the frame to grayscale, and blur it
-        frame = vs.read()
+        # read the next frame from the video stream or snapshot
+        if sourceImage == 'snapshot':
+            frame = cv2.imread(snapshotFile)
+        else:
+            frame = vs.read()
+
+        # do nothing if we didn't get a frame
+        if frame is None:
+            continue
+
+        # resize it, convert the frame to grayscale, and blur it
         resized = imutils.resize(frame, width=width, height=height)
         blurred = cv2.GaussianBlur(resized, (5, 5), 0)
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
@@ -150,16 +160,17 @@ def grab_frame():
         for i in range(len(cnts)):
             hull.append(cv2.convexHull(cnts[i], False))
 
-        for i in range(len(cnts)):
-            cv2.drawContours(resized, hull, i, (0, 255, 255), 4, 8)
+        if len(cnts) > 1:
+            for i in range(len(cnts)):
+                cv2.drawContours(resized, hull, i, (0, 255, 255), 4, 8)
 
         # draw a center line on the frame
         # cv2.line(frame, (width, 0), (width, height), (255, 255, 255), 1)
         # timestamp = datetime.datetime.now()
         # cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
-        cv2.putText(resized, "FPS: {:.2f}".format(fps.fps()), (10, resized.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
-        cv2.putText(mask, "FPS: {:.2f}".format(fps.fps()), (10, mask.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        cv2.putText(resized, "{:.1f}".format(fps.fps()), (1, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
+        cv2.putText(mask, "{:.1f}".format(fps.fps()), (1, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
 
         # grab the current timestamp and draw it on the frame
         # timestamp = datetime.datetime.now()
@@ -175,18 +186,15 @@ def grab_frame():
         # update the frame counter
         fps.update()
 
-def save_frame():
-    global vs, width, height
+def save_snapshot():
+    global vs, width, height, snapshotFile
 
-    img = vs.read()
-    sized = imutils.resize(img, width=width, height=height)
+    snapshot = vs.read()
+    sized = imutils.resize(snapshot, width=width, height=height)
 
-    print("Taking snapshot")
-    cv2.imwrite(os.path.join(imagePath, "snapshot" + time.strftime("%Y%m%d-%H%M%S") + ".jpg"), sized)
-
-def load_frame():
-    snapshots = glob.glob(imagePath + '/*')
-    snapshot = max(snapshots, key=os.path.getctime)
+    # save the image to disk
+    snapshotFile = os.path.join(imagePath, "snapshot" + time.strftime("%Y%m%d-%H%M%S") + ".jpg")
+    cv2.imwrite(snapshotFile, sized)
 
 def generate():
     # grab global references to the output frame and lock variables
@@ -198,6 +206,7 @@ def generate():
         with lock:
             # check if the output frame is available, otherwise skip the iteration of the loop
             if outputFrame is None:
+                print("Frame is none")
                 continue
 
             # encode the frame in JPEG format
