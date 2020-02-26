@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+
 import { ApiService } from 'src/app/services/api.service';
 import { ChatService } from 'src/app/services/chat.service';
+import { PipelineService } from 'src/app/services/pipeline.service';
 
 @Component({
   selector: 'app-thresholding',
@@ -31,7 +33,7 @@ export class ThresholdingComponent implements OnInit {
   initialDilation: number;
   dilation: number;
 
-  constructor(private apiService : ApiService, private chatService: ChatService) { }
+  constructor(private apiService : ApiService, private chatService: ChatService, private pipelineService: PipelineService) { }
 
   ngOnInit() {
     this.apiService.getDefaultPipeline().subscribe(data => {
@@ -88,6 +90,10 @@ export class ThresholdingComponent implements OnInit {
   setDilation(event: any) {
     this.dilation = event.from;
     this.chatService.setComponent('dilate', event.from);
+  }
+
+  toggleStyle() {
+    this.pipelineService.toggleSliderStyle();
   }
 
 }

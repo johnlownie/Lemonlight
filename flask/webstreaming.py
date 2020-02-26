@@ -27,8 +27,8 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 lock = threading.Lock()
 
 # initialize frame holders
-width = 320
-height = 240
+width = 640
+height = 480
 frame   = np.zeros(shape=(height, width, 3), dtype=np.uint8)
 resized = np.zeros(shape=(height, width, 3), dtype=np.uint8)
 blurred = np.zeros(shape=(height, width, 3), dtype=np.uint8)
@@ -94,7 +94,9 @@ def set_component(json_data):
     if component == 'sourceImage':
         sourceImage = value.lower()
     elif component == 'resolution':
-        (width, height) = value.split("x")
+        (w, h) = value.split("x")
+        width = int(w)
+        height = int(h)
     elif component == 'exposure':
         exposure = int(value)
         vs.stream.set(cv2.CAP_PROP_EXPOSURE, exposure - 12)

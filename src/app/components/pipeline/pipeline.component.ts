@@ -53,7 +53,7 @@ export class PipelineComponent implements OnInit {
   }
   
   takeSnapshot() {
-    this.chatService.setComponent('takeSnapshot', false);
+    this.chatService.setComponent('takeSnapshot', true);
   }
 
   tx: number = -14.74;

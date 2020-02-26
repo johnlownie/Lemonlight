@@ -80,7 +80,9 @@
 }
 
 .sliding {
-    border: 2px solid #95e4ea;
+    -moz-box-shadow:    0 0 5px 5px #12404d;
+    -webkit-box-shadow: 0 0 5px 5px #12404d;
+    box-shadow:         0 0 5px 5px #12404d;
 }
 
 .highlight {
