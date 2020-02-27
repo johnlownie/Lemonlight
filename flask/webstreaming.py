@@ -83,13 +83,9 @@ fps = FPS().start()
 # let camera warmup
 time.sleep(2.0)
 
-# set commponent value
-def set_component(json_data):
+# set component value
+def set_component(component, value):
     global sourceImage, videoFeed, width, height, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate
-
-    loaded = json.loads(json_data)
-    component = loaded['component']
-    value = loaded['value']
 
     print("C: {} - V: {}".format(component, value))
 
@@ -130,6 +126,17 @@ def set_component(json_data):
         save_snapshot()
     else:
         print("No component set")
+
+# convert commponent value
+def convert_hsv(b, g, r):
+    color = np.uint8([[[b, g, r]]])
+    hsvColor = cv2.cvtColor(color, cv2.COLOR_BGR2HSV)
+
+    lower = max(hsvColor[0][0][0] - 5, 0), max(hsvColor[0][0][1] - 10, 0), max(hsvColor[0][0][2] - 15, 0)
+    upper = min(hsvColor[0][0][0] + 5, 179), min(hsvColor[0][0][1] + 10, 255), min(hsvColor[0][0][2] + 15, 255)
+
+    data = { "lower": { "lh": str(lower[0]), "ls": str(lower[1]), "lv": str(lower[2]) }, "upper": { "uh": str(upper[0]), "us": str(upper[1]), "uv": str(upper[2]) } }
+    return data
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
@@ -239,10 +246,14 @@ def video_feed():
 def messageReceived(methods=['GET', 'POST']):
     print('Message was received!!')
 
-@socketio.on('new-message')
-def handle_my_custom_event(json_data, methods=['GET', 'POST']):
-    set_component(json_data)
-    # socketio.emit('ack-response', json, callback=messageReceived)
+@socketio.on('set-component')
+def set_component_event(component, value):
+    set_component(component, value)
+
+@socketio.on('convert-hsv')
+def convert_hsv_event(b, g, r):
+    bounds = convert_hsv(b, g, r)
+    socketio.send(bounds, json=True)
 
 # check to see if this is the main thread of execution
 if __name__ == '__main__':

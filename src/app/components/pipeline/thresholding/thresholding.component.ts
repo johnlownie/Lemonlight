@@ -10,15 +10,6 @@ import { PipelineService } from 'src/app/services/pipeline.service';
   styleUrls: ['./thresholding.component.css']
 })
 export class ThresholdingComponent implements OnInit {
-
-  initialMinHue: number;
-  initialMinSaturation: number;
-  initialMinValue: number;
-
-  initialMaxHue: number;
-  initialMaxSaturation: number;
-  initialMaxValue: number;
-
   minHue: number;
   minSaturation: number;
   minValue: number;
@@ -27,37 +18,28 @@ export class ThresholdingComponent implements OnInit {
   maxSaturation: number;
   maxValue: number;
 
-  initialErosion: number;
   erosion: number;
-
-  initialDilation: number;
   dilation: number;
 
   constructor(private apiService : ApiService, private chatService: ChatService, private pipelineService: PipelineService) { }
 
   ngOnInit() {
     this.apiService.getDefaultPipeline().subscribe(data => {
-      this.initialMinHue = data.thresholding.hue_lower;
-      this.initialMinSaturation = data.thresholding.saturation_lower;
-      this.initialMinValue = data.thresholding.value_lower;
+      this.minHue = data.thresholding.hue_lower;
+      this.minSaturation = data.thresholding.saturation_lower;
+      this.minValue = data.thresholding.value_lower;
 
-      this.minHue = this.initialMinHue;
-      this.minSaturation = this.initialMinSaturation;
-      this.minValue = this.initialMinValue;
+      this.maxHue = data.thresholding.hue_upper;
+      this.maxSaturation = data.thresholding.saturation_upper;
+      this.maxValue = data.thresholding.value_upper;
 
-      this.initialMaxHue = data.thresholding.hue_upper;
-      this.initialMaxSaturation = data.thresholding.saturation_upper;
-      this.initialMaxValue = data.thresholding.value_upper;
+      this.erosion = data.thresholding.erosion;
+      this.dilation = data.thresholding.dilation;
+    });
 
-      this.maxHue = this.initialMaxHue;
-      this.maxSaturation = this.initialMaxSaturation;
-      this.maxValue = this.initialMaxValue;
-
-      this.initialErosion = data.thresholding.erosion;
-      this.initialDilation = data.thresholding.dilation;
-      
-      this.erosion = this.initialErosion;
-      this.dilation = this.initialErosion;
+    this.chatService.getMessages().subscribe((message: any) => {
+      this.setLower(message.lower);
+      this.setUpper(message.upper);
     });
   }
 
@@ -86,6 +68,14 @@ export class ThresholdingComponent implements OnInit {
         this.highlightStyleOff();
       }
     }
+  }
+
+  highlightStyleOn() {
+    this.pipelineService.highlightStyleOn();
+  }
+
+  highlightStyleOff() {
+    this.pipelineService.highlightStyleOff();
   }
 
   setHue($event: any) {
@@ -119,12 +109,22 @@ export class ThresholdingComponent implements OnInit {
     this.chatService.setComponent('dilate', $event.from);
   }
 
-  highlightStyleOn() {
-    this.pipelineService.highlightStyleOn();
+  setLower(data: any) {
+    this.minHue = data.lh;
+    this.minSaturation = data.ls;
+    this.minValue = data.lv;
+    this.chatService.setComponent('lowerHue', this.minHue);
+    this.chatService.setComponent('lowerSaturation', this.minSaturation);
+    this.chatService.setComponent('lowerValue', this.minValue);
   }
 
-  highlightStyleOff() {
-    this.pipelineService.highlightStyleOff();
+  setUpper(data: any) {
+    this.maxHue = data.uh;
+    this.maxSaturation = data.us;
+    this.maxValue = data.uv;
+    this.chatService.setComponent('upperHue', this.maxHue);
+    this.chatService.setComponent('upperSaturation', this.maxSaturation);
+    this.chatService.setComponent('upperValue', this.maxValue);
   }
 
 }

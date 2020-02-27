@@ -15,8 +15,13 @@ export class ChatService {
   }
   
   public setComponent(key: string, value: any) {
-    let message = { 'component': key, 'value': value }
-    this.sendMessage(JSON.stringify(message));
+    console.log("[Emitting] Key: " + key + " - Value: " + value);
+    this.socket.emit('set-component', key, value);
+  }
+
+  public sendBGR(b: number, g: number, r: number) {
+    console.log("[Emitting] B: " + b + " - G: " + g + " - R: " + r);
+    this.socket.emit('convert-hsv', b, g, r);
   }
 
   public sendMessage(message: any) {
@@ -26,8 +31,7 @@ export class ChatService {
 
   public getMessages = () => {
     return Observable.create((observer) => {
-      this.socket.on('ack-response', (msg) => {
-        console.log(msg);
+      this.socket.on('json', (msg) => {
         observer.next(msg);
       });
     });

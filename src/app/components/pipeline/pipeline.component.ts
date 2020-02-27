@@ -21,8 +21,6 @@ export class PipelineComponent implements OnInit {
   pipelines: Pipeline[] = [];
   selectedPipeline: number;
   streamUrl: string;
-  message: any;
-  messages: string[] = [];
   isStyleSliderSet: boolean;
   isApiConnected: boolean;
 
@@ -50,10 +48,6 @@ export class PipelineComponent implements OnInit {
       console.log(this.pipelines);
     });
 
-    this.chatService.getMessages().subscribe((message: string) => {
-      this.messages.push(message);
-    });
-
     this.pipelineService.isStyleSliderSet.subscribe(isStyleSliderSet => this.isStyleSliderSet = isStyleSliderSet);
   }
 
@@ -70,6 +64,7 @@ export class PipelineComponent implements OnInit {
     this.getBase64ImageFromURL(this.streamUrl).subscribe(base64data => {
       var pixelData = this.canvas.getContext('2d').getImageData($event.offsetX, $event.offsetY, 1, 1).data;
       this.pixels = 'R: ' + pixelData[0] + '<br>G: ' + pixelData[1] + '<br>B: ' + pixelData[2] + '<br>A: ' + pixelData[3];
+      this.chatService.sendBGR(pixelData[2], pixelData[1], pixelData[0]);
   });
   }
 
