@@ -61,39 +61,70 @@ export class ThresholdingComponent implements OnInit {
     });
   }
 
-  setHue(event: any) {
-    this.minHue = event.from;
-    this.maxHue = event.to;
-    this.chatService.setComponent('lowerHue', event.from);
-    this.chatService.setComponent('upperHue', event.to);
+  onButtonGroupClick($event) {
+    let element = $event.target || $event.srcElement;
+
+    if (element.nodeName === "BUTTON") {
+      let isActive = element.parentElement.querySelector(".active");
+      if( isActive) {
+        isActive.classList.remove("active");
+      }
+      this.highlightStyleOn();
+    }
+  }
+  
+  onButtonGroupBlur($event) {
+    let element = $event.target || $event.srcElement;
+    
+    if (element.nodeName === "BUTTON") {
+      let isActive = element.parentElement.querySelector(".active");
+      if (isActive) {
+        isActive.classList.remove("active");
+      }
+      isActive = element.parentElement.querySelector(".active");
+      if (!isActive) {
+        this.highlightStyleOff();
+      }
+    }
   }
 
-  setSaturation(event: any) {
-    this.minSaturation = event.from;
-    this.maxSaturation = event.to;
-    this.chatService.setComponent('lowerSaturation', event.from);
-    this.chatService.setComponent('upperSaturation', event.to);
+  setHue($event: any) {
+    this.minHue = $event.from;
+    this.maxHue = $event.to;
+    this.chatService.setComponent('lowerHue', $event.from);
+    this.chatService.setComponent('upperHue', $event.to);
   }
 
-  setValue(event: any) {
-    this.minValue = event.from;
-    this.maxValue = event.to;
-    this.chatService.setComponent('lowerValue', event.from);
-    this.chatService.setComponent('upperValue', event.to);
+  setSaturation($event: any) {
+    this.minSaturation = $event.from;
+    this.maxSaturation = $event.to;
+    this.chatService.setComponent('lowerSaturation', $event.from);
+    this.chatService.setComponent('upperSaturation', $event.to);
   }
 
-  setErosion(event: any) {
-    this.erosion = event.from;
-    this.chatService.setComponent('erosion', event.from);
+  setValue($event: any) {
+    this.minValue = $event.from;
+    this.maxValue = $event.to;
+    this.chatService.setComponent('lowerValue', $event.from);
+    this.chatService.setComponent('upperValue', $event.to);
   }
 
-  setDilation(event: any) {
-    this.dilation = event.from;
-    this.chatService.setComponent('dilate', event.from);
+  setErosion($event: any) {
+    this.erosion = $event.from;
+    this.chatService.setComponent('erosion', $event.from);
   }
 
-  toggleStyle() {
-    this.pipelineService.toggleSliderStyle();
+  setDilation($event: any) {
+    this.dilation = $event.from;
+    this.chatService.setComponent('dilate', $event.from);
+  }
+
+  highlightStyleOn() {
+    this.pipelineService.highlightStyleOn();
+  }
+
+  highlightStyleOff() {
+    this.pipelineService.highlightStyleOff();
   }
 
 }

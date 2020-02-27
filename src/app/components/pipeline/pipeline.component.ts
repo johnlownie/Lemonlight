@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable, Observer } from 'rxjs';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { Select2OptionData } from 'ng2-select2';
 
@@ -28,6 +29,15 @@ export class PipelineComponent implements OnInit {
   showOptions: Array<Select2OptionData> = [{id: 'colour', text: 'Colour'}, {id: 'threshold', text: 'Threshold'}];
   options: Select2Options = { minimumResultsForSearch: -1, theme: 'lemonlight' };
 
+  canvas: any;
+  base64Image: any;
+  pixels: string;
+
+  tx: number = -14.74;
+  ty: number = -0.16;
+  ta: number = 0.699;
+  tl: number = 3.5;
+
   constructor(private apiService : ApiService, private pipelineService : PipelineService, private chatService: ChatService) { }
 
   ngOnInit() {
@@ -47,8 +57,8 @@ export class PipelineComponent implements OnInit {
     this.pipelineService.isStyleSliderSet.subscribe(isStyleSliderSet => this.isStyleSliderSet = isStyleSliderSet);
   }
 
-  setFeed(event: any) {
-    let feedValue: string = event.value;
+  setFeed($event: any) {
+    let feedValue: string = $event.value;
     this.chatService.setComponent('videoFeed', feedValue);
   }
   
@@ -56,8 +66,40 @@ export class PipelineComponent implements OnInit {
     this.chatService.setComponent('takeSnapshot', true);
   }
 
-  tx: number = -14.74;
-  ty: number = -0.16;
-  ta: number = 0.699;
-  tl: number = 3.5;
+  getRGB($event) {
+    this.getBase64ImageFromURL(this.streamUrl).subscribe(base64data => {
+      var pixelData = this.canvas.getContext('2d').getImageData($event.offsetX, $event.offsetY, 1, 1).data;
+      this.pixels = 'R: ' + pixelData[0] + '<br>G: ' + pixelData[1] + '<br>B: ' + pixelData[2] + '<br>A: ' + pixelData[3];
+  });
+  }
+
+  getBase64ImageFromURL(url: string) {
+    return Observable.create((observer: Observer<string>) => {
+      let img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.src = url;
+      if (!img.complete) {
+        img.onload = () => {
+          observer.next(this.getBase64Image(img));
+          observer.complete();
+        };
+        img.onerror = (err) => {
+          observer.error(err);
+        };
+      } else {
+        observer.next(this.getBase64Image(img));
+        observer.complete();
+      }
+    });
+  }
+
+  getBase64Image(img: HTMLImageElement) {
+    this.canvas = document.createElement("canvas");
+    this.canvas.width = img.width;
+    this.canvas.height = img.height;
+    var ctx = this.canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    var dataURL = this.canvas.toDataURL("image/png");
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+  }
 }

@@ -15,11 +15,13 @@ import glob
 
 from imutils.video import FPS, VideoStream
 from flask import Flask, Response, render_template
+from flask_cors import CORS
 from flask_socketio import SocketIO
 
 # initialize a flask object
 app = Flask(__name__, static_url_path='')
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
+CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # initialize the output frame and a lock used to ensure thread-safe

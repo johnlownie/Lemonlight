@@ -6,13 +6,16 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class PipelineService {
 
-  private styleSlider = new BehaviorSubject<boolean>(false);
-  isStyleSliderSet = this.styleSlider.asObservable();
+  private highlightStyle = new BehaviorSubject<boolean>(false);
+  isStyleSliderSet = this.highlightStyle.asObservable();
 
   constructor() { }
 
-  public toggleSliderStyle() {
-    this.styleSlider.next(!this.styleSlider.value);
-    console.log("Toggled slider: " + this.styleSlider.value);
+  public highlightStyleOn() {
+    this.highlightStyle.next(true);
+  }
+
+  public highlightStyleOff() {
+    this.highlightStyle.next(false);
   }
 }
