@@ -17,11 +17,6 @@ export class InputComponent implements OnInit {
   leds: string;
   orientation: string;
 
-  initialExposure: number;
-  initialBlackLevel: number;
-  initialRedBalance: number;
-  initialBlueBalance: number;
-  
   exposure: number;
   blackLevel: number;
   redBalance: number;
@@ -39,24 +34,35 @@ export class InputComponent implements OnInit {
       this.resolution = data.input.resolution;
       this.leds = data.input.leds;
       this.orientation = data.input.orientation;
-
-      this.initialExposure = data.input.exposure;
-      this.initialBlackLevel = data.input.blackLevel;
-      this.initialRedBalance = data.input.redBalance;
-      this.initialBlueBalance = data.input.blueBalance;
       
-      this.exposure = this.initialExposure;
-      this.blackLevel = this.initialBlackLevel;
-      this.redBalance = this.initialRedBalance;
-      this.blueBalance = this.initialBlueBalance;
+      this.exposure = data.input.exposure;
+      this.blackLevel = data.input.blackLevel;
+      this.redBalance = data.input.redBalance;
+      this.blueBalance = data.input.blueBalance;
     });
   }
 
-  toggleStyle() {
-    // this.pipelineService.toggleSliderStyle();
-  }
-  
   setComponent(component: string, value: any) {
     this.chatService.setComponent(component, value);
+  }
+
+  setExposure($event: any) {
+    this.exposure = $event.from;
+    this.chatService.setComponent('exposure', $event.from);
+  }
+
+  setBlackLevel($event: any) {
+    this.blackLevel = $event.from;
+    this.chatService.setComponent('blackLevel', $event.from);
+  }
+
+  setRedBalance($event: any) {
+    this.redBalance = $event.from;
+    this.chatService.setComponent('redBalance', $event.from);
+  }
+
+  setBlueBalance($event: any) {
+    this.blueBalance = $event.from;
+    this.chatService.setComponent('blueBalance', $event.from);
   }
 }

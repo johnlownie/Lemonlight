@@ -15,17 +15,16 @@ export class ChatService {
   }
   
   public setComponent(key: string, value: any) {
-    console.log("[Emitting] Key: " + key + " - Value: " + value);
+    // console.log("[Emitting] Key: " + key + " - Value: " + value);
     this.socket.emit('set-component', key, value);
   }
 
-  public sendBGR(b: number, g: number, r: number) {
-    console.log("[Emitting] B: " + b + " - G: " + g + " - R: " + r);
-    this.socket.emit('convert-hsv', b, g, r);
+  public sendBGR(s: string, b: number, g: number, r: number) {
+    this.socket.emit('convert-hsv', s, b, g, r);
   }
 
   public sendMessage(message: any) {
-    console.log("Emitting: " + message);
+    // console.log("Emitting: " + message);
     this.socket.emit('new-message', message);
   }
 

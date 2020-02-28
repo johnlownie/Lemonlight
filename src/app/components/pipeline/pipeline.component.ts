@@ -30,6 +30,7 @@ export class PipelineComponent implements OnInit {
   canvas: any;
   base64Image: any;
   pixels: string;
+  magicWand: string;
 
   tx: number = -14.74;
   ty: number = -0.16;
@@ -45,10 +46,13 @@ export class PipelineComponent implements OnInit {
 
     this.apiService.getPipelines().subscribe(data => {
       this.pipelines.push(data);
-      console.log(this.pipelines);
     });
 
     this.pipelineService.isStyleSliderSet.subscribe(isStyleSliderSet => this.isStyleSliderSet = isStyleSliderSet);
+  }
+
+  receiveMagicWand($event) {
+    this.magicWand = $event;
   }
 
   setFeed($event: any) {
@@ -64,7 +68,7 @@ export class PipelineComponent implements OnInit {
     this.getBase64ImageFromURL(this.streamUrl).subscribe(base64data => {
       var pixelData = this.canvas.getContext('2d').getImageData($event.offsetX, $event.offsetY, 1, 1).data;
       this.pixels = 'R: ' + pixelData[0] + '<br>G: ' + pixelData[1] + '<br>B: ' + pixelData[2] + '<br>A: ' + pixelData[3];
-      this.chatService.sendBGR(pixelData[2], pixelData[1], pixelData[0]);
+      this.chatService.sendBGR(this.magicWand, pixelData[2], pixelData[1], pixelData[0]);
   });
   }
 

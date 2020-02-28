@@ -30,7 +30,7 @@
                         <app-input></app-input>
                     </div>
                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                        <app-thresholding></app-thresholding>
+                        <app-thresholding (magicWandEvent)="receiveMagicWand($event)"></app-thresholding>
                     </div>
                     <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
                         <app-contour-filtering></app-contour-filtering>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 import { ApiService } from 'src/app/services/api.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -21,6 +21,9 @@ export class ThresholdingComponent implements OnInit {
   erosion: number;
   dilation: number;
 
+  magicWand: string;
+  @Output() magicWandEvent = new EventEmitter<string>();
+
   constructor(private apiService : ApiService, private chatService: ChatService, private pipelineService: PipelineService) { }
 
   ngOnInit() {
@@ -38,13 +41,27 @@ export class ThresholdingComponent implements OnInit {
     });
 
     this.chatService.getMessages().subscribe((message: any) => {
-      this.setLower(message.lower);
-      this.setUpper(message.upper);
+      console.log("Lower: " + JSON.stringify(message.lower));
+      console.log("Upper: " + JSON.stringify(message.upper));
+
+      if (message.wand === 'eyedropper') {
+        this.setLower(message.lower);
+        this.setUpper(message.upper);
+      }
+      else if (message.wand ==='include') {
+        this.setInclude(message.lower);
+      }
+      else if (message.wand ==='ignore') {
+        this.setIgnore(message.lower);
+      }
     });
   }
 
   onButtonGroupClick($event) {
     let element = $event.target || $event.srcElement;
+    
+    this.magicWand = element.id;
+    this.magicWandEvent.emit(this.magicWand);
 
     if (element.nodeName === "BUTTON") {
       let isActive = element.parentElement.querySelector(".active");
@@ -127,4 +144,23 @@ export class ThresholdingComponent implements OnInit {
     this.chatService.setComponent('upperValue', this.maxValue);
   }
 
+  setInclude(data: any) {
+    this.minHue = Math.min(this.minHue, data.lh);
+    this.minSaturation = Math.min(this.minSaturation, data.ls);
+    this.minValue = Math.min(this.minValue, data.lv);
+
+    this.maxHue = Math.max(this.maxHue, data.lh);
+    this.maxSaturation = Math.max(this.maxSaturation, data.ls);
+    this.maxValue = Math.max(this.maxValue, data.lv);
+  }
+
+  setIgnore(data: any) {
+    this.minHue = Math.max(this.minHue, data.lh);
+    this.minSaturation = Math.max(this.minSaturation, data.ls);
+    this.minValue = Math.max(this.minValue, data.lv);
+
+    this.maxHue = Math.min(this.maxHue, data.uh);
+    this.maxSaturation = Math.min(this.maxSaturation, data.us);
+    this.maxValue = Math.min(this.maxValue, data.uv);
+  }
 }

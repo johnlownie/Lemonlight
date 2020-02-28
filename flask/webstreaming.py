@@ -47,6 +47,7 @@ videoFeed = "colour"
 
 # Input variables
 sourceImage = "camera"
+orientation = "normal"
 exposure = 0
 blackLevel = 0
 redBalance = 0
@@ -85,12 +86,14 @@ time.sleep(2.0)
 
 # set component value
 def set_component(component, value):
-    global sourceImage, videoFeed, width, height, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate
+    global sourceImage, orientation, videoFeed, width, height, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate
 
     print("C: {} - V: {}".format(component, value))
 
     if component == 'sourceImage':
         sourceImage = value.lower()
+    elif component == 'orientation':
+        orientation = value.lower()
     elif component == 'resolution':
         (w, h) = value.split("x")
         width = int(w)
@@ -102,8 +105,10 @@ def set_component(component, value):
         blackLevel = int(value)
     elif component == 'redBalance':
         redBalance = int(value)
+        vs.stream.set(cv2.CAP_PROP_WHITE_BALANCE_RED_V, redBalance - 12)
     elif component == 'blueBalance':
         blueBalance = int(value)
+        vs.stream.set(cv2.CAP_PROP_WHITE_BALANCE_BLUE_U, blueBalance - 12)
     elif component == 'lowerHue':
         lowerHue = int(value)
     elif component == 'lowerSaturation':
@@ -128,20 +133,24 @@ def set_component(component, value):
         print("No component set")
 
 # convert commponent value
-def convert_hsv(b, g, r):
+def convert_hsv(s, b, g, r):
     color = np.uint8([[[b, g, r]]])
     hsvColor = cv2.cvtColor(color, cv2.COLOR_BGR2HSV)
 
-    lower = max(hsvColor[0][0][0] - 5, 0), max(hsvColor[0][0][1] - 10, 0), max(hsvColor[0][0][2] - 15, 0)
-    upper = min(hsvColor[0][0][0] + 5, 179), min(hsvColor[0][0][1] + 10, 255), min(hsvColor[0][0][2] + 15, 255)
+    hsvRange = (0, 0, 0)
+    if s == 'eyedropper':
+        hsvRange = (5, 10, 15)
 
-    data = { "lower": { "lh": str(lower[0]), "ls": str(lower[1]), "lv": str(lower[2]) }, "upper": { "uh": str(upper[0]), "us": str(upper[1]), "uv": str(upper[2]) } }
+    lower = max(hsvColor[0][0][0] - hsvRange[0], 0), max(hsvColor[0][0][1] - hsvRange[1], 0), max(hsvColor[0][0][2] - hsvRange[2], 0)
+    upper = min(hsvColor[0][0][0] + hsvRange[0], 179), min(hsvColor[0][0][1] + hsvRange[1], 255), min(hsvColor[0][0][2] + hsvRange[2], 255)
+
+    data = { "wand": s, "lower": { "lh": str(lower[0]), "ls": str(lower[1]), "lv": str(lower[2]) }, "upper": { "uh": str(upper[0]), "us": str(upper[1]), "uv": str(upper[2]) } }
+    print(data)
     return data
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, sourceImage, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, snapshotFile
-        
+    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, snapshotFile
 
     # loop over frames from the video stream
     while True:
@@ -154,6 +163,9 @@ def grab_frame():
         # do nothing if we didn't get a frame
         if frame is None:
             continue
+
+        if orientation == 'upside-down':
+            frame = cv2.flip(frame, -1)
 
         # resize it, convert the frame to grayscale, and blur it
         resized = imutils.resize(frame, width=width, height=height)
@@ -251,8 +263,8 @@ def set_component_event(component, value):
     set_component(component, value)
 
 @socketio.on('convert-hsv')
-def convert_hsv_event(b, g, r):
-    bounds = convert_hsv(b, g, r)
+def convert_hsv_event(s, b, g, r):
+    bounds = convert_hsv(s, b, g, r)
     socketio.send(bounds, json=True)
 
 # check to see if this is the main thread of execution
