@@ -3,6 +3,9 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { PipelineService } from 'src/app/services/pipeline.service';
+import { Pipeline } from 'src/app/models/pipeline.model';
+
+import { Thresholding } from 'src/app/models/thresholding.model';
 
 @Component({
   selector: 'app-thresholding',
@@ -10,34 +13,38 @@ import { PipelineService } from 'src/app/services/pipeline.service';
   styleUrls: ['./thresholding.component.css']
 })
 export class ThresholdingComponent implements OnInit {
-  minHue: number;
-  minSaturation: number;
-  minValue: number;
+  pipeline: Pipeline
 
-  maxHue: number;
-  maxSaturation: number;
-  maxValue: number;
+  lowerHue: number;
+  lowerSaturation: number;
+  lowerValue: number;
+
+  upperHue: number;
+  upperSaturation: number;
+  upperValue: number;
 
   erosion: number;
   dilation: number;
 
   magicWand: string;
   @Output() magicWandEvent = new EventEmitter<string>();
+  @Output() thresholdingChangeEvent = new EventEmitter<Thresholding>();
 
   constructor(private apiService : ApiService, private chatService: ChatService, private pipelineService: PipelineService) { }
 
   ngOnInit() {
-    this.apiService.getDefaultPipeline().subscribe(data => {
-      this.minHue = data.thresholding.hue_lower;
-      this.minSaturation = data.thresholding.saturation_lower;
-      this.minValue = data.thresholding.value_lower;
+    this.apiService.getDefaultPipeline().subscribe(pipeline => {
+      this.pipeline = pipeline;
 
-      this.maxHue = data.thresholding.hue_upper;
-      this.maxSaturation = data.thresholding.saturation_upper;
-      this.maxValue = data.thresholding.value_upper;
+      this.lowerHue = pipeline.thresholding.lowerHue;
+      this.lowerSaturation = pipeline.thresholding.lowerSaturation;
+      this.lowerValue = pipeline.thresholding.lowerValue;
 
-      this.erosion = data.thresholding.erosion;
-      this.dilation = data.thresholding.dilation;
+      this.upperHue = pipeline.thresholding.upperHue;
+      this.upperSaturation = pipeline.thresholding.upperSaturation;
+      this.upperValue = pipeline.thresholding.upperValue;
+      this.erosion = pipeline.thresholding.erosion;
+      this.dilation = pipeline.thresholding.dilation;
     });
 
     this.chatService.getMessages().subscribe((message: any) => {
@@ -87,6 +94,19 @@ export class ThresholdingComponent implements OnInit {
     }
   }
 
+  getData() {
+    this.pipeline.thresholding.lowerHue = this.lowerHue;
+    this.pipeline.thresholding.lowerSaturation = this.lowerSaturation;
+    this.pipeline.thresholding.lowerValue = this.lowerValue;
+    this.pipeline.thresholding.upperHue = this.upperHue;
+    this.pipeline.thresholding.upperSaturation = this.upperSaturation;
+    this.pipeline.thresholding.upperValue = this.upperValue;
+    this.pipeline.thresholding.erosion = this.erosion;
+    this.pipeline.thresholding.dilation = this.dilation;
+    
+    this.thresholdingChangeEvent.emit(this.pipeline.thresholding);
+  }
+
   highlightStyleOn() {
     this.pipelineService.highlightStyleOn();
   }
@@ -96,22 +116,22 @@ export class ThresholdingComponent implements OnInit {
   }
 
   setHue($event: any) {
-    this.minHue = $event.from;
-    this.maxHue = $event.to;
+    this.lowerHue = $event.from;
+    this.upperHue = $event.to;
     this.chatService.setComponent('lowerHue', $event.from);
     this.chatService.setComponent('upperHue', $event.to);
   }
 
   setSaturation($event: any) {
-    this.minSaturation = $event.from;
-    this.maxSaturation = $event.to;
+    this.lowerSaturation = $event.from;
+    this.upperSaturation = $event.to;
     this.chatService.setComponent('lowerSaturation', $event.from);
     this.chatService.setComponent('upperSaturation', $event.to);
   }
 
   setValue($event: any) {
-    this.minValue = $event.from;
-    this.maxValue = $event.to;
+    this.lowerValue = $event.from;
+    this.upperValue = $event.to;
     this.chatService.setComponent('lowerValue', $event.from);
     this.chatService.setComponent('upperValue', $event.to);
   }
@@ -127,40 +147,40 @@ export class ThresholdingComponent implements OnInit {
   }
 
   setLower(data: any) {
-    this.minHue = data.lh;
-    this.minSaturation = data.ls;
-    this.minValue = data.lv;
-    this.chatService.setComponent('lowerHue', this.minHue);
-    this.chatService.setComponent('lowerSaturation', this.minSaturation);
-    this.chatService.setComponent('lowerValue', this.minValue);
+    this.lowerHue = data.lh;
+    this.lowerSaturation = data.ls;
+    this.lowerValue = data.lv;
+    this.chatService.setComponent('lowerHue', this.lowerHue);
+    this.chatService.setComponent('lowerSaturation', this.lowerSaturation);
+    this.chatService.setComponent('lowerValue', this.lowerValue);
   }
 
   setUpper(data: any) {
-    this.maxHue = data.uh;
-    this.maxSaturation = data.us;
-    this.maxValue = data.uv;
-    this.chatService.setComponent('upperHue', this.maxHue);
-    this.chatService.setComponent('upperSaturation', this.maxSaturation);
-    this.chatService.setComponent('upperValue', this.maxValue);
+    this.upperHue = data.uh;
+    this.upperSaturation = data.us;
+    this.upperValue = data.uv;
+    this.chatService.setComponent('upperHue', this.upperHue);
+    this.chatService.setComponent('upperSaturation', this.upperSaturation);
+    this.chatService.setComponent('upperValue', this.upperValue);
   }
 
   setInclude(data: any) {
-    this.minHue = Math.min(this.minHue, data.lh);
-    this.minSaturation = Math.min(this.minSaturation, data.ls);
-    this.minValue = Math.min(this.minValue, data.lv);
+    this.lowerHue = Math.min(this.lowerHue, data.lh);
+    this.lowerSaturation = Math.min(this.lowerSaturation, data.ls);
+    this.lowerValue = Math.min(this.lowerValue, data.lv);
 
-    this.maxHue = Math.max(this.maxHue, data.lh);
-    this.maxSaturation = Math.max(this.maxSaturation, data.ls);
-    this.maxValue = Math.max(this.maxValue, data.lv);
+    this.upperHue = Math.max(this.upperHue, data.lh);
+    this.upperSaturation = Math.max(this.upperSaturation, data.ls);
+    this.upperValue = Math.max(this.upperValue, data.lv);
   }
 
   setIgnore(data: any) {
-    this.minHue = Math.max(this.minHue, data.lh);
-    this.minSaturation = Math.max(this.minSaturation, data.ls);
-    this.minValue = Math.max(this.minValue, data.lv);
+    this.lowerHue = Math.max(this.lowerHue, data.lh);
+    this.lowerSaturation = Math.max(this.lowerSaturation, data.ls);
+    this.lowerValue = Math.max(this.lowerValue, data.lv);
 
-    this.maxHue = Math.min(this.maxHue, data.uh);
-    this.maxSaturation = Math.min(this.maxSaturation, data.us);
-    this.maxValue = Math.min(this.maxValue, data.uv);
+    this.upperHue = Math.min(this.upperHue, data.uh);
+    this.upperSaturation = Math.min(this.upperSaturation, data.us);
+    this.upperValue = Math.min(this.upperValue, data.uv);
   }
 }

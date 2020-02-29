@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { retry, catchError } from 'rxjs/operators';
+import { retry, catchError, map } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 
-import { Network } from 'src/app/models/network';
-import { Pipeline } from 'src/app/models/pipeline';
+import { Network } from 'src/app/models/network.model';
+import { Pipeline } from 'src/app/models/pipeline.model';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -83,23 +83,35 @@ export class ApiService {
       .pipe(retry(1), catchError(this.handleError<Network>('getSettings')));
   }
 
-  public getPipelines(): Observable<any> {
-    return this.http.get<Pipeline[]>(this.pipelineUrl)
-      .pipe(retry(1), catchError(this.handleError<Pipeline[]>('getPipelines', [])));
+  public getPipelines(): Observable<Pipeline[]> {
+    return this.http.get<Pipeline[]>(this.pipelineUrl).pipe(
+      retry(3),
+      map(data => data.map(data => new Pipeline().deserialize(data))),
+      catchError(this.handleError<Pipeline[]>('getPipelines', []))
+    );
   }
 
-  public getPipeline(id: number): Observable<any> {
-    return this.http.get<Pipeline>(this.pipelineUrl + id)
-      .pipe(retry(1), catchError(this.handleError<Pipeline>('getPipeline')));
+  public getPipeline(id: number): Observable<Pipeline> {
+    return this.http.get<Pipeline>(this.pipelineUrl + id).pipe(
+      retry(3),
+      map(data => new Pipeline().deserialize(data)),
+      catchError(this.handleError<Pipeline>('getPipeline'))
+    );
   }
 
-  public getDefaultPipeline(): Observable<any> {
-    return this.getPipeline(1)
-      .pipe(retry(1), catchError(this.handleError));
+  public getDefaultPipeline(): Observable<Pipeline> {
+    return this.http.get<Pipeline>(this.pipelineUrl + '1').pipe(
+      retry(3),
+      map(data => new Pipeline().deserialize(data)),
+      catchError(this.handleError)
+    );
   }
 
   public updatePipeline(id: any, pipeline: Pipeline): Observable<Pipeline> {
-    return this.http.put<Pipeline>(this.pipelineUrl + id, pipeline, httpOptions)
-      .pipe(catchError(this.handleError('updatePipeline', pipeline)));
+    console.log("Updating: " + JSON.stringify(pipeline));
+    console.log("Url: " + this.pipelineUrl + id);
+    return this.http.put<Pipeline>(this.pipelineUrl + id, pipeline, httpOptions).pipe(
+      catchError(this.handleError('updatePipeline', pipeline))
+    );
   }
 }

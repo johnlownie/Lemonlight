@@ -8,7 +8,9 @@ import { ApiService } from 'src/app/services/api.service';
 import { PipelineService } from 'src/app/services/pipeline.service';
 import { ChatService } from 'src/app/services/chat.service';
 
-import { Pipeline } from 'src/app/models/pipeline';
+import { Pipeline } from 'src/app/models/pipeline.model';
+import { Input } from 'src/app/models/input.model';
+import { Thresholding } from 'src/app/models/thresholding.model';
 
 @Component({
   selector: 'app-pipeline',
@@ -19,7 +21,7 @@ export class PipelineComponent implements OnInit {
 
   @BlockUI() blockUI: NgBlockUI;
   pipelines: Pipeline[] = [];
-  selectedPipeline: number;
+  selectedPipeline: Pipeline;
   streamUrl: string;
   isStyleSliderSet: boolean;
   isApiConnected: boolean;
@@ -41,13 +43,11 @@ export class PipelineComponent implements OnInit {
 
   ngOnInit() {
     this.apiService.isConnected.subscribe(isConnected => this.isApiConnected = isConnected);
-    
     this.streamUrl = this.apiService.getStreamUrl();
-
     this.apiService.getPipelines().subscribe(data => {
-      this.pipelines.push(data);
+      this.pipelines = data;
+      this.selectedPipeline = this.pipelines[0];
     });
-
     this.pipelineService.isStyleSliderSet.subscribe(isStyleSliderSet => this.isStyleSliderSet = isStyleSliderSet);
   }
 
@@ -100,5 +100,17 @@ export class PipelineComponent implements OnInit {
     ctx.drawImage(img, 0, 0);
     var dataURL = this.canvas.toDataURL("image/png");
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+  }
+
+  changeInput(input: Input) {
+    this.selectedPipeline.input = input;
+  }
+  
+  changeThresholding(thresholding: Thresholding) {
+    this.selectedPipeline.thresholding = thresholding;
+  }
+ 
+  updatePipeline() {
+    this.apiService.updatePipeline(this.selectedPipeline.id, this.selectedPipeline);
   }
 }

@@ -79,6 +79,10 @@
     width: 100%;
 }
 
+.streaming-frame img {
+    width: 100%;
+}
+
 .sliding {
     -moz-box-shadow:    0 0 5px 5px #12404d;
     -webkit-box-shadow: 0 0 5px 5px #12404d;

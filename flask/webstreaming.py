@@ -187,7 +187,7 @@ def grab_frame():
 
         if len(cnts) > 1:
             for i in range(len(cnts)):
-                cv2.drawContours(resized, hull, i, (0, 255, 255), 4, 8)
+                cv2.drawContours(resized, hull, i, (255, 255, 255), 1, cv2.LINE_AA)
 
         # draw a center line on the frame
         # cv2.line(frame, (width, 0), (width, height), (255, 255, 255), 1)

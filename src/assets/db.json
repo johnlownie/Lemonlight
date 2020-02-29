@@ -6,9 +6,9 @@
             "streamRate": "Normal",
             "streamResolution": "320x240",
             "ipAssignment": true,
-            "ipAddress": "",
-            "netmask": "",
-            "gateway": "",
+            "ipAddress": "0.0.0.0",
+            "netmask": "255.0.0.0",
+            "gateway": "0.0.0.0",
             "hostname": "",
             "preview": ""
         }        
@@ -21,8 +21,8 @@
             "input": {
                 "pipelineType": "Lemonlight Standard",
                 "sourceImage": "Camera",
-                "resolution": "320x240 90fps",
-                "leds": "Off",
+                "resolution": "320x240",
+                "ledState": "Off",
                 "orientation": "Normal",
                 "exposure": 4,
                 "blackLevel": 1,
@@ -30,12 +30,12 @@
                 "blueBalance": 50
             },
             "thresholding": {
-                "hue_lower": 0,
-                "hue_upper": 179,
-                "saturation_lower": 0,
-                "saturation_upper": 255,
-                "value_lower": 0,
-                "value_upper": 255,
+                "lowerHue": 0,
+                "lowerSaturation": 0,
+                "lowerValue": 0,
+                "upperHue": 179,
+                "upperSaturation": 255,
+                "upperValue": 255,
                 "erosion": 0,
                 "dilation": 0
             }
