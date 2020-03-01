@@ -6,16 +6,12 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class PipelineService {
 
-  private highlightStyle = new BehaviorSubject<boolean>(false);
-  isStyleSliderSet = this.highlightStyle.asObservable();
+  private streamBorderStyleSubject = new BehaviorSubject<string>("");
+  streamBorderStyle = this.streamBorderStyleSubject.asObservable();
 
   constructor() { }
 
-  public highlightStyleOn() {
-    this.highlightStyle.next(true);
-  }
-
-  public highlightStyleOff() {
-    this.highlightStyle.next(false);
+  public setStreamBorderStyle(style: string) {
+    this.streamBorderStyleSubject.next(style);
   }
 }

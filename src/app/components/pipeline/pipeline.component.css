@@ -83,10 +83,22 @@
     width: 100%;
 }
 
-.sliding {
+.eyedropper {
     -moz-box-shadow:    0 0 5px 5px #12404d;
     -webkit-box-shadow: 0 0 5px 5px #12404d;
     box-shadow:         0 0 5px 5px #12404d;
+}
+
+.include {
+    -moz-box-shadow:    0 0 5px 5px #2c6226;
+    -webkit-box-shadow: 0 0 5px 5px #2c6226;
+    box-shadow:         0 0 5px 5px #2c6226;
+}
+
+.ignore {
+    -moz-box-shadow:    0 0 5px 5px #510f12;
+    -webkit-box-shadow: 0 0 5px 5px #510f12;
+    box-shadow:         0 0 5px 5px #510f12;
 }
 
 .highlight {

@@ -24,7 +24,7 @@ export class PipelineComponent implements OnInit {
   pipelines: PipelineModel[] = [];
   selectedPipeline: PipelineModel;
   streamUrl: string;
-  isStyleSliderSet: boolean;
+  streamBorderStyle: string;
   isApiConnected: boolean;
 
   showOptions: Array<Select2OptionData> = [{id: 'colour', text: 'Colour'}, {id: 'threshold', text: 'Threshold'}];
@@ -50,7 +50,7 @@ export class PipelineComponent implements OnInit {
       this.pipelines = data;
       this.selectedPipeline = this.pipelines[0];
     });
-    this.pipelineService.isStyleSliderSet.subscribe(isStyleSliderSet => this.isStyleSliderSet = isStyleSliderSet);
+    this.pipelineService.streamBorderStyle.subscribe(streamBorderStyle => this.streamBorderStyle = streamBorderStyle);
   }
 
   receiveMagicWand($event) {

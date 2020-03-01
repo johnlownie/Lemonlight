@@ -75,7 +75,7 @@ export class ThresholdingComponent implements OnInit {
       if( isActive) {
         isActive.classList.remove("active");
       }
-      this.highlightStyleOn();
+      this.setStreamBorderStyle(this.magicWand);
     }
   }
   
@@ -89,7 +89,7 @@ export class ThresholdingComponent implements OnInit {
       }
       isActive = element.parentElement.querySelector(".active");
       if (!isActive) {
-        this.highlightStyleOff();
+        this.setStreamBorderStyle("");
       }
     }
   }
@@ -107,12 +107,8 @@ export class ThresholdingComponent implements OnInit {
     this.thresholdingChangeEvent.emit(this.pipeline.thresholding);
   }
 
-  highlightStyleOn() {
-    this.pipelineService.highlightStyleOn();
-  }
-
-  highlightStyleOff() {
-    this.pipelineService.highlightStyleOff();
+  setStreamBorderStyle(style: string) {
+    this.pipelineService.setStreamBorderStyle(style);
   }
 
   setHue($event: any) {
@@ -172,6 +168,13 @@ export class ThresholdingComponent implements OnInit {
     this.upperHue = Math.max(this.upperHue, data.lh);
     this.upperSaturation = Math.max(this.upperSaturation, data.ls);
     this.upperValue = Math.max(this.upperValue, data.lv);
+
+    this.chatService.setComponent('lowerHue', this.lowerHue);
+    this.chatService.setComponent('lowerSaturation', this.lowerSaturation);
+    this.chatService.setComponent('lowerValue', this.lowerValue);
+    this.chatService.setComponent('upperHue', this.upperHue);
+    this.chatService.setComponent('upperSaturation', this.upperSaturation);
+    this.chatService.setComponent('upperValue', this.upperValue);
   }
 
   setIgnore(data: any) {
@@ -182,5 +185,12 @@ export class ThresholdingComponent implements OnInit {
     this.upperHue = Math.min(this.upperHue, data.uh);
     this.upperSaturation = Math.min(this.upperSaturation, data.us);
     this.upperValue = Math.min(this.upperValue, data.uv);
+
+    this.chatService.setComponent('lowerHue', this.lowerHue);
+    this.chatService.setComponent('lowerSaturation', this.lowerSaturation);
+    this.chatService.setComponent('lowerValue', this.lowerValue);
+    this.chatService.setComponent('upperHue', this.upperHue);
+    this.chatService.setComponent('upperSaturation', this.upperSaturation);
+    this.chatService.setComponent('upperValue', this.upperValue);
   }
 }
