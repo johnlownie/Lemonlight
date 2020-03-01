@@ -3,9 +3,9 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { PipelineService } from 'src/app/services/pipeline.service';
-import { Pipeline } from 'src/app/models/pipeline.model';
+import { PipelineModel } from 'src/app/models/pipeline.model';
 
-import { Thresholding } from 'src/app/models/thresholding.model';
+import { ThresholdingModel } from 'src/app/models/thresholding.model';
 
 @Component({
   selector: 'app-thresholding',
@@ -13,7 +13,7 @@ import { Thresholding } from 'src/app/models/thresholding.model';
   styleUrls: ['./thresholding.component.css']
 })
 export class ThresholdingComponent implements OnInit {
-  pipeline: Pipeline
+  pipeline: PipelineModel
 
   lowerHue: number;
   lowerSaturation: number;
@@ -28,7 +28,7 @@ export class ThresholdingComponent implements OnInit {
 
   magicWand: string;
   @Output() magicWandEvent = new EventEmitter<string>();
-  @Output() thresholdingChangeEvent = new EventEmitter<Thresholding>();
+  @Output() thresholdingChangeEvent = new EventEmitter<ThresholdingModel>();
 
   constructor(private apiService : ApiService, private chatService: ChatService, private pipelineService: PipelineService) { }
 

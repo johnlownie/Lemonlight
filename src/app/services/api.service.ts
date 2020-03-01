@@ -5,11 +5,11 @@ import { retry, catchError, map } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 
 import { Network } from 'src/app/models/network.model';
-import { Pipeline } from 'src/app/models/pipeline.model';
+import { PipelineModel } from 'src/app/models/pipeline.model';
 
 const httpOptions = {
   headers: new HttpHeaders({
-    'Content-Type':  'application/xml',
+    'Content-Type':  'application/json',
     'Authorization': 'jwt-token'
   })
 };
@@ -61,13 +61,13 @@ export class ApiService {
     this.apiUrl = "http://" + (this.ipAssignment ? "10." + this.teamNumber.slice(0, 1) + "." + this.teamNumber.slice(2, 3) + ".11" : this.ipAddress ) + ":3000";
   }
 
-  public addPipeline(pipeline: Pipeline): Observable<Pipeline> {
-    return this.http.post<Pipeline>(this.pipelineUrl, pipeline, httpOptions)
+  public addPipeline(pipeline: PipelineModel): Observable<PipelineModel> {
+    return this.http.post<PipelineModel>(this.pipelineUrl, pipeline, httpOptions)
       .pipe(catchError(this.handleError('addPipeline', pipeline)));
   }
 
-  public deletePipeline(id: any, pipeline: Pipeline): Observable<Pipeline> {
-    return this.http.delete<Pipeline>(this.pipelineUrl + id, httpOptions)
+  public deletePipeline(id: any, pipeline: PipelineModel): Observable<PipelineModel> {
+    return this.http.delete<PipelineModel>(this.pipelineUrl + id, httpOptions)
       .pipe(catchError(this.handleError('deletePipeline', pipeline)));
   }
   public getSocketUrl() {
@@ -83,34 +83,34 @@ export class ApiService {
       .pipe(retry(1), catchError(this.handleError<Network>('getSettings')));
   }
 
-  public getPipelines(): Observable<Pipeline[]> {
-    return this.http.get<Pipeline[]>(this.pipelineUrl).pipe(
+  public getPipelines(): Observable<PipelineModel[]> {
+    return this.http.get<PipelineModel[]>(this.pipelineUrl).pipe(
       retry(3),
-      map(data => data.map(data => new Pipeline().deserialize(data))),
-      catchError(this.handleError<Pipeline[]>('getPipelines', []))
+      map(data => data.map(data => new PipelineModel().deserialize(data))),
+      catchError(this.handleError<PipelineModel[]>('getPipelines', []))
     );
   }
 
-  public getPipeline(id: number): Observable<Pipeline> {
-    return this.http.get<Pipeline>(this.pipelineUrl + id).pipe(
+  public getPipeline(id: number): Observable<PipelineModel> {
+    return this.http.get<PipelineModel>(this.pipelineUrl + id).pipe(
       retry(3),
-      map(data => new Pipeline().deserialize(data)),
-      catchError(this.handleError<Pipeline>('getPipeline'))
+      map(data => new PipelineModel().deserialize(data)),
+      catchError(this.handleError<PipelineModel>('getPipeline'))
     );
   }
 
-  public getDefaultPipeline(): Observable<Pipeline> {
-    return this.http.get<Pipeline>(this.pipelineUrl + '1').pipe(
+  public getDefaultPipeline(): Observable<PipelineModel> {
+    return this.http.get<PipelineModel>(this.pipelineUrl + '1').pipe(
       retry(3),
-      map(data => new Pipeline().deserialize(data)),
+      map(data => new PipelineModel().deserialize(data)),
       catchError(this.handleError)
     );
   }
 
-  public updatePipeline(id: any, pipeline: Pipeline): Observable<Pipeline> {
+  public updatePipeline(id: any, pipeline: PipelineModel): Observable<PipelineModel> {
     console.log("Updating: " + JSON.stringify(pipeline));
     console.log("Url: " + this.pipelineUrl + id);
-    return this.http.put<Pipeline>(this.pipelineUrl + id, pipeline, httpOptions).pipe(
+    return this.http.put<PipelineModel>(this.pipelineUrl + id, pipeline, httpOptions).pipe(
       catchError(this.handleError('updatePipeline', pipeline))
     );
   }

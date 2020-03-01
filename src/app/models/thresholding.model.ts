@@ -1,6 +1,6 @@
 import { Deserializable } from './deserializable.model';
 
-export class Thresholding implements Deserializable {
+export class ThresholdingModel implements Deserializable {
     public lowerHue: number;
     public lowerSaturation: number;
     public lowerValue: number;

@@ -8,9 +8,10 @@ import { ApiService } from 'src/app/services/api.service';
 import { PipelineService } from 'src/app/services/pipeline.service';
 import { ChatService } from 'src/app/services/chat.service';
 
-import { Pipeline } from 'src/app/models/pipeline.model';
-import { Input } from 'src/app/models/input.model';
-import { Thresholding } from 'src/app/models/thresholding.model';
+import { PipelineModel } from 'src/app/models/pipeline.model';
+import { InputModel } from 'src/app/models/input.model';
+import { ThresholdingModel } from 'src/app/models/thresholding.model';
+import { OutputModel } from 'src/app/models/output.model';
 
 @Component({
   selector: 'app-pipeline',
@@ -20,8 +21,8 @@ import { Thresholding } from 'src/app/models/thresholding.model';
 export class PipelineComponent implements OnInit {
 
   @BlockUI() blockUI: NgBlockUI;
-  pipelines: Pipeline[] = [];
-  selectedPipeline: Pipeline;
+  pipelines: PipelineModel[] = [];
+  selectedPipeline: PipelineModel;
   streamUrl: string;
   isStyleSliderSet: boolean;
   isApiConnected: boolean;
@@ -31,8 +32,9 @@ export class PipelineComponent implements OnInit {
 
   canvas: any;
   base64Image: any;
-  pixels: string;
   magicWand: string;
+
+  spresp: any;
 
   tx: number = -14.74;
   ty: number = -0.16;
@@ -66,8 +68,14 @@ export class PipelineComponent implements OnInit {
 
   getRGB($event) {
     this.getBase64ImageFromURL(this.streamUrl).subscribe(base64data => {
-      var pixelData = this.canvas.getContext('2d').getImageData($event.offsetX, $event.offsetY, 1, 1).data;
-      this.pixels = 'R: ' + pixelData[0] + '<br>G: ' + pixelData[1] + '<br>B: ' + pixelData[2] + '<br>A: ' + pixelData[3];
+      var scaleX = $event.target.width / $event.target.naturalWidth;
+      var scaleY = $event.target.height / $event.target.naturalHeight;
+
+      var x = $event.offsetX / scaleX;
+      var y = $event.offsetY / scaleY;
+
+      var pixelData = this.canvas.getContext('2d').getImageData(x, y, 1, 1).data;
+      console.log('R: ' + pixelData[0] + ' - G: ' + pixelData[1] + ' - B: ' + pixelData[2] + ' - A: ' + pixelData[3]);
       this.chatService.sendBGR(this.magicWand, pixelData[2], pixelData[1], pixelData[0]);
   });
   }
@@ -102,15 +110,34 @@ export class PipelineComponent implements OnInit {
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
   }
 
-  changeInput(input: Input) {
+   getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect(), // abs. size of element
+        scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
+        scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
+  
+    return {
+      x: (evt.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
+      y: (evt.clientY - rect.top) * scaleY     // been adjusted to be relative to element
+    }
+  }
+
+  changeInput(input: InputModel) {
     this.selectedPipeline.input = input;
   }
   
-  changeThresholding(thresholding: Thresholding) {
+  changeThresholding(thresholding: ThresholdingModel) {
     this.selectedPipeline.thresholding = thresholding;
   }
- 
+   
+  changeOutput(output: OutputModel) {
+    this.selectedPipeline.output = output;
+  }
+
   updatePipeline() {
-    this.apiService.updatePipeline(this.selectedPipeline.id, this.selectedPipeline);
+    this.apiService.updatePipeline(this.selectedPipeline.id, this.selectedPipeline)
+      .subscribe(resp => {
+        console.log("Resp: " + JSON.stringify(resp));
+        return this.spresp.push(resp);
+      });
   }
 }

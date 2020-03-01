@@ -1,5 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Select2OptionData } from 'ng2-select2';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+
+import { ApiService } from 'src/app/services/api.service';
+import { ChatService } from 'src/app/services/chat.service';
+
+import { PipelineModel } from 'src/app/models/pipeline.model';
+import { OutputModel } from 'src/app/models/output.model';
 
 @Component({
   selector: 'app-output',
@@ -7,12 +12,53 @@ import { Select2OptionData } from 'ng2-select2';
   styleUrls: ['./output.component.css']
 })
 export class OutputComponent implements OnInit {
+  
+  pipeline: PipelineModel;
+
+  targetingRegion: string;
+  targetGrouping: string;
+  crosshairMode: string;
 
   options: Select2Options = { minimumResultsForSearch: -1, theme: 'lemonlight' };
 
-  constructor() { }
+  @Output() outputChangeEvent = new EventEmitter<OutputModel>();
+
+  constructor(private apiService : ApiService, private chatService: ChatService) { }
 
   ngOnInit() {
+    this.apiService.getDefaultPipeline().subscribe(pipeline => { 
+      this.pipeline = pipeline;
+
+      this.targetingRegion = pipeline.output.targetingRegion;
+      this.targetGrouping = pipeline.output.targetGrouping;
+      this.crosshairMode = pipeline.output.crosshairMode;
+    });
+  }
+  
+  getData() {
+    this.pipeline.output.targetingRegion = this.targetingRegion;
+    this.pipeline.output.targetGrouping = this.targetGrouping;
+    this.pipeline.output.crosshairMode = this.crosshairMode;
+    
+    this.outputChangeEvent.emit(this.pipeline.output);
+  }
+
+  setTargetingRegion(value: any) {
+    this.targetingRegion = value;
+    this.chatService.setComponent('targetingRegion', value);
+    this.getData();
+  }
+  
+  setTargetGrouping(value: any) {
+    this.targetGrouping = value;
+    this.chatService.setComponent('targetGrouping', value);
+    this.getData();
+  }
+  
+  setCrosshairMode(value: any) {
+    this.crosshairMode = value;
+    this.chatService.setComponent('crosshairMode', value);
+    this.getData();
   }
 
 }

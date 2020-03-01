@@ -1,6 +1,6 @@
 import { Deserializable } from './deserializable.model';
 
-export class Input implements Deserializable {
+export class InputModel implements Deserializable {
     public pipelineType: string;
     public sourceImage: string;
     public resolution: string;

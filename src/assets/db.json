@@ -1,44 +1,49 @@
 {
-    "networks": [
-        {
-            "id": 1,
-            "teamNumber": "5024",
-            "streamRate": "Normal",
-            "streamResolution": "320x240",
-            "ipAssignment": true,
-            "ipAddress": "0.0.0.0",
-            "netmask": "255.0.0.0",
-            "gateway": "0.0.0.0",
-            "hostname": "",
-            "preview": ""
-        }        
-    ],
-    "pipelines": [
-        {
-            "id": 1,
-            "name": "Default",
-            "feed": "Colour",
-            "input": {
-                "pipelineType": "Lemonlight Standard",
-                "sourceImage": "Camera",
-                "resolution": "320x240",
-                "ledState": "Off",
-                "orientation": "Normal",
-                "exposure": 4,
-                "blackLevel": 1,
-                "redBalance": 50,
-                "blueBalance": 50
-            },
-            "thresholding": {
-                "lowerHue": 0,
-                "lowerSaturation": 0,
-                "lowerValue": 0,
-                "upperHue": 179,
-                "upperSaturation": 255,
-                "upperValue": 255,
-                "erosion": 0,
-                "dilation": 0
-            }
-        }
-    ]
+  "networks": [
+    {
+      "id": 1,
+      "teamNumber": "5024",
+      "streamRate": "Normal",
+      "streamResolution": "320x240",
+      "ipAssignment": true,
+      "ipAddress": "0.0.0.0",
+      "netmask": "255.0.0.0",
+      "gateway": "0.0.0.0",
+      "hostname": "",
+      "preview": ""
+    }
+  ],
+  "pipelines": [
+    {
+      "id": 1,
+      "name": "Default",
+      "feed": "Colour",
+      "input": {
+        "pipelineType": "Lemonlight Standard",
+        "sourceImage": "Snapshot",
+        "resolution": "320x240",
+        "ledState": "Off",
+        "orientation": "Normal",
+        "exposure": 4,
+        "blackLevel": 1,
+        "redBalance": 50,
+        "blueBalance": 50
+      },
+      "thresholding": {
+        "lowerHue": 0,
+        "lowerSaturation": 0,
+        "lowerValue": 0,
+        "upperHue": 179,
+        "upperSaturation": 255,
+        "upperValue": 255,
+        "erosion": 0,
+        "dilation": 0
+      },
+      "output": {
+        "targetingRegion": "Center",
+        "targetGrouping": "Single Target",
+        "crosshairMode": "Single Crosshair"
+      }
+    }
+  ]
 }

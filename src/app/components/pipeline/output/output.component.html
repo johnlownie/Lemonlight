@@ -2,19 +2,19 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Targeting Region</label>
         <div class="col-sm-6">
-            <select2 class="select2" (valueChanged)="setComponent('targetingRegion', $event.value)" [cssImport]="true" [options]="options"><option>Center</option></select2>
+            <select2 class="select2" (valueChanged)="setTargetingRegion($event.value)" [cssImport]="true" [options]="options"><option>Center</option></select2>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Target Grouping</label>
         <div class="col-sm-6">
-            <select2 class="select2" (valueChanged)="setComponent('targetingGrouping', $event.value)" [cssImport]="true" [options]="options"><option>Single Target</option><option>Dual Target</option></select2>
+            <select2 class="select2" (valueChanged)="setTargetGrouping($event.value)" [cssImport]="true" [options]="options"><option>Single Target</option><option>Dual Target</option><option>In Target</option></select2>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Crosshair Mode</label>
         <div class="col-sm-6">
-            <select2 class="select2" (valueChanged)="setComponent('crosshairMode', $event.value)" [cssImport]="true" [options]="options"><option>Single Target</option><option>Dual Target</option></select2>
+            <select2 class="select2" (valueChanged)="setCrosshairMode($event.value)" [cssImport]="true" [options]="options"><option>Single Crosshair</option><option>Dual Crosshair</option></select2>
         </div>
     </div>
 

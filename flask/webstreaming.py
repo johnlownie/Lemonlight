@@ -63,6 +63,11 @@ upperValue = 255
 erosion = 0
 dilate = 0
 
+# Output variables
+targetingRegion = "center"
+targetGrouping = "single target"
+crosshairMode = "single crosshair"
+
 # Actions
 takeSnapshot = False
 imagePath = 'D:/jet/projects/python/Lemonlight/flask/snapshots'
@@ -125,6 +130,12 @@ def set_component(component, value):
         erosion = int(value)
     elif component == 'dilate':
         dilate = int(value)
+    elif component == 'targetingRegion':
+        targetingRegion = value.lower()
+    elif component == 'targetGrouping':
+        targetGrouping = value.lower()
+    elif component == 'crosshairMode':
+        crosshairMode = value.lower()
     elif component == 'videoFeed':
         videoFeed = value.lower()
     elif component == 'takeSnapshot':
@@ -187,7 +198,7 @@ def grab_frame():
 
         if len(cnts) > 1:
             for i in range(len(cnts)):
-                cv2.drawContours(resized, hull, i, (255, 255, 255), 1, cv2.LINE_AA)
+                cv2.drawContours(resized, hull, i, (0, 0, 0), 1, cv2.LINE_AA)
 
         # draw a center line on the frame
         # cv2.line(frame, (width, 0), (width, height), (255, 255, 255), 1)
@@ -211,6 +222,12 @@ def grab_frame():
 
         # update the frame counter
         fps.update()
+
+def load_snapshot():
+    global snapshotFile
+
+    files = glob.glob(os.path.join(imagePath, "*"))
+    snapshotFile = max(files, key=os.path.getctime)
 
 def save_snapshot():
     global vs, width, height, snapshotFile
@@ -276,6 +293,9 @@ if __name__ == '__main__':
     ap.add_argument("-f", "--frame-count", type=int, default=32, help="# of frames used to construct the background model")
     ap.add_argument("-w", "--webcam", action="store_true", help="use webcam as the video source")
     args = vars(ap.parse_args())
+
+    # load latest snapshot
+    load_snapshot()
 
     # start a thread that will perform motion detection
     t = threading.Thread(target=grab_frame)

@@ -1,11 +1,10 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { Select2OptionData } from 'ng2-select2';
 
 import { ApiService } from 'src/app/services/api.service';
 import { ChatService } from 'src/app/services/chat.service';
-import { Pipeline } from 'src/app/models/pipeline.model';
 
-import { Input } from 'src/app/models/input.model';
+import { PipelineModel } from 'src/app/models/pipeline.model';
+import { InputModel } from 'src/app/models/input.model';
 
 @Component({
   selector: 'app-input',
@@ -13,7 +12,8 @@ import { Input } from 'src/app/models/input.model';
   styleUrls: ['./input.component.css']
 })
 export class InputComponent implements OnInit {
-  pipeline: Pipeline;
+  
+  pipeline: PipelineModel;
 
   pipelineType: string;
   sourceImage: string;
@@ -26,10 +26,9 @@ export class InputComponent implements OnInit {
   redBalance: number;
   blueBalance: number;
 
-  ledOptions: Array<Select2OptionData> = [{id: 'on', text: 'On'}, {id: 'off', text: 'Off'}];
   options: Select2Options = { minimumResultsForSearch: -1, theme: 'lemonlight' };
 
-  @Output() inputChangeEvent = new EventEmitter<Input>();
+  @Output() inputChangeEvent = new EventEmitter<InputModel>();
 
   constructor(private apiService : ApiService, private chatService: ChatService) { }
 
