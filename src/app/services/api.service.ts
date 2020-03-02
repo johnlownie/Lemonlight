@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { retry, catchError, map } from 'rxjs/operators';
+
 import { CookieService } from 'ngx-cookie-service';
 
 import { Network } from 'src/app/models/network.model';
@@ -70,6 +71,7 @@ export class ApiService {
     return this.http.delete<PipelineModel>(this.pipelineUrl + id, httpOptions)
       .pipe(catchError(this.handleError('deletePipeline', pipeline)));
   }
+
   public getSocketUrl() {
     return this.socketUrl;
   }
