@@ -1,0 +1,44 @@
+import { Injectable } from '@angular/core';
+import * as Rx from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class WebsocketService {
+  private subject: Rx.Subject<MessageEvent>;
+
+  constructor() { }
+
+  private create(url: string, protocol: string): Rx.Subject<MessageEvent> {
+    let ws = new WebSocket(url, protocol);
+
+    let observable = Rx.Observable.create((obs: Rx.Observer<MessageEvent>) => {
+      ws.onmessage = obs.next.bind(obs);
+      ws.onerror = obs.error.bind(obs);
+      ws.onclose = obs.complete.bind(obs);
+
+      return ws.close.bind(ws);
+    });
+
+    let observer = {
+      next: (data: string) => {
+        console.log("Nexting : " + data);
+        if (ws.readyState === WebSocket.OPEN) {
+          console.log("Sending : " + data);
+          ws.send(data);
+        }
+      }
+    };
+
+    return Rx.Subject.create(observer, observable);    
+  }
+
+  public connect(url, protocol): Rx.Subject<MessageEvent> {
+    if (!this.subject) {
+      this.subject = this.create(url, protocol);
+      console.log("Successfully connected: " + url);
+    }
+    
+    return this.subject;
+  }
+}

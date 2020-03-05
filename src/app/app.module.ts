@@ -19,6 +19,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from './services/api.service';
 import { PipelineService } from './services/pipeline.service';
 import { ChatService } from './services/chat.service';
+import { WebsocketService } from 'src/app/services/websocket.service';
+import { FrcService } from 'src/app/services/frc.service';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,9 @@ import { ChatService } from './services/chat.service';
     CookieService,
     ApiService,
     PipelineService,
-    ChatService
+    ChatService,
+    WebsocketService,
+    FrcService
   ],
   bootstrap: [AppComponent]
 })

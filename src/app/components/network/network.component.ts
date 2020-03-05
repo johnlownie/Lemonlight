@@ -43,6 +43,15 @@ export class NetworkComponent implements OnInit {
     });
   }
 
+  readOnly() {
+    let message = {
+      type: 'systemReadOnly'
+    }
+
+    console.log("Sending : " + JSON.stringify(message));
+    this.frcService.messages.next(JSON.stringify(message));
+  }
+
   saveSettings() {
     let message = {
       type: 'networkSave',
@@ -53,6 +62,7 @@ export class NetworkComponent implements OnInit {
       networkDNS: '192.168.24.1'
     }
 
-    this.frcService.sendMessage(JSON.stringify(message));
+    console.log("Sending : " + JSON.stringify(message));
+    this.frcService.messages.next(JSON.stringify(message));
   }
 }

@@ -1,26 +1,25 @@
 import { Injectable } from '@angular/core';
-import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { WebsocketService } from "./websocket.service";
+
+const FRC_URL = "ws://frcvision.local";
+const FRC_PROTOCOL = "frcvision";
 
 @Injectable({
   providedIn: 'root'
 })
 export class FrcService {
-  private socket: any;
+  public messages: Subject<string>;
 
-  readonly webSocketConnection$ = (
-    webSocket({
-      protocol: 'frcvision',
-      url: 'ws://frcvision.local',
-      WebSocketCtor: WebSocket,
-    })
-  )
-
-  constructor() {
-    this.socket = webSocket('ws://frcvision.local');
-  }
-
-  public sendMessage(message: any) {
-    console.log("Emitting: " + message);
-    this.socket.emit(message);
+  constructor(private wsService: WebsocketService) {
+    this.messages = <Subject<string>>wsService.connect(FRC_URL, FRC_PROTOCOL).pipe(
+      map((response: MessageEvent): string => {
+        let data = JSON.parse(response.data);
+        console.log("Response : " + data);
+        return data;
+      }
+    ))
   }
 }
