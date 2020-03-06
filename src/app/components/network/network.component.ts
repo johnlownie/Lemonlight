@@ -2,6 +2,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 import { ApiService } from 'src/app/services/api.service';
 import { FrcService } from 'src/app/services/frc.service';
+import { FrcTestService } from 'src/app/services/frc-test.service';
 
 @Component({
   selector: 'app-network',
@@ -22,7 +23,7 @@ export class NetworkComponent implements OnInit {
   private hostname: string;
   private preview: string;
 
-  constructor(private apiService : ApiService, private frcService : FrcService) { }
+  constructor(private apiService : ApiService, private frcService : FrcTestService) { }
 
   ngOnInit() {
     this.apiService.getSettings().subscribe(data => {
@@ -49,7 +50,7 @@ export class NetworkComponent implements OnInit {
     }
 
     console.log("Sending : " + JSON.stringify(message));
-    this.frcService.messages.next(JSON.stringify(message));
+    this.frcService.sendMessage(JSON.stringify(message));
   }
 
   saveSettings() {
@@ -63,6 +64,6 @@ export class NetworkComponent implements OnInit {
     }
 
     console.log("Sending : " + JSON.stringify(message));
-    this.frcService.messages.next(JSON.stringify(message));
+    this.frcService.sendMessage(JSON.stringify(message));
   }
 }
