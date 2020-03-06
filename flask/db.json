@@ -30,14 +30,14 @@
         "blueBalance": 50
       },
       "thresholding": {
-        "lowerHue": 0,
-        "lowerSaturation": 0,
-        "lowerValue": 0,
-        "upperHue": 179,
+        "lowerHue": 56,
+        "lowerSaturation": 201,
+        "lowerValue": 170,
+        "upperHue": 66,
         "upperSaturation": 255,
-        "upperValue": 255,
-        "erosion": 0,
-        "dilation": 0
+        "upperValue": 228,
+        "erosion": 1,
+        "dilation": 1
       },
       "output": {
         "targetingRegion": "Center",

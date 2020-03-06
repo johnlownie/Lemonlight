@@ -34,7 +34,7 @@ export class PipelineComponent implements OnInit {
   base64Image: any;
   magicWand: string;
 
-  spresp: any;
+  spresp: any = [];
 
   tx: number = -14.74;
   ty: number = -0.16;

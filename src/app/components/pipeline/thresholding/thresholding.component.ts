@@ -116,6 +116,9 @@ export class ThresholdingComponent implements OnInit {
     this.upperHue = $event.to;
     this.chatService.setComponent('lowerHue', $event.from);
     this.chatService.setComponent('upperHue', $event.to);
+
+    // notify the pipeline of the changes
+    this.getData();
   }
 
   setSaturation($event: any) {
@@ -123,6 +126,9 @@ export class ThresholdingComponent implements OnInit {
     this.upperSaturation = $event.to;
     this.chatService.setComponent('lowerSaturation', $event.from);
     this.chatService.setComponent('upperSaturation', $event.to);
+
+    // notify the pipeline of the changes
+    this.getData();
   }
 
   setValue($event: any) {
@@ -130,16 +136,25 @@ export class ThresholdingComponent implements OnInit {
     this.upperValue = $event.to;
     this.chatService.setComponent('lowerValue', $event.from);
     this.chatService.setComponent('upperValue', $event.to);
+
+    // notify the pipeline of the changes
+    this.getData();
   }
 
   setErosion($event: any) {
     this.erosion = $event.from;
     this.chatService.setComponent('erosion', $event.from);
+
+    // notify the pipeline of the changes
+    this.getData();
   }
 
   setDilation($event: any) {
     this.dilation = $event.from;
     this.chatService.setComponent('dilate', $event.from);
+
+    // notify the pipeline of the changes
+    this.getData();
   }
 
   setLower(data: any) {
@@ -149,6 +164,9 @@ export class ThresholdingComponent implements OnInit {
     this.chatService.setComponent('lowerHue', this.lowerHue);
     this.chatService.setComponent('lowerSaturation', this.lowerSaturation);
     this.chatService.setComponent('lowerValue', this.lowerValue);
+
+    // notify the pipeline of the changes
+    this.getData();
   }
 
   setUpper(data: any) {
@@ -158,6 +176,9 @@ export class ThresholdingComponent implements OnInit {
     this.chatService.setComponent('upperHue', this.upperHue);
     this.chatService.setComponent('upperSaturation', this.upperSaturation);
     this.chatService.setComponent('upperValue', this.upperValue);
+
+    // notify the pipeline of the changes
+    this.getData();
   }
 
   setInclude(data: any) {
@@ -175,6 +196,9 @@ export class ThresholdingComponent implements OnInit {
     this.chatService.setComponent('upperHue', this.upperHue);
     this.chatService.setComponent('upperSaturation', this.upperSaturation);
     this.chatService.setComponent('upperValue', this.upperValue);
+
+    // notify the pipeline of the changes
+    this.getData();
   }
 
   setIgnore(data: any) {
@@ -192,5 +216,8 @@ export class ThresholdingComponent implements OnInit {
     this.chatService.setComponent('upperHue', this.upperHue);
     this.chatService.setComponent('upperSaturation', this.upperSaturation);
     this.chatService.setComponent('upperValue', this.upperValue);
+
+    // notify the pipeline of the changes
+    this.getData();
   }
 }

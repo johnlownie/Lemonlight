@@ -70,7 +70,7 @@ crosshairMode = "single crosshair"
 
 # Actions
 takeSnapshot = False
-imagePath = 'D:/jet/projects/python/Lemonlight/flask/snapshots'
+imagePath = './snapshots'
 snapshotFile = os.path.join(imagePath, "default.jpg")
 
 # initialize the video stream
@@ -91,7 +91,7 @@ time.sleep(2.0)
 
 # set component value
 def set_component(component, value):
-    global sourceImage, orientation, videoFeed, width, height, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate
+    global sourceImage, orientation, videoFeed, width, height, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate, targetGrouping
 
     print("C: {} - V: {}".format(component, value))
 
@@ -161,10 +161,13 @@ def convert_hsv(s, b, g, r):
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, snapshotFile
+    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, snapshotFile, targetGrouping
 
     # loop over frames from the video stream
     while True:
+        # initialize variables
+        hull = []
+
         # read the next frame from the video stream or snapshot
         if sourceImage == 'snapshot':
             frame = cv2.imread(snapshotFile)
@@ -189,22 +192,51 @@ def grab_frame():
         mask = cv2.dilate(mask, None, iterations=dilate)
 
         # find the contours in the mask
-        cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        cnts = imutils.grab_contours(cnts)
-        hull = []
+        contours, hierarchy = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # contours = imutils.grab_contours(contours)
 
-        for i in range(len(cnts)):
-            hull.append(cv2.convexHull(cnts[i], False))
+        # only process found contours
+        if len(contours) > 0:
+            # draw a line around all the cohtours
+            cv2.drawContours(resized, contours, -1, (0, 0, 0), 1)
 
-        if len(cnts) > 1:
-            for i in range(len(cnts)):
-                cv2.drawContours(resized, hull, i, (0, 0, 0), 1, cv2.LINE_AA)
+            # draw rectangle if single target otherwise 
+            if targetGrouping == 'single target':
+                # find largest contour and draw bounding box
+                c = max(contours, key=cv2.contourArea)
+                x, y, w, h = cv2.boundingRect(c)
+                cv2.rectangle(resized, (x, y), (x + w, y + h), (149, 228, 234), 1)
+            elif targetGrouping == 'dual target':
+                try: hierarchy = hierarchy[0]
+                except: hierarchy = []
+
+                min_x, min_y, _ = resized.shape
+                max_x = max_y = 0
+
+                for contour, heir in zip(contours, hierarchy):
+                    (x, y, w, h) = cv2.boundingRect(contour)
+                    min_x, max_x = min(x, min_x), max(x + w, max_x)
+                    min_y, max_y = min(y, min_y), max(y + h, max_y)
+
+                    if w > 80 and h > 80:
+                        cv2.rectangle(resized, (x, y), (x + w, y + h), (0, 255, 0), 1)
+
+                if max_x - min_x > 0 and max_y - min_y > 0:
+                    cv2.rectangle(resized, (min_x, min_y), (max_x, max_y), (202, 219, 45), 2)
+
+        # for i in range(len(cnts)):
+        #     hull.append(cv2.convexHull(cnts[i], False))
+
+        # if len(cnts) > 1:
+        #     for i in range(len(cnts)):
+        #         cv2.drawContours(resized, hull, i, (0, 0, 0), 1, cv2.LINE_AA)
 
         # draw a center line on the frame
         # cv2.line(frame, (width, 0), (width, height), (255, 255, 255), 1)
         # timestamp = datetime.datetime.now()
         # cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
+        # draw the FPS count on the image
         if sourceImage == 'camera':
             cv2.putText(resized, "{:.1f}".format(fps.fps()), (1, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
             cv2.putText(mask, "{:.1f}".format(fps.fps()), (1, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
