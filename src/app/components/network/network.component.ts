@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import { ApiService } from 'src/app/services/api.service';
-import { FrcService } from 'src/app/services/frc.service';
-import { FrcTestService } from 'src/app/services/frc-test.service';
+import { FrcChatService } from 'src/app/services/frc-chat.service';
 
 @Component({
   selector: 'app-network',
@@ -23,7 +23,14 @@ export class NetworkComponent implements OnInit {
   private hostname: string;
   private preview: string;
 
-  constructor(private apiService : ApiService, private frcService : FrcTestService) { }
+  private message: any = {};
+  private subscription: Subscription;
+
+  constructor(private apiService : ApiService, private frcService : FrcChatService) { 
+    this.subscription = this.frcService.getMessage().subscribe(message => {
+      this.message = message;
+    });
+  }
 
   ngOnInit() {
     this.apiService.getSettings().subscribe(data => {
@@ -38,9 +45,6 @@ export class NetworkComponent implements OnInit {
 
       this.hostname = data.hostname;
       this.preview = data.preview;
-
-      console.log("URL: " + window.location.hostname);
-      console.log("Port: " + window.location.port);
     });
   }
 

@@ -20,8 +20,7 @@ import { ApiService } from './services/api.service';
 import { PipelineService } from './services/pipeline.service';
 import { ChatService } from './services/chat.service';
 import { WebsocketService } from 'src/app/services/websocket.service';
-import { FrcService } from 'src/app/services/frc.service';
-import { FrcTestService } from 'src/app/services/frc-test.service';
+import { FrcChatService } from 'src/app/services/frc-chat.service';
 
 @NgModule({
   declarations: [
@@ -48,8 +47,7 @@ import { FrcTestService } from 'src/app/services/frc-test.service';
     PipelineService,
     ChatService,
     WebsocketService,
-    FrcService,
-    FrcTestService
+    FrcChatService
   ],
   bootstrap: [AppComponent]
 })

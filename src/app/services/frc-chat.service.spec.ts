@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { FrcService } from './frc.service';
+import { FrcChatService } from './frc-chat.service';
 
 describe('FrcService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: FrcService = TestBed.get(FrcService);
+    const service: FrcChatService = TestBed.get(FrcChatService);
     expect(service).toBeTruthy();
   });
 });
