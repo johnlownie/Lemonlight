@@ -206,6 +206,13 @@ def grab_frame():
                 c = max(contours, key=cv2.contourArea)
                 x, y, w, h = cv2.boundingRect(c)
                 cv2.rectangle(resized, (x, y), (x + w, y + h), (149, 228, 234), 1)
+
+                #draw crosshair
+                M = cv2.moments(c)
+                center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+
+                cv2.drawMarker(resized, center, (0, 0, 255), cv2.MARKER_CROSS, 10, 1)
+
             elif targetGrouping == 'dual target':
                 try: hierarchy = hierarchy[0]
                 except: hierarchy = []
