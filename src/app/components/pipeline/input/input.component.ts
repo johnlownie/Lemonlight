@@ -21,17 +21,22 @@ export class InputComponent implements OnInit {
   ledState: string;
   orientation: string;
 
-  exposure: number;
-  blackLevel: number;
-  redBalance: number;
-  blueBalance: number;
+  exposureInput = {name: 'exposure', value: 0};
+  blackLevelInput = {name: 'blackLevel', value: 0};
+  redBalanceInput = {name: 'readBalance', value: 0};
+  blueBalanceInput = {name: 'blueBalance', value: 0};
+
+  exposureSlider = {name: 'exposure', value: 0};
+  blackLevelSlider = {name: 'blackLevel', value: 0};
+  redBalanceSlider = {name: 'redBalance', value: 0};
+  blueBalanceSlider = {name: 'blueBalance', value: 0};
 
   options: Select2Options = { minimumResultsForSearch: -1, theme: 'lemonlight' };
 
   @Output() inputChangeEvent = new EventEmitter<InputModel>();
 
   constructor(private apiService : ApiService, private chatService: ChatService) { }
-
+  
   ngOnInit() {
     this.apiService.getDefaultPipeline().subscribe(pipeline => { 
       this.pipeline = pipeline;
@@ -42,10 +47,10 @@ export class InputComponent implements OnInit {
       this.ledState = pipeline.input.ledState;
       this.orientation = pipeline.input.orientation;
       
-      this.exposure = pipeline.input.exposure;
-      this.blackLevel = pipeline.input.blackLevel;
-      this.redBalance = pipeline.input.redBalance;
-      this.blueBalance = pipeline.input.blueBalance;
+      this.exposureInput.value = this.exposureSlider.value = pipeline.input.exposure;
+      this.blackLevelInput.value = this.blackLevelSlider.value = pipeline.input.blackLevel;
+      this.redBalanceInput.value = this.redBalanceSlider.value = pipeline.input.redBalance;
+      this.blueBalanceInput.value = this.blueBalanceSlider.value = pipeline.input.blueBalance;
     });
   }
 
@@ -56,64 +61,71 @@ export class InputComponent implements OnInit {
     this.pipeline.input.ledState = this.ledState;
     this.pipeline.input.orientation = this.orientation;
     
-    this.pipeline.input.blackLevel = this.blackLevel;
-    this.pipeline.input.redBalance = this.redBalance;
-    this.pipeline.input.blueBalance = this.blueBalance;
+    this.pipeline.input.exposure = this.exposureInput.value;
+    this.pipeline.input.blackLevel = this.blackLevelInput.value;
+    this.pipeline.input.redBalance = this.redBalanceInput.value;
+    this.pipeline.input.blueBalance = this.blueBalanceInput.value;
     
     this.inputChangeEvent.emit(this.pipeline.input);
   }
   
-  setPipelineType(value: any) {
-    this.pipelineType = value;
-    this.chatService.setComponent('pipelineType', value);
+  updateDropdown($component: string, $value: any) {
+    switch($component) {
+      case "pipelineType":
+        this.pipelineType = $value;
+        break;
+      case "sourceImage":
+        this.sourceImage = $value;
+        break;
+      case "resolution":
+        this.resolution = $value;
+        break;
+      case "ledState":
+        this.ledState = $value;
+        break;
+      case "orientation":
+        this.orientation = $value;
+        break;
+    }
+    this.chatService.setInputComponent($component, $value);
     this.getData();
   }
-  
-  setSourceImage(value: any) {
-    this.sourceImage = value;
-    this.chatService.setComponent('sourceImage', value);
+
+  updateInput($slider: any, $event: any) {
+    switch($slider.name) {
+      case "exposure":
+        this.exposureInput.value = $event.from;
+        break;
+      case "blackLevel":
+        this.blackLevelInput.value = $event.from;
+        break;
+      case "readBalance":
+        this.redBalanceInput.value = $event.from;
+        break;
+      case "blueBalance":
+        this.blueBalanceInput.value = $event.from;
+        break;
+    }
+    this.chatService.setInputComponent($slider.name, $event.from);
     this.getData();
   }
-  
-  setResolution(value: any) {
-    this.resolution = value;
-    this.chatService.setComponent('resolution', value);
-    this.getData();
-  }
-   
-  setLedState(value: any) {
-    this.ledState = value;
-    this.chatService.setComponent('ledState', value);
-    this.getData();
-  }
-  
-  setOrientation(value: any) {
-    this.orientation = value;
-    this.chatService.setComponent('orientation', value);
-    this.getData();
-  }
-  
-  setExposure($event: any) {
-    this.exposure = $event.from;
-    this.chatService.setComponent('exposure', $event.from);
-    this.getData();
-  }
-  
-  setBlackLevel($event: any) {
-    this.blackLevel = $event.from;
-    this.chatService.setComponent('blackLevel', $event.from);
-    this.getData();
-  }
-  
-  setRedBalance($event: any) {
-    this.redBalance = $event.from;
-    this.chatService.setComponent('redBalance', $event.from);
-    this.getData();
-  }
-  
-  setBlueBalance($event: any) {
-    this.blueBalance = $event.from;
-    this.chatService.setComponent('blueBalance', $event.from);
+    
+  updateSlider($input: any, $event: any) {
+    switch($input.name) {
+      case "exposure":
+        this.exposureSlider.value = $event.target.value;
+        break;
+      case "blackLevel":
+        this.blackLevelSlider.value = $event.target.value;
+        break;
+      case "readBalance":
+        this.redBalanceSlider.value = $event.target.value;
+        break;
+      case "blueBalance":
+        this.blueBalanceSlider.value = $event.target.value;
+        break;
+    }
+    this.chatService.setInputComponent($input.name, $event.target.value);
     this.getData();
   }
 }

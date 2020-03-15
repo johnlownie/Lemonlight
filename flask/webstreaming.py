@@ -46,7 +46,9 @@ logging.basicConfig(level=logging.DEBUG)
 videoFeed = "colour"
 
 # Input variables
+pipelineType = "limelight standard"
 sourceImage = "camera"
+ledState = "off"
 orientation = "normal"
 exposure = 0
 blackLevel = 0
@@ -61,7 +63,19 @@ upperHue = 255
 upperSaturation = 255
 upperValue = 255
 erosion = 0
-dilate = 0
+dilation = 0
+
+# Contour Filtering variables
+sortMode = 'largest'
+lowerArea = 0
+lowerFullness = 0
+lowerRatio = 0
+upperArea = 100
+upperFullness = 100
+upperRatio = 100
+directionFilter = 'None'
+smartSpeckle = 0
+intersectionFilter = 'None'
 
 # Output variables
 targetingRegion = "center"
@@ -89,20 +103,24 @@ fps = FPS().start()
 # let camera warmup
 time.sleep(2.0)
 
-# set component value
-def set_component(component, value):
-    global sourceImage, orientation, videoFeed, width, height, exposure, blackLevel, redBalance, blueBalance, lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilate, targetGrouping
+# set input component value
+def set_input_component(component, value):
+    global pipelineType, sourceImage, width, height, ledState, orientation, exposure, blackLevel, redBalance, blueBalance
 
     print("C: {} - V: {}".format(component, value))
 
-    if component == 'sourceImage':
+    if component == 'pipelineType':
+        pipelineType = value.lower()
+    elif component == 'sourceImage':
         sourceImage = value.lower()
-    elif component == 'orientation':
-        orientation = value.lower()
     elif component == 'resolution':
         (w, h) = value.split("x")
         width = int(w)
         height = int(h)
+    elif component == 'ledState':
+        ledState = value.lower()
+    elif component == 'orientation':
+        orientation = value.lower()
     elif component == 'exposure':
         exposure = int(value)
         vs.stream.set(cv2.CAP_PROP_EXPOSURE, exposure - 12)
@@ -114,34 +132,82 @@ def set_component(component, value):
     elif component == 'blueBalance':
         blueBalance = int(value)
         vs.stream.set(cv2.CAP_PROP_WHITE_BALANCE_BLUE_U, blueBalance - 12)
-    elif component == 'lowerHue':
-        lowerHue = int(value)
-    elif component == 'lowerSaturation':
-        lowerSaturation = int(value)
-    elif component == 'lowerValue':
-        lowerValue = int(value)
-    elif component == 'upperHue':
-        upperHue = int(value)
-    elif component == 'upperSaturation':
-        upperSaturation = int(value)
-    elif component == 'upperValue':
-        upperValue = int(value)
+
+# set thresholding component value
+def set_thresholding_component(component, value1, value2):
+    global lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilation
+
+    print("C: {} - V1: {} - V2: {}".format(component, value1, value2))
+
+    if component == 'hue':
+        lowerHue = int(value1)
+        upperHue = int(value2)
+    elif component == 'saturation':
+        lowerSaturation = int(value1)
+        upperSaturation = int(value2)
+    elif component == 'value':
+        lowerValue = int(value1)
+        upperValue = int(value2)
     elif component == 'erosion':
-        erosion = int(value)
-    elif component == 'dilate':
-        dilate = int(value)
-    elif component == 'targetingRegion':
+        erosion = int(value1)
+    elif component == 'dilation':
+        dilation = int(value1)
+    else:
+        print("No component set: " + component)
+
+# set contour filtering component value
+def set_contour_filtering_component(component, value1, value2):
+    global sortMode, lowerArea, lowerFullness, lowerRatio, upperArea, upperFullness, upperRatio, directionFilter, smartSpeckle, targetGrouping, intersectionFilter
+
+    print("C: {} - V1: {} - V2: {}".format(component, value1, value2))
+
+    if component == 'sortMode':
+        sortMode = value1.lower()
+    elif component == 'area':
+        lowerArea = int(value1)
+        upperArea = int(value2)
+    elif component == 'fullness':
+        lowerFullness = int(value1)
+        upperFullness = int(value2)
+    elif component == 'ration':
+        lowerRatio = int(value1)
+        upperRatio = int(value2)
+    elif component == 'directionFilter':
+        directionFilter = value1.lower()
+    elif component == 'smartSpeckle':
+        smartSpeckle = int(value1)
+    elif component == 'targetGrouping':
+        targetGrouping = value1.lower()
+    elif component == 'intersectionFilter':
+        intersectionFilter = value1.lower()
+    else:
+        print("No component set: " + component)
+
+# set output component value
+def set_output_component(component, value):
+    global targetingRegion, targetGrouping, crosshairMode
+
+    print("C: {} - V: {}".format(component, value))
+
+    if component == 'targetingRegion':
         targetingRegion = value.lower()
     elif component == 'targetGrouping':
         targetGrouping = value.lower()
     elif component == 'crosshairMode':
         crosshairMode = value.lower()
-    elif component == 'videoFeed':
-        videoFeed = value.lower()
-    elif component == 'takeSnapshot':
-        save_snapshot()
     else:
-        print("No component set")
+        print("No component set: " + component)
+
+# set component value
+def set_component(component, value):
+    global videoFeed
+
+    print("C: {} - V: {}".format(component, value))
+
+    if component == 'videoFeed':
+        videoFeed = value.lower()
+    else:
+        print("No component set: " + component)
 
 # convert commponent value
 def convert_hsv(s, b, g, r):
@@ -161,7 +227,7 @@ def convert_hsv(s, b, g, r):
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilate, outputFrame, lock, snapshotFile, targetGrouping
+    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilation, outputFrame, lock, snapshotFile, targetGrouping
 
     # loop over frames from the video stream
     while True:
@@ -189,7 +255,7 @@ def grab_frame():
         # create a mask, dilate and erode it
         mask = cv2.inRange(hsv, (lowerHue, lowerSaturation, lowerValue), (upperHue, upperSaturation, upperValue))
         mask = cv2.erode(mask, None, iterations=erosion)
-        mask = cv2.dilate(mask, None, iterations=dilate)
+        mask = cv2.dilate(mask, None, iterations=dilation)
 
         # find the contours in the mask
         contours, hierarchy = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -313,6 +379,22 @@ def video_feed():
 
 def messageReceived(methods=['GET', 'POST']):
     print('Message was received!!')
+
+@socketio.on('set-input-component')
+def set_input_component_event(component, value):
+    set_input_component(component, value)
+
+@socketio.on('set-thresholding-component')
+def set_thresholding_component_event(component, value1, value2):
+    set_thresholding_component(component, value1, value2)
+
+@socketio.on('set-contour-filtering-component')
+def set_contour_filtering_component_event(component, value1, value2):
+    set_contour_filtering_component(component, value1, value2)
+
+@socketio.on('set-output-component')
+def set_output_component_event(component, value):
+    set_output_component(component, value)
 
 @socketio.on('set-component')
 def set_component_event(component, value):

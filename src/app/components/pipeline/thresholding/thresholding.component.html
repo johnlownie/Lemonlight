@@ -12,56 +12,56 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Hue</label>
         <div class="col-sm-1">
-            <input name="lowerHue" [(ngModel)]="lowerHue" type="number" min="0" max="179" class="form-control">
+            <input name="hueInput.lower" [(ngModel)]="hueInput.lower" type="number" min="0" max="179" class="form-control" (change)="updateSlider(hueInput, $event, true)" (keyup)="updateSlider(hueInput, $event, true)">
         </div>
         <div class="col-sm-6 offset-sm-1 col-form-label">
-            <ion-range-slider type="double" [from]="lowerHue" [to]="upperHue" min="0" max="179" hide_from_to="true" (onChange)="setHue($event)"></ion-range-slider>
+            <ion-range-slider type="double" [from]="hueSlider.lower" [to]="hueSlider.upper" min="0" max="179" hide_from_to="true" (change)="updateInput(hueSlider, $event)"></ion-range-slider>
         </div>
         <div class="col-sm-1 offset-sm-1">
-            <input name="upperHue" [(ngModel)]="upperHue" type="number" min="0" max="179" class="form-control">
+            <input name="hueInput.upper" [(ngModel)]="hueInput.upper" type="number" min="0" max="179" class="form-control" (change)="updateSlider(hueInput, $event, false)" (keyup)="updateSlider(hueInput, $event)">
         </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Saturation</label>
         <div class="col-sm-1">
-            <input name="lowerSaturation" [(ngModel)]="lowerSaturation" type="number" min="0" max="255" class="form-control">
+            <input name="saturationLower" [(ngModel)]="saturationInput.lower" type="number" min="0" max="255" class="form-control" (change)="updateSlider(saturationInput, $event, true)" (keyup)="updateSlider(saturationInput, $event, true)">
         </div>
         <div class="col-sm-6 offset-sm-1 col-form-label">
-            <ion-range-slider type="double" [from]="lowerSaturation" [to]="upperSaturation" min="0" max="255" hide_from_to="true" (onChange)="setSaturation($event)"></ion-range-slider>
+            <ion-range-slider type="double" [from]="saturationSlider.lower" [to]="saturationSlider.upper" min="0" max="255" hide_from_to="true" (change)="updateInput(saturationSlider, $event)"></ion-range-slider>
         </div>
         <div class="col-sm-1 offset-sm-1">
-            <input name="upperSaturation" [(ngModel)]="upperSaturation" type="number" min="0" max="255" class="form-control">
+            <input name="saturationUpper" [(ngModel)]="saturationInput.upper" type="number" min="0" max="255" class="form-control" (change)="updateSlider(saturationInput, $event, false)" (keyup)="updateSlider(saturationInput, $event)">
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Value</label>
         <div class="col-sm-1">
-            <input name="lowerValue" [(ngModel)]="lowerValue" type="number" min="0" max="255" class="form-control">
+            <input name="valueLower" [(ngModel)]="valueInput.lower" type="number" min="0" max="255" class="form-control" (change)="updateSlider(valueInput, $event, true)" (keyup)="updateSlider(valueInput, $event, true)">
         </div>
         <div class="col-sm-6 offset-sm-1 col-form-label">
-            <ion-range-slider type="double" [from]="lowerValue" [to]="upperValue" min="0" max="255" hide_from_to="true" (onChange)="setValue($event)"></ion-range-slider>
+            <ion-range-slider type="double" [from]="valueSlider.lower" [to]="valueSlider.upper" min="0" max="255" hide_from_to="true" (change)="updateInput(valueSlider, $event)"></ion-range-slider>
         </div>
         <div class="col-sm-1 offset-sm-1">
-            <input name="upperValue" [(ngModel)]="upperValue" type="number" min="0" max="255" class="form-control">
+            <input name="valueUpper" [(ngModel)]="valueInput.upper" type="number" min="0" max="255" class="form-control" (change)="updateSlider(valueInput, $event, false)" (keyup)="updateSlider(valueInput, $event)">
         </div>
    </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Erosion Steps</label>
         <div class="col-sm-1">
-            <input name="erosion" [(ngModel)]="erosion" type="number" min="0" max="5" class="form-control">
+            <input name="erosionInput" [(ngModel)]="erosionInput.value" type="number" min="0" max="5" class="form-control" (change)="updateSlider(erosionInput, $event, false)" (keyup)="updateSlider(erosionInput, $event)">
         </div>
         <div class="col-sm-6 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="erosion" min="0" max="5" hide_min_max="true" (onChange)="setErosion($event)"></ion-range-slider>
+            <ion-range-slider [from]="erosionSlider.value" min="0" max="5" hide_min_max="true" (change)="updateInput(erosionSlider, $event)"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Dilation Steps</label>
         <div class="col-sm-1">
-            <input name="dilation" [(ngModel)]="dilation" type="number" min="0" max="5" class="form-control">
+            <input name="dilationInput" [(ngModel)]="dilationInput.value" type="number" min="0" max="5" class="form-control" (change)="updateSlider(dilationInput, $event, false)" (keyup)="updateSlider(dilationInput, $event)">
         </div>
         <div class="col-sm-6 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="dilation" min="0" max="5" hide_min_max="true" (onChange)="setDilation($event)"></ion-range-slider>
+            <ion-range-slider [from]="dilationSlider.value" min="0" max="5" hide_min_max="true" (change)="updateInput(dilationSlider, $event)"></ion-range-slider>
         </div>
     </div>
 </form>

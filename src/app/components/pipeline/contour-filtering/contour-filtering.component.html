@@ -1,1 +1,80 @@
-<p>contour-filtering works!</p>
+<form>
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 col-form-label">Sort Mode</label>
+        <div class="col-6">
+            <select2 class="select2" [value]="sortMode" (valueChanged)="updateDropdown('sortMode', $event.value)" [cssImport]="true" [options]="options"><option>Largest</option></select2>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Area (% of image)</label>
+        <div class="col-sm-1">
+            <input name="areaLower" [(ngModel)]="areaInput.lower" type="number" min="0" max="100" class="form-control" (change)="updateSlider(areaInput, $event)" (keyup)="updateSlider(areaInput, $event)">
+        </div>
+        <div class="col-sm-6 offset-sm-1 col-form-label">
+            <ion-range-slider type="double" [from]="areaSlider.lower" [to]="areaSlider.upper" min="0" max="100" hide_from_to="true" (onChange)="updateInput(areaSlider, $event)"></ion-range-slider>
+        </div>
+        <div class="col-sm-1 offset-sm-1">
+            <input name="areaUpper" [(ngModel)]="areaInput.upper" type="number" min="0" max="100" class="form-control" (change)="updateSlider(areaInput, $event)" (keyup)="updateSlider(areaInput, $event)">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Fullness (% of blue rect)</label>
+        <div class="col-sm-1">
+            <input name="fullnessLower" [(ngModel)]="fullnessInput.lower" type="number" min="0" max="100" class="form-control" (change)="updateSlider(fullnessInput, $event)" (keyup)="updateSlider(fullnessInput, $event)">
+        </div>
+        <div class="col-sm-6 offset-sm-1 col-form-label">
+            <ion-range-slider type="double" [from]="fullnessSlider.lower" [to]="fullnessSlider.upper" min="0" max="100" hide_from_to="true" (onChange)="updateInput(fullnessSlider, $event)"></ion-range-slider>
+        </div>
+        <div class="col-sm-1 offset-sm-1">
+            <input name="fullnessUpper" [(ngModel)]="fullnessInput.upper" type="number" min="0" max="100" class="form-control" (change)="updateSlider(fullnessInput, $event)" (keyup)="updateSlider(fullnessInput, $event)">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">W/H Ratio (yellow rect)</label>
+        <div class="col-sm-1">
+            <input name="ratioLower" [(ngModel)]="ratioInput.lower" type="number" min="0" max="100" class="form-control" (change)="updateSlider(ratioInput, $event)" (keyup)="updateSlider(ratioInput, $event)">
+        </div>
+        <div class="col-sm-6 offset-sm-1 col-form-label">
+            <ion-range-slider type="double" [from]="ratioSlider.lower" [to]="ratioSlider.upper" min="0" max="100" hide_from_to="true" (onChange)="updateInput(ratioSlider, $event)"></ion-range-slider>
+        </div>
+        <div class="col-sm-1 offset-sm-1">
+            <input name="ratioUpper" [(ngModel)]="ratioInput.upper" type="number" min="0" max="100" class="form-control" (change)="updateSlider(ratioInput, $event)" (keyup)="updateSlider(ratioInput, $event)">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 col-form-label">Direction Filter</label>
+        <div class="col-6">
+            <select2 class="select2" [value]="directionFilter" (valueChanged)="updateDropdown('directionFilter', $event.value)" [cssImport]="true" [options]="options"><option>None</option></select2>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 col-form-label">Smart Speckle Rejection</label>
+        <div class="col-sm-2">
+            <input name="smartSpeckle" [(ngModel)]="smartSpeckleInput.value" type="number" min="1" max="255" class="form-control" (change)="updateSlider(smartSpeckleInput, $event)" (keyup)="updateSlider(smartSpeckleInput, $event)">
+        </div>
+        <div class="col-sm-7 offset-sm-1 col-form-label">
+            <ion-range-slider [from]="smartSpeckleSlider.value" min="1" max="255" hide_min_max="true" (onChange)="updateInput(smartSpeckleSlider, $event)"></ion-range-slider>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 col-form-label">Target Grouping</label>
+        <div class="col-6">
+            <select2 class="select2" [value]="targetGrouping" (valueChanged)="updateDropdown('targetGrouping', $event.value)" [cssImport]="true" [options]="options"><option>Single Target</option><option>Dual Target</option><option>In Target</option></select2>
+        </div>
+    </div>
+
+    <div class="row"><h2><span>Dual-Target Filters</span></h2></div>
+
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 col-form-label">Intersection Filter</label>
+        <div class="col-6">
+            <select2 class="select2" [value]="intersectionFilter" (valueChanged)="updateDropdown('intersectionFilter', $event.value)" [cssImport]="true" [options]="options"><option>None</option></select2>
+        </div>
+    </div>
+</form>

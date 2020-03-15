@@ -30,14 +30,20 @@
         "blueBalance": 50
       },
       "thresholding": {
-        "lowerHue": 56,
-        "lowerSaturation": 201,
-        "lowerValue": 170,
-        "upperHue": 66,
-        "upperSaturation": 255,
-        "upperValue": 228,
+        "hue": {"lower": 56, "upper": 66},
+        "saturation": {"lower": 201, "upper": 255},
+        "value": {"lower": 170, "upper": 228},
         "erosion": 1,
         "dilation": 1
+      },
+      "contourFiltering": {
+        "sortMode": "Largest",
+        "area": {"lower": 0, "upper": 100},
+        "fullness": {"lower": 0, "upper": 100},
+        "ratio": {"lower": 0, "upper": 100},
+        "directionFilter": "None",
+        "smartSpeckle": 0,
+        "intersectionFilter": "None"
       },
       "output": {
         "targetingRegion": "Center",

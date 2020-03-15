@@ -14,8 +14,19 @@ export class ChatService {
     this.socket = io(apiService.getSocketUrl());
   }
   
+  public setInputComponent(key: string, value: any) {
+    this.socket.emit('set-input-component', key, value);
+  }
+  
+  public setThresholdingComponent(key: string, value1: any, value2?: any) {
+    this.socket.emit('set-thresholding-component', key, value1, value2);
+  }
+    
+  public setContourFilteringComponent(key: string, value1: any, value2?: any) {
+    this.socket.emit('set-contour-filtering-component', key, value1, value2);
+  }
+
   public setComponent(key: string, value: any) {
-    // console.log("[Emitting] Key: " + key + " - Value: " + value);
     this.socket.emit('set-component', key, value);
   }
 
@@ -24,7 +35,6 @@ export class ChatService {
   }
 
   public sendMessage(message: any) {
-    // console.log("Emitting: " + message);
     this.socket.emit('new-message', message);
   }
 
