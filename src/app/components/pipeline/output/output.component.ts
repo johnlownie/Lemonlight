@@ -45,19 +45,19 @@ export class OutputComponent implements OnInit {
 
   setTargetingRegion(value: any) {
     this.targetingRegion = value;
-    this.chatService.setComponent('targetingRegion', value);
+    this.chatService.setOutputComponent('targetingRegion', value);
     this.getData();
   }
   
   setTargetGrouping(value: any) {
     this.targetGrouping = value;
-    this.chatService.setComponent('targetGrouping', value);
+    this.chatService.setOutputComponent('targetGrouping', value);
     this.getData();
   }
   
   setCrosshairMode(value: any) {
     this.crosshairMode = value;
-    this.chatService.setComponent('crosshairMode', value);
+    this.chatService.setOutputComponent('crosshairMode', value);
     this.getData();
   }
 

@@ -25,6 +25,10 @@ export class ChatService {
   public setContourFilteringComponent(key: string, value1: any, value2?: any) {
     this.socket.emit('set-contour-filtering-component', key, value1, value2);
   }
+  
+  public setOutputComponent(key: string, value: any) {
+    this.socket.emit('set-output-component', key, value);
+  }
 
   public setComponent(key: string, value: any) {
     this.socket.emit('set-component', key, value);

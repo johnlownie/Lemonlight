@@ -76,6 +76,8 @@ upperRatio = 100
 directionFilter = 'None'
 smartSpeckle = 0
 intersectionFilter = 'None'
+lowerAreaInPixels = lowerArea * width * height / 100
+upperAreaInPixels = upperArea * width * height / 100
 
 # Output variables
 targetingRegion = "center"
@@ -117,6 +119,7 @@ def set_input_component(component, value):
         (w, h) = value.split("x")
         width = int(w)
         height = int(h)
+        set_area_by_pixels()
     elif component == 'ledState':
         ledState = value.lower()
     elif component == 'orientation':
@@ -132,6 +135,8 @@ def set_input_component(component, value):
     elif component == 'blueBalance':
         blueBalance = int(value)
         vs.stream.set(cv2.CAP_PROP_WHITE_BALANCE_BLUE_U, blueBalance - 12)
+    else:
+        print("No input component set: " + component)
 
 # set thresholding component value
 def set_thresholding_component(component, value1, value2):
@@ -153,7 +158,7 @@ def set_thresholding_component(component, value1, value2):
     elif component == 'dilation':
         dilation = int(value1)
     else:
-        print("No component set: " + component)
+        print("No thresholding component set: " + component)
 
 # set contour filtering component value
 def set_contour_filtering_component(component, value1, value2):
@@ -166,6 +171,7 @@ def set_contour_filtering_component(component, value1, value2):
     elif component == 'area':
         lowerArea = int(value1)
         upperArea = int(value2)
+        set_area_by_pixels()
     elif component == 'fullness':
         lowerFullness = int(value1)
         upperFullness = int(value2)
@@ -181,7 +187,7 @@ def set_contour_filtering_component(component, value1, value2):
     elif component == 'intersectionFilter':
         intersectionFilter = value1.lower()
     else:
-        print("No component set: " + component)
+        print("No contour filtering component set: " + component)
 
 # set output component value
 def set_output_component(component, value):
@@ -196,7 +202,7 @@ def set_output_component(component, value):
     elif component == 'crosshairMode':
         crosshairMode = value.lower()
     else:
-        print("No component set: " + component)
+        print("No output component set: " + component)
 
 # set component value
 def set_component(component, value):
@@ -208,6 +214,19 @@ def set_component(component, value):
         videoFeed = value.lower()
     else:
         print("No component set: " + component)
+
+# convert area to pixels
+def set_area_by_pixels():
+    global width, height, lowerArea, upperArea, lowerAreaInPixels, upperAreaInPixels
+
+    if sourceImage == 'snapshot':
+        frame = cv2.imread(snapshotFile)
+        (height, width, _) = frame.shape
+
+    lowerAreaInPixels = (width * height * lowerArea) / 100
+    upperAreaInPixels = (width * height * upperArea) / 100
+
+    print("W: {} - H: {} - LAIP: {} - UAIP: {}".format(width, height, lowerAreaInPixels, upperAreaInPixels))
 
 # convert commponent value
 def convert_hsv(s, b, g, r):
@@ -227,7 +246,7 @@ def convert_hsv(s, b, g, r):
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilation, outputFrame, lock, snapshotFile, targetGrouping
+    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilation, outputFrame, lock, snapshotFile, targetGrouping, lowerAreaInPixels, upperAreaInPixels
 
     # loop over frames from the video stream
     while True:
@@ -263,19 +282,28 @@ def grab_frame():
 
         # only process found contours
         if len(contours) > 0:
-            # draw a line around all the cohtours
+            # draw a line around all the contours
             cv2.drawContours(resized, contours, -1, (0, 0, 0), 1)
 
             # draw rectangle if single target otherwise 
             if targetGrouping == 'single target':
-                # find largest contour and draw bounding box
-                c = max(contours, key=cv2.contourArea)
-                x, y, w, h = cv2.boundingRect(c)
-                cv2.rectangle(resized, (x, y), (x + w, y + h), (149, 228, 234), 1)
+                areas = []
+                for c in contours:
+                    area = cv2.contourArea(c)
+                    if area >= lowerAreaInPixels and area <= upperAreaInPixels:
+                        # print("A: {}".format(area))
+                        areas.append(c)
 
-                #draw crosshair
-                M = cv2.moments(c)
-                center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+                # find largest contour and draw bounding box
+                if len(areas) > 0:
+                    c = max(areas, key=cv2.contourArea)
+                    x, y, w, h = cv2.boundingRect(c)
+                    cv2.rectangle(resized, (x, y), (x + w, y + h), (149, 228, 234), 1)
+                    cv2.putText(resized, "{} x {}".format(w, h), (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
+
+                    #draw crosshair
+                    M = cv2.moments(c)
+                    center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
                 cv2.drawMarker(resized, center, (0, 0, 255), cv2.MARKER_CROSS, 10, 1)
 

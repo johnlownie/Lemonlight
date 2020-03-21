@@ -9,7 +9,7 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Area (% of image)</label>
         <div class="col-sm-1">
-            <input name="areaLower" [(ngModel)]="areaInput.lower" type="number" min="0" max="100" class="form-control" (change)="updateSlider(areaInput, $event)" (keyup)="updateSlider(areaInput, $event)">
+            <input name="areaLower" [(ngModel)]="areaInput.lower" type="number" min="0" max="100" class="form-control" (change)="updateSlider(areaInput, $event, true)" (keyup)="updateSlider(areaInput, $event, true)">
         </div>
         <div class="col-sm-6 offset-sm-1 col-form-label">
             <ion-range-slider type="double" [from]="areaSlider.lower" [to]="areaSlider.upper" min="0" max="100" hide_from_to="true" (onChange)="updateInput(areaSlider, $event)"></ion-range-slider>
@@ -22,7 +22,7 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Fullness (% of blue rect)</label>
         <div class="col-sm-1">
-            <input name="fullnessLower" [(ngModel)]="fullnessInput.lower" type="number" min="0" max="100" class="form-control" (change)="updateSlider(fullnessInput, $event)" (keyup)="updateSlider(fullnessInput, $event)">
+            <input name="fullnessLower" [(ngModel)]="fullnessInput.lower" type="number" min="0" max="100" class="form-control" (change)="updateSlider(fullnessInput, $event, true)" (keyup)="updateSlider(fullnessInput, $event, true)">
         </div>
         <div class="col-sm-6 offset-sm-1 col-form-label">
             <ion-range-slider type="double" [from]="fullnessSlider.lower" [to]="fullnessSlider.upper" min="0" max="100" hide_from_to="true" (onChange)="updateInput(fullnessSlider, $event)"></ion-range-slider>
@@ -35,7 +35,7 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">W/H Ratio (yellow rect)</label>
         <div class="col-sm-1">
-            <input name="ratioLower" [(ngModel)]="ratioInput.lower" type="number" min="0" max="100" class="form-control" (change)="updateSlider(ratioInput, $event)" (keyup)="updateSlider(ratioInput, $event)">
+            <input name="ratioLower" [(ngModel)]="ratioInput.lower" type="number" min="0" max="100" class="form-control" (change)="updateSlider(ratioInput, $event, true)" (keyup)="updateSlider(ratioInput, $event, true)">
         </div>
         <div class="col-sm-6 offset-sm-1 col-form-label">
             <ion-range-slider type="double" [from]="ratioSlider.lower" [to]="ratioSlider.upper" min="0" max="100" hide_from_to="true" (onChange)="updateInput(ratioSlider, $event)"></ion-range-slider>
