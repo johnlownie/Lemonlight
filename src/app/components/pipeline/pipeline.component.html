@@ -33,7 +33,7 @@
                         <app-thresholding (magicWandEvent)="receiveMagicWand($event)" (thresholdingChangeEvent)="changeThresholding($event)"></app-thresholding>
                     </div>
                     <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                        <app-contour-filtering></app-contour-filtering>
+                        <app-contour-filtering (contourFilteringChangeEvent)="changeContourFiltering($event)" [outputChangeEvent]="changeOutput"></app-contour-filtering>
                     </div>
                     <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
                         <app-output (outputChangeEvent)="changeOutput($event)"></app-output>

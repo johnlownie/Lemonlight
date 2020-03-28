@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { ApiService } from 'src/app/services/api.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -6,6 +6,7 @@ import { PipelineService } from 'src/app/services/pipeline.service';
 
 import { PipelineModel } from 'src/app/models/pipeline.model';
 import { ContourFilteringModel } from 'src/app/models/contour-filtering.model';
+import { OutputModel } from 'src/app/models/output.model';
 
 @Component({
   selector: 'app-contour-filtering',
@@ -34,6 +35,7 @@ export class ContourFilteringComponent implements OnInit {
   options: Select2Options = { minimumResultsForSearch: -1, theme: 'lemonlight' };
 
   @Output() contourFilteringChangeEvent = new EventEmitter<ContourFilteringModel>();
+  @Input() outputChangeEvent: OutputModel;
 
   constructor(private apiService : ApiService, private chatService: ChatService, private pipelineService: PipelineService) { }
 

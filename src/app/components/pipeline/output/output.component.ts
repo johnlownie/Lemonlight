@@ -18,6 +18,8 @@ export class OutputComponent implements OnInit {
   targetingRegion: string;
   targetGrouping: string;
   crosshairMode: string;
+  crosshairAX: number;
+  crosshairAY: number;
 
   options: Select2Options = { minimumResultsForSearch: -1, theme: 'lemonlight' };
 
@@ -32,6 +34,8 @@ export class OutputComponent implements OnInit {
       this.targetingRegion = pipeline.output.targetingRegion;
       this.targetGrouping = pipeline.output.targetGrouping;
       this.crosshairMode = pipeline.output.crosshairMode;
+      this.crosshairAX = pipeline.output.crosshairAX;
+      this.crosshairAY = pipeline.output.crosshairAY;
     });
   }
   
@@ -39,6 +43,8 @@ export class OutputComponent implements OnInit {
     this.pipeline.output.targetingRegion = this.targetingRegion;
     this.pipeline.output.targetGrouping = this.targetGrouping;
     this.pipeline.output.crosshairMode = this.crosshairMode;
+    this.pipeline.output.crosshairAX = this.crosshairAX;
+    this.pipeline.output.crosshairAY = this.crosshairAY;
     
     this.outputChangeEvent.emit(this.pipeline.output);
   }
@@ -59,6 +65,10 @@ export class OutputComponent implements OnInit {
     this.crosshairMode = value;
     this.chatService.setOutputComponent('crosshairMode', value);
     this.getData();
+  }
+
+  setOutputComponent(component: string, value: any) {
+    this.chatService.setOutputComponent(component, value);
   }
 
 }

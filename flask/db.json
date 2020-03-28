@@ -48,7 +48,9 @@
       "output": {
         "targetingRegion": "Center",
         "targetGrouping": "Single Target",
-        "crosshairMode": "Single Crosshair"
+        "crosshairMode": "Single Crosshair",
+        "crosshairX": 0,
+        "corsshairY": 0
       }
     }
   ]

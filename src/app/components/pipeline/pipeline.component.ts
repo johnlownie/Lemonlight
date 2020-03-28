@@ -11,6 +11,7 @@ import { ChatService } from 'src/app/services/chat.service';
 import { PipelineModel } from 'src/app/models/pipeline.model';
 import { InputModel } from 'src/app/models/input.model';
 import { ThresholdingModel } from 'src/app/models/thresholding.model';
+import { ContourFilteringModel } from 'src/app/models/contour-filtering.model';
 import { OutputModel } from 'src/app/models/output.model';
 
 @Component({
@@ -125,10 +126,14 @@ export class PipelineComponent implements OnInit {
     this.selectedPipeline.input = input;
   }
   
-  changeThresholding(thresholding: ThresholdingModel) {
+  changeThresholding(contourFilteringModel: ContourFilteringModel) {
+    this.selectedPipeline.contourFiltering = contourFilteringModel;
+  }
+    
+  changeContourFiltering(thresholding: ThresholdingModel) {
     this.selectedPipeline.thresholding = thresholding;
   }
-   
+ 
   changeOutput(output: OutputModel) {
     this.selectedPipeline.output = output;
   }

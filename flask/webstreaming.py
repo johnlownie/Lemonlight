@@ -83,6 +83,12 @@ upperAreaInPixels = upperArea * width * height / 100
 targetingRegion = "center"
 targetGrouping = "single target"
 crosshairMode = "single crosshair"
+crosshair_x = int(width / 2)
+crosshair_y = int(height / 2)
+
+# Other variables
+center_x = 0
+center_y = 0
 
 # Actions
 takeSnapshot = False
@@ -191,7 +197,7 @@ def set_contour_filtering_component(component, value1, value2):
 
 # set output component value
 def set_output_component(component, value):
-    global targetingRegion, targetGrouping, crosshairMode
+    global targetingRegion, targetGrouping, crosshairMode, crosshair_x, crosshair_y, center_x, center_y
 
     print("C: {} - V: {}".format(component, value))
 
@@ -201,6 +207,13 @@ def set_output_component(component, value):
         targetGrouping = value.lower()
     elif component == 'crosshairMode':
         crosshairMode = value.lower()
+    elif component == 'calibrateXY':
+        crosshair_x = center_x
+        crosshair_y = center_y
+    elif component == 'calibrateX':
+        crosshair_x = center_x
+    elif component == 'calibrateY':
+        crosshair_y = center_y
     else:
         print("No output component set: " + component)
 
@@ -246,7 +259,7 @@ def convert_hsv(s, b, g, r):
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilation, outputFrame, lock, snapshotFile, targetGrouping, lowerAreaInPixels, upperAreaInPixels
+    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilation, outputFrame, lock, snapshotFile, targetGrouping, lowerAreaInPixels, upperAreaInPixels, center_x, center_y
 
     # loop over frames from the video stream
     while True:
@@ -304,8 +317,8 @@ def grab_frame():
                     #draw crosshair
                     M = cv2.moments(c)
                     center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-
-                cv2.drawMarker(resized, center, (0, 0, 255), cv2.MARKER_CROSS, 10, 1)
+                    center_x = center[0]
+                    center_y = center[1]
 
             elif targetGrouping == 'dual target':
                 try: hierarchy = hierarchy[0]
@@ -319,11 +332,31 @@ def grab_frame():
                     min_x, max_x = min(x, min_x), max(x + w, max_x)
                     min_y, max_y = min(y, min_y), max(y + h, max_y)
 
-                    if w > 80 and h > 80:
-                        cv2.rectangle(resized, (x, y), (x + w, y + h), (0, 255, 0), 1)
+                    # if w > 80 and h > 80:
+                        # cv2.rectangle(resized, (x, y), (x + w, y + h), (0, 255, 0), 1)
 
                 if max_x - min_x > 0 and max_y - min_y > 0:
                     cv2.rectangle(resized, (min_x, min_y), (max_x, max_y), (202, 219, 45), 2)
+                    center_x = min_x + int((max_x - min_x) / 2)
+                    center_y = min_y + int((max_y - min_y) / 2)
+
+
+            # draw small crosshair
+            cv2.line(resized, (center_x, center_y - 5), (center_x, center_y - 15), (0, 0, 255), 3)
+            cv2.line(resized, (center_x, center_y + 5), (center_x, center_y + 15), (0, 0, 255), 3)
+            cv2.line(resized, (center_x - 5, center_y), (center_x - 15, center_y), (0, 0, 255), 3)
+            cv2.line(resized, (center_x + 5, center_y), (center_x + 15, center_y), (0, 0, 255), 3)
+
+            cv2.line(mask, (center_x, center_y - 5), (center_x, center_y - 15), (0, 0, 255), 3)
+            cv2.line(mask, (center_x, center_y + 5), (center_x, center_y + 15), (0, 0, 255), 3)
+            cv2.line(mask, (center_x - 5, center_y), (center_x - 15, center_y), (0, 0, 255), 3)
+            cv2.line(mask, (center_x + 5, center_y), (center_x + 15, center_y), (0, 0, 255), 3)
+
+            # draw targeting crosshair
+            cv2.line(resized, (crosshair_x, crosshair_y - 15), (crosshair_x, crosshair_y - 45), (0, 255, 0), 1)
+            cv2.line(resized, (crosshair_x, crosshair_y + 15), (crosshair_x, crosshair_y + 45), (0, 255, 0), 1)
+            cv2.line(resized, (crosshair_x - 15, crosshair_y), (crosshair_x - 45, crosshair_y), (0, 255, 0), 1)
+            cv2.line(resized, (crosshair_x + 15, crosshair_y), (crosshair_x + 45, crosshair_y), (0, 255, 0), 1)
 
         # for i in range(len(cnts)):
         #     hull.append(cv2.convexHull(cnts[i], False))
