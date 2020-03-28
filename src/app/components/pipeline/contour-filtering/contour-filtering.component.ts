@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Select2Component, Select2OptionData } from 'ng2-select2'
 
 import { ApiService } from 'src/app/services/api.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -6,7 +7,6 @@ import { PipelineService } from 'src/app/services/pipeline.service';
 
 import { PipelineModel } from 'src/app/models/pipeline.model';
 import { ContourFilteringModel } from 'src/app/models/contour-filtering.model';
-import { OutputModel } from 'src/app/models/output.model';
 
 @Component({
   selector: 'app-contour-filtering',
@@ -33,13 +33,16 @@ export class ContourFilteringComponent implements OnInit {
   intersectionFilter: string;
 
   options: Select2Options = { minimumResultsForSearch: -1, theme: 'lemonlight' };
+  public targetGroupingData: Array<Select2OptionData>;
 
+  @ViewChild('targetGroupingSelect', {static: false}) targetGroupingSelect: Select2Component;
   @Output() contourFilteringChangeEvent = new EventEmitter<ContourFilteringModel>();
-  @Input() outputChangeEvent: OutputModel;
 
   constructor(private apiService : ApiService, private chatService: ChatService, private pipelineService: PipelineService) { }
 
   ngOnInit() {
+    this.pipelineService.getTargetingGroupList().subscribe(targetGroupingData => this.targetGroupingData = targetGroupingData);
+    
     this.apiService.getDefaultPipeline().subscribe(pipeline => {
       this.pipeline = pipeline;
 
@@ -58,6 +61,8 @@ export class ContourFilteringComponent implements OnInit {
       this.targetGrouping = pipeline.output.targetGrouping;
       this.intersectionFilter = pipeline.contourFiltering.intersectionFilter;
     });
+
+    this.pipelineService.targetGrouping.subscribe(targetGrouping => this.targetGrouping = targetGrouping);
   }
 
   getData() {
@@ -86,6 +91,7 @@ export class ContourFilteringComponent implements OnInit {
         break;
       case "targetGrouping":
         this.targetGrouping = $value;
+        this.pipelineService.setTargetGrouping($value);
         break;
       case "intersectionFilter":
         this.intersectionFilter = $value;
