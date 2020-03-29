@@ -42,6 +42,8 @@ export class ContourFilteringComponent implements OnInit {
 
   ngOnInit() {
     this.pipelineService.getTargetingGroupList().subscribe(targetGroupingData => this.targetGroupingData = targetGroupingData);
+
+    this.pipelineService.targetGrouping.subscribe(targetGrouping => this.targetGrouping = targetGrouping);
     
     this.apiService.getDefaultPipeline().subscribe(pipeline => {
       this.pipeline = pipeline;
@@ -61,8 +63,6 @@ export class ContourFilteringComponent implements OnInit {
       this.targetGrouping = pipeline.output.targetGrouping;
       this.intersectionFilter = pipeline.contourFiltering.intersectionFilter;
     });
-
-    this.pipelineService.targetGrouping.subscribe(targetGrouping => this.targetGrouping = targetGrouping);
   }
 
   getData() {

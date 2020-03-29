@@ -8,6 +8,7 @@ import imutils
 import json
 import logging
 import numpy as np
+import math
 import time
 import cv2
 import os
@@ -81,14 +82,20 @@ upperAreaInPixels = upperArea * width * height / 100
 
 # Output variables
 targetingRegion = "center"
-targetGrouping = "single target"
+targetGrouping = "single"
 crosshairMode = "single crosshair"
 crosshair_x = int(width / 2)
 crosshair_y = int(height / 2)
 
 # Other variables
-center_x = 0
-center_y = 0
+cx = 0
+cy = 0
+nx = 0
+ny = 0
+hfov = 54
+vfov = 41
+vpw = 2.0 * math.tan(hfov / 2)
+vph = 2.0 * math.tan(vfov / 2)
 
 # Actions
 takeSnapshot = False
@@ -197,7 +204,7 @@ def set_contour_filtering_component(component, value1, value2):
 
 # set output component value
 def set_output_component(component, value):
-    global targetingRegion, targetGrouping, crosshairMode, crosshair_x, crosshair_y, center_x, center_y
+    global targetingRegion, targetGrouping, crosshairMode, crosshair_x, crosshair_y, cx, cy
 
     print("C: {} - V: {}".format(component, value))
 
@@ -208,12 +215,12 @@ def set_output_component(component, value):
     elif component == 'crosshairMode':
         crosshairMode = value.lower()
     elif component == 'calibrateXY':
-        crosshair_x = center_x
-        crosshair_y = center_y
+        crosshair_x = cx
+        crosshair_y = cy
     elif component == 'calibrateX':
-        crosshair_x = center_x
+        crosshair_x = cx
     elif component == 'calibrateY':
-        crosshair_y = center_y
+        crosshair_y = cy
     else:
         print("No output component set: " + component)
 
@@ -230,7 +237,7 @@ def set_component(component, value):
 
 # convert area to pixels
 def set_area_by_pixels():
-    global width, height, lowerArea, upperArea, lowerAreaInPixels, upperAreaInPixels
+    global width, height, lowerArea, upperArea, lowerAreaInPixels, upperAreaInPixels, nx, ny
 
     if sourceImage == 'snapshot':
         frame = cv2.imread(snapshotFile)
@@ -259,7 +266,7 @@ def convert_hsv(s, b, g, r):
 
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilation, outputFrame, lock, snapshotFile, targetGrouping, lowerAreaInPixels, upperAreaInPixels, center_x, center_y
+    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilation, outputFrame, lock, snapshotFile, targetGrouping, lowerAreaInPixels, upperAreaInPixels, cx, cy, vpw, vph
 
     # loop over frames from the video stream
     while True:
@@ -298,18 +305,21 @@ def grab_frame():
             # draw a line around all the contours
             cv2.drawContours(resized, contours, -1, (0, 0, 0), 1)
 
+            # get area of contours
+            areas = []
+            bounds = []
+            for c in contours:
+                area = cv2.contourArea(c)
+                if area >= lowerAreaInPixels and area <= upperAreaInPixels:
+                    bounds.append(c)
+                    areas.append(area)
+
             # draw rectangle if single target otherwise 
-            if targetGrouping == 'single target':
-                areas = []
-                for c in contours:
-                    area = cv2.contourArea(c)
-                    if area >= lowerAreaInPixels and area <= upperAreaInPixels:
-                        # print("A: {}".format(area))
-                        areas.append(c)
+            if targetGrouping == 'single':
 
                 # find largest contour and draw bounding box
-                if len(areas) > 0:
-                    c = max(areas, key=cv2.contourArea)
+                if len(bounds) > 0:
+                    c = max(bounds, key=cv2.contourArea)
                     x, y, w, h = cv2.boundingRect(c)
                     cv2.rectangle(resized, (x, y), (x + w, y + h), (149, 228, 234), 1)
                     cv2.putText(resized, "{} x {}".format(w, h), (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
@@ -317,10 +327,10 @@ def grab_frame():
                     #draw crosshair
                     M = cv2.moments(c)
                     center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-                    center_x = center[0]
-                    center_y = center[1]
+                    cx = center[0]
+                    cy = center[1]
 
-            elif targetGrouping == 'dual target':
+            elif targetGrouping == 'dual':
                 try: hierarchy = hierarchy[0]
                 except: hierarchy = []
 
@@ -337,20 +347,31 @@ def grab_frame():
 
                 if max_x - min_x > 0 and max_y - min_y > 0:
                     cv2.rectangle(resized, (min_x, min_y), (max_x, max_y), (202, 219, 45), 2)
-                    center_x = min_x + int((max_x - min_x) / 2)
-                    center_y = min_y + int((max_y - min_y) / 2)
+                    cx = min_x + int((max_x - min_x) / 2)
+                    cy = min_y + int((max_y - min_y) / 2)
 
+            # calculate degrees to target
+            nx = int((1 / (width / 2)) * (cx - ((width / 2) - 0.5)))
+            ny = int((1 / (height / 2)) * (((height / 2) - 0.5) - cy))
+            px = int(vpw / 2 * nx)
+            py = int(vph / 2 * ny)
+            tx = math.atan2(1, px)
+            ty = math.atan2(1, py)
+            ta = sum(areas) / (width * height) * 100
+            print("vpw: {} - vph: {} cx: {} cy: {} nx: {} ny: {} px: {} py: {} tx: {} ty {} ta {}".format(vpw, vph, cx, cy, nx, ny, px, py, tx, ty, ta))
+            data = { "tx": tx, "ty": ty, "ta": ta }
+            socketio.emit('degrees', data)
 
             # draw small crosshair
-            cv2.line(resized, (center_x, center_y - 5), (center_x, center_y - 15), (0, 0, 255), 3)
-            cv2.line(resized, (center_x, center_y + 5), (center_x, center_y + 15), (0, 0, 255), 3)
-            cv2.line(resized, (center_x - 5, center_y), (center_x - 15, center_y), (0, 0, 255), 3)
-            cv2.line(resized, (center_x + 5, center_y), (center_x + 15, center_y), (0, 0, 255), 3)
+            cv2.line(resized, (cx, cy - 5), (cx, cy - 15), (0, 0, 255), 3)
+            cv2.line(resized, (cx, cy + 5), (cx, cy + 15), (0, 0, 255), 3)
+            cv2.line(resized, (cx - 5, cy), (cx - 15, cy), (0, 0, 255), 3)
+            cv2.line(resized, (cx + 5, cy), (cx + 15, cy), (0, 0, 255), 3)
 
-            cv2.line(mask, (center_x, center_y - 5), (center_x, center_y - 15), (0, 0, 255), 3)
-            cv2.line(mask, (center_x, center_y + 5), (center_x, center_y + 15), (0, 0, 255), 3)
-            cv2.line(mask, (center_x - 5, center_y), (center_x - 15, center_y), (0, 0, 255), 3)
-            cv2.line(mask, (center_x + 5, center_y), (center_x + 15, center_y), (0, 0, 255), 3)
+            cv2.line(mask, (cx, cy - 5), (cx, cy - 15), (0, 0, 255), 3)
+            cv2.line(mask, (cx, cy + 5), (cx, cy + 15), (0, 0, 255), 3)
+            cv2.line(mask, (cx - 5, cy), (cx - 15, cy), (0, 0, 255), 3)
+            cv2.line(mask, (cx + 5, cy), (cx + 15, cy), (0, 0, 255), 3)
 
             # draw targeting crosshair
             cv2.line(resized, (crosshair_x, crosshair_y - 15), (crosshair_x, crosshair_y - 45), (0, 255, 0), 1)

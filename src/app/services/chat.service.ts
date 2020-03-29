@@ -49,4 +49,12 @@ export class ChatService {
       });
     });
   }
+
+  public getDegrees = () => {
+    return Observable.create((observer) => {
+      this.socket.on('degrees', (msg) => {
+        observer.next(msg);
+      });
+    });
+  }
 }

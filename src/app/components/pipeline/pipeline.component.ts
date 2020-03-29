@@ -37,20 +37,30 @@ export class PipelineComponent implements OnInit {
 
   spresp: any = [];
 
-  tx: number = -14.74;
-  ty: number = -0.16;
-  ta: number = 0.699;
-  tl: number = 3.5;
+  tx: any = 0.0;
+  ty: any = 0.0;
+  ta: any = 0.0;
+  tl: any = 0.0;
 
   constructor(private apiService : ApiService, private pipelineService : PipelineService, private chatService: ChatService) { }
 
   ngOnInit() {
     this.apiService.isConnected.subscribe(isConnected => this.isApiConnected = isConnected);
     this.streamUrl = this.apiService.getStreamUrl();
+    
     this.apiService.getPipelines().subscribe(data => {
       this.pipelines = data;
       this.selectedPipeline = this.pipelines[0];
     });
+
+    this.chatService.getDegrees().subscribe((message: any) => {
+      let  tx = (Math.round(message.tx * 100) / 100).toFixed(2);
+      this.tx = parseFloat(tx) > 0 ? `+${tx}` : tx;
+      let  ty = (Math.round(message.ty * 100) / 100).toFixed(2);
+      this.ty = parseFloat(ty) > 0 ? `+${ty}` : ty;
+      this.ta = (Math.round(message.ta * 100) / 100).toFixed(2);
+    });
+
     this.pipelineService.streamBorderStyle.subscribe(streamBorderStyle => this.streamBorderStyle = streamBorderStyle);
   }
 
