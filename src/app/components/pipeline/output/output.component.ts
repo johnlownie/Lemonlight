@@ -37,13 +37,13 @@ export class OutputComponent implements OnInit {
       this.pipeline = pipeline;
 
       this.targetingRegion = pipeline.output.targetingRegion;
-      // this.targetGrouping = pipeline.output.targetGrouping;
+      this.targetGrouping = pipeline.output.targetGrouping;
       this.crosshairMode = pipeline.output.crosshairMode;
       this.crosshairAX = pipeline.output.crosshairAX;
       this.crosshairAY = pipeline.output.crosshairAY;
-    });
 
-    this.pipelineService.targetGrouping.subscribe(targetGrouping => this.targetGrouping = targetGrouping);
+      this.pipelineService.targetGrouping.subscribe(targetGrouping => this.targetGrouping = targetGrouping);
+    });
   }
 
   getData() {

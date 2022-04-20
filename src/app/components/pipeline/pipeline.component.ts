@@ -63,6 +63,10 @@ export class PipelineComponent implements OnInit {
 
     this.pipelineService.streamBorderStyle.subscribe(streamBorderStyle => this.streamBorderStyle = streamBorderStyle);
   }
+  
+  deleteSnapshot() {
+    this.chatService.setComponent('deleteSnapshot', true);
+  }
 
   receiveMagicWand($event) {
     this.magicWand = $event;
@@ -146,6 +150,10 @@ export class PipelineComponent implements OnInit {
  
   changeOutput(output: OutputModel) {
     this.selectedPipeline.output = output;
+  }
+
+  isSourceCamera() {
+    return this.selectedPipeline.input.sourceImage === "Camera";
   }
 
   updatePipeline() {

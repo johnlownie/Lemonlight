@@ -23,7 +23,7 @@ export class InputComponent implements OnInit {
 
   exposureInput = {name: 'exposure', value: 0};
   blackLevelInput = {name: 'blackLevel', value: 0};
-  redBalanceInput = {name: 'readBalance', value: 0};
+  redBalanceInput = {name: 'redBalance', value: 0};
   blueBalanceInput = {name: 'blueBalance', value: 0};
 
   exposureSlider = {name: 'exposure', value: 0};
@@ -68,49 +68,8 @@ export class InputComponent implements OnInit {
     
     this.inputChangeEvent.emit(this.pipeline.input);
   }
-  
-  updateDropdown($component: string, $value: any) {
-    switch($component) {
-      case "pipelineType":
-        this.pipelineType = $value;
-        break;
-      case "sourceImage":
-        this.sourceImage = $value;
-        break;
-      case "resolution":
-        this.resolution = $value;
-        break;
-      case "ledState":
-        this.ledState = $value;
-        break;
-      case "orientation":
-        this.orientation = $value;
-        break;
-    }
-    this.chatService.setInputComponent($component, $value);
-    this.getData();
-  }
-
-  updateInput($slider: any, $event: any) {
-    switch($slider.name) {
-      case "exposure":
-        this.exposureInput.value = $event.from;
-        break;
-      case "blackLevel":
-        this.blackLevelInput.value = $event.from;
-        break;
-      case "readBalance":
-        this.redBalanceInput.value = $event.from;
-        break;
-      case "blueBalance":
-        this.blueBalanceInput.value = $event.from;
-        break;
-    }
-    this.chatService.setInputComponent($slider.name, $event.from);
-    this.getData();
-  }
     
-  updateSlider($input: any, $event: any) {
+  onInputChange($input: any, $event: any) {
     switch($input.name) {
       case "exposure":
         this.exposureSlider.value = $event.target.value;
@@ -118,7 +77,7 @@ export class InputComponent implements OnInit {
       case "blackLevel":
         this.blackLevelSlider.value = $event.target.value;
         break;
-      case "readBalance":
+      case "redBalance":
         this.redBalanceSlider.value = $event.target.value;
         break;
       case "blueBalance":
@@ -126,6 +85,30 @@ export class InputComponent implements OnInit {
         break;
     }
     this.chatService.setInputComponent($input.name, $event.target.value);
+    this.getData();
+  }
+  
+  onSelectChange($component: string, $value: any) {
+    this.chatService.setInputComponent($component, $value);
+    this.getData();
+  }
+
+  onSliderChange($slider: any, $event: any) {
+    switch($slider.name) {
+      case "exposure":
+        this.exposureInput.value = $event.from;
+        break;
+      case "blackLevel":
+        this.blackLevelInput.value = $event.from;
+        break;
+      case "redBalance":
+        this.redBalanceInput.value = $event.from;
+        break;
+      case "blueBalance":
+        this.blueBalanceInput.value = $event.from;
+        break;
+    }
+    this.chatService.setInputComponent($slider.name, $event.from);
     this.getData();
   }
 }

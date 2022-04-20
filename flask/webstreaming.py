@@ -4,6 +4,7 @@
 import threading
 import argparse
 import datetime
+import engineio
 import imutils
 import json
 import logging
@@ -20,10 +21,11 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 
 # initialize a flask object
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
-CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+# CORS(app)
+# app.config['CORS_HEADERS'] = 'Content-Type'
+socketio = SocketIO(app, cors_allowed_origins="*", logger=False)
 
 # initialize the output frame and a lock used to ensure thread-safe
 # exchanges of the output frames (useful for multiple browsers/tabs are viewing tthe stream)
@@ -41,7 +43,9 @@ outputFrame = np.zeros(shape=(height, width, 3), dtype=np.uint8)
 min_area = 100
 
 # set up logging
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
+weblog = logging.getLogger('werkzeug')
+weblog.setLevel(logging.ERROR)
 
 # Frame variables
 videoFeed = "colour"
@@ -87,18 +91,23 @@ crosshairMode = "single crosshair"
 crosshair_x = int(width / 2)
 crosshair_y = int(height / 2)
 
-# Other variables
+# center pixel coordinates
 cx = 0
 cy = 0
+
+# normalized pixel coordinates
 nx = 0
 ny = 0
+
+# camera's horizontal and vertical field of view
 hfov = 54
 vfov = 41
-vpw = 2.0 * math.tan(hfov / 2)
-vph = 2.0 * math.tan(vfov / 2)
+
+# view plane width and height
+vpw = 2.0 * math.tan(hfov / 2 * math.pi / 180)
+vph = 2.0 * math.tan(vfov / 2 * math.pi / 180)
 
 # Actions
-takeSnapshot = False
 imagePath = './snapshots'
 snapshotFile = os.path.join(imagePath, "default.jpg")
 
@@ -232,6 +241,10 @@ def set_component(component, value):
 
     if component == 'videoFeed':
         videoFeed = value.lower()
+    elif component == 'deleteSnapshot':
+        delete_snapshot()
+    elif component == 'takeSnapshot':
+        save_snapshot()
     else:
         print("No component set: " + component)
 
@@ -264,10 +277,17 @@ def convert_hsv(s, b, g, r):
     print(data)
     return data
 
+def normalize_coordinates(px, py):
+    global width, height
+    x = (1/(width/2)) * (px - (width/2) - .5)
+    y = (1/(height/2)) * ((height/2) - .5 - py)
+    return x, y
+
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
-    global vs, sourceImage, orientation, videoFeed, width, height, frame, resized, blurred, hsv, mask, erosion, dilation, outputFrame, lock, snapshotFile, targetGrouping, lowerAreaInPixels, upperAreaInPixels, cx, cy, vpw, vph
+    global vs, sourceImage, orientation, videoFeed, hfov, vfov, width, height, frame, resized, blurred, hsv, mask, erosion, dilation, outputFrame, lock, snapshotFile, targetGrouping, lowerAreaInPixels, upperAreaInPixels, cx, cy, vpw, vph
 
+    counter = 0
     # loop over frames from the video stream
     while True:
         # initialize variables
@@ -324,11 +344,14 @@ def grab_frame():
                     cv2.rectangle(resized, (x, y), (x + w, y + h), (149, 228, 234), 1)
                     cv2.putText(resized, "{} x {}".format(w, h), (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
 
-                    #draw crosshair
+                    # get center of contour
                     M = cv2.moments(c)
-                    center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-                    cx = center[0]
-                    cy = center[1]
+
+                    if M["m00"] != 0:
+                        cx = int(M["m10"] / M["m00"])
+                        cy = int(M["m01"] / M["m00"])
+                    else:
+                        cx = cy = 0
 
             elif targetGrouping == 'dual':
                 try: hierarchy = hierarchy[0]
@@ -351,16 +374,25 @@ def grab_frame():
                     cy = min_y + int((max_y - min_y) / 2)
 
             # calculate degrees to target
-            nx = int((1 / (width / 2)) * (cx - ((width / 2) - 0.5)))
-            ny = int((1 / (height / 2)) * (((height / 2) - 0.5) - cy))
-            px = int(vpw / 2 * nx)
-            py = int(vph / 2 * ny)
-            tx = math.atan2(1, px)
-            ty = math.atan2(1, py)
+            # cx = 640
+            # cy = 480
+            nx, ny = normalize_coordinates(cx, cy)
+            px = vpw / 2 * nx
+            py = vph / 2 * ny
+            # ax = math.atan2(1, round(px, 2))
+            # ay = math.atan2(1, round(py, 2))
+            ax = math.atan(px)
+            ay = math.atan(py)
+            tx = math.degrees(ax)
+            ty = math.degrees(ay)
             ta = sum(areas) / (width * height) * 100
-            print("vpw: {} - vph: {} cx: {} cy: {} nx: {} ny: {} px: {} py: {} tx: {} ty {} ta {}".format(vpw, vph, cx, cy, nx, ny, px, py, tx, ty, ta))
+
+            if counter % 1000 == 0:
+                print("width: {} - height: {} - cx: {} - cx: {} vpw: {} vph: {} nx: {} ny: {} px: {} py: {} ax: {} ay {} tx {} ty {} ta {}".format(width, height, cx, cy, round(vpw, 2), round(vph, 2), round(nx, 2), round(ny, 2), round(px, 2), round(py, 2), round(ax, 2), round(ay, 2), round(tx, 2),  round(ty, 2), ta))
+                counter = 0
+
             data = { "tx": tx, "ty": ty, "ta": ta }
-            socketio.emit('degrees', data)
+            socketio.emit('degrees', data, namespace='/test')
 
             # draw small crosshair
             cv2.line(resized, (cx, cy - 5), (cx, cy - 15), (0, 0, 255), 3)
@@ -392,9 +424,9 @@ def grab_frame():
         # cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
         # draw the FPS count on the image
-        if sourceImage == 'camera':
-            cv2.putText(resized, "{:.1f}".format(fps.fps()), (1, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
-            cv2.putText(mask, "{:.1f}".format(fps.fps()), (1, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
+        # if sourceImage == 'camera':
+            # cv2.putText(resized, "{:.1f}".format(fps.fps()), (1, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
+            # cv2.putText(mask, "{:.1f}".format(fps.fps()), (1, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (102,191,14), 1, cv2.LINE_AA)
 
         # grab the current timestamp and draw it on the frame
         # timestamp = datetime.datetime.now()
@@ -409,6 +441,15 @@ def grab_frame():
 
         # update the frame counter
         fps.update()
+        counter += 1
+
+def delete_snapshot():
+    global snapshotFile
+
+    files = glob.glob(os.path.join(imagePath, "*"))
+    snapshotFile = max(files, key=os.path.getctime)
+    os.remove(snapshotFile)
+    load_snapshot()
 
 def load_snapshot():
     global snapshotFile
@@ -449,6 +490,7 @@ def generate():
         # yield the output frame in the byte format
         yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
 
+# setup routing and sockets
 @app.route("/")
 def index():
     # return the rendered template
@@ -462,30 +504,44 @@ def video_feed():
 def messageReceived(methods=['GET', 'POST']):
     print('Message was received!!')
 
-@socketio.on('set-input-component')
+@socketio.on('connect', namespace='/test')
+def client_connect(auth):
+    print('Client connected - sending ack')
+    socketio.emit('ack-response', {'connect': True}, namespace='/test')
+
+@socketio.on('disconnect', namespace='/test')
+def client_disconnect():
+    print('Client disconnected')
+
+@socketio.on('new-message', namespace='/test')
+def handle_my_custom_event(json, methods=['GET', 'POST']):
+    print('Received: ' + str(json))
+    socketio.emit('ack-response', json, callback=messageReceived, namespace='/test')
+
+@socketio.on('set-input-component', namespace='/test')
 def set_input_component_event(component, value):
     set_input_component(component, value)
 
-@socketio.on('set-thresholding-component')
+@socketio.on('set-thresholding-component', namespace='/test')
 def set_thresholding_component_event(component, value1, value2):
     set_thresholding_component(component, value1, value2)
 
-@socketio.on('set-contour-filtering-component')
+@socketio.on('set-contour-filtering-component', namespace='/test')
 def set_contour_filtering_component_event(component, value1, value2):
     set_contour_filtering_component(component, value1, value2)
 
-@socketio.on('set-output-component')
+@socketio.on('set-output-component', namespace='/test')
 def set_output_component_event(component, value):
     set_output_component(component, value)
 
-@socketio.on('set-component')
+@socketio.on('set-component', namespace='/test')
 def set_component_event(component, value):
     set_component(component, value)
 
-@socketio.on('convert-hsv')
+@socketio.on('convert-hsv', namespace='/test')
 def convert_hsv_event(s, b, g, r):
     bounds = convert_hsv(s, b, g, r)
-    socketio.send(bounds, json=True)
+    socketio.send(bounds, json=True, namespace='/test')
 
 # check to see if this is the main thread of execution
 if __name__ == '__main__':
@@ -505,9 +561,9 @@ if __name__ == '__main__':
     t.daemon = True
     t.start()
 
-    # start the flask app
-    # app.run(host=args["ip"], port=args["port"], debug=True, threaded=True, use_reloader=False)
-    socketio.run(app, host="0.0.0.0", port=args["port"], debug=True, use_reloader=False)
+    # start the flask app - 0.0.0.0 will listen on all interfaces
+    # app.run(host='0.0.0.0', port=args["port"], debug=True, threaded=True, use_reloader=False)
+    socketio.run(app, host="0.0.0.0", port=args["port"], debug=False, use_reloader=False)
 
 # release the video stream pointer
 vs.stop()

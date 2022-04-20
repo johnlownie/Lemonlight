@@ -15,17 +15,17 @@ import { ThresholdingModel } from 'src/app/models/thresholding.model';
 export class ThresholdingComponent implements OnInit {
   pipeline: PipelineModel
 
-  hueSlider = {name: "hue", lower: 0, upper: 179};
-  saturationSlider = {name: "saturation", lower: 0, upper: 255};
-  valueSlider = {name: "value", lower: 0, upper: 255};
-  erosionSlider = {name: "erosion", value: 0};
-  dilationSlider = {name: "dilation", value: 0};
-
   hueInput = {name: "hue", lower: 0, upper: 179};
   saturationInput = {name: "saturation", lower: 0, upper: 255};
   valueInput = {name: "value", lower: 0, upper: 255};
   erosionInput = {name: "erosion", value: 0};
   dilationInput = {name: "dilation", value: 0};
+
+  hueSlider = {name: "hue", lower: 0, upper: 179};
+  saturationSlider = {name: "saturation", lower: 0, upper: 255};
+  valueSlider = {name: "value", lower: 0, upper: 255};
+  erosionSlider = {name: "erosion", value: 0};
+  dilationSlider = {name: "dilation", value: 0};
 
   magicWand: string;
   @Output() magicWandEvent = new EventEmitter<string>();
@@ -68,6 +68,11 @@ export class ThresholdingComponent implements OnInit {
   onButtonGroupClick($event) {
     let element = $event.target || $event.srcElement;
     
+    if (element.id === "reset") {
+      element.blur();
+      return;
+    }
+    
     this.magicWand = element.id;
     this.magicWandEvent.emit(this.magicWand);
 
@@ -94,50 +99,9 @@ export class ThresholdingComponent implements OnInit {
       }
     }
   }
-
-  getData() {
-    this.pipeline.thresholding.hue.lower = this.hueInput.lower;
-    this.pipeline.thresholding.saturation.lower = this.saturationInput.lower;
-    this.pipeline.thresholding.value.lower = this.valueInput.lower;
-    this.pipeline.thresholding.hue.upper = this.hueInput.upper;
-    this.pipeline.thresholding.saturation.upper = this.saturationInput.upper;
-    this.pipeline.thresholding.value.upper = this.valueInput.upper;
-    this.pipeline.thresholding.erosion = this.erosionInput.value;
-    this.pipeline.thresholding.dilation = this.dilationInput.value;
     
-    this.thresholdingChangeEvent.emit(this.pipeline.thresholding);
-  }
-
-  setStreamBorderStyle(style: string) {
-    this.pipelineService.setStreamBorderStyle(style);
-  }
-
-  updateInput($slider: any, $event: any) {
-    switch($slider.name) {
-      case "hue":
-        this.hueInput.lower = $event.from;
-        this.hueInput.upper = $event.to;
-        break;
-      case "saturation":
-        this.saturationInput.lower = $event.from;
-        this.saturationInput.upper = $event.to;
-        break;
-      case "value":
-        this.valueInput.lower = $event.from;
-        this.valueInput.upper = $event.to;
-        break;
-      case "erosion":
-        this.erosionInput.value = $event.from;
-        break;
-      case "dilation":
-        this.dilationInput.value = $event.from;
-        break;
-    }
-    this.chatService.setThresholdingComponent($slider.name, $event.from, $event.to);
-    this.getData();
-  }
-    
-  updateSlider($input: any, $event: any, $lower: boolean = false) {
+  onInputChange($input: any, $event: any, $lower: boolean = false) {
+    console.log('input changed');
     let value1 = $event.target.value;
     let value2 = $event.target.value;
 
@@ -177,7 +141,71 @@ export class ThresholdingComponent implements OnInit {
         break;
     }
     this.chatService.setThresholdingComponent($input.name, value1, value2);
+
+    // notify the pipeline of the changes
     this.getData();
+  }
+
+  onReset() {
+    this.hueInput.lower = this.hueSlider.lower = 0;
+    this.saturationInput.lower = this.saturationSlider.lower = 0;
+    this.valueInput.lower = this.valueSlider.lower = 0;
+    this.hueInput.upper = this.hueSlider.upper = 179;
+    this.saturationInput.upper = this.saturationSlider.upper = 255;
+    this.valueInput.upper = this.valueSlider.upper = 255;
+    this.erosionInput.value = this.erosionSlider.value = 1;
+    this.dilationInput.value = this.dilationSlider.value = 1;
+
+    this.chatService.setThresholdingComponent('hue', this.hueInput.lower, this.hueInput.upper);
+    this.chatService.setThresholdingComponent('saturation', this.saturationInput.lower, this.saturationInput.upper);
+    this.chatService.setThresholdingComponent('value', this.valueInput.lower, this.valueInput.upper);
+
+    // notify the pipeline of the changes
+    this.getData();
+  }
+
+  onSliderChange($slider: any, $event: any) {
+    switch($slider.name) {
+      case "hue":
+        this.hueInput.lower = $event.from;
+        this.hueInput.upper = $event.to;
+        break;
+      case "saturation":
+        this.saturationInput.lower = $event.from;
+        this.saturationInput.upper = $event.to;
+        break;
+      case "value":
+        this.valueInput.lower = $event.from;
+        this.valueInput.upper = $event.to;
+        break;
+      case "erosion":
+        this.erosionInput.value = $event.from;
+        break;
+      case "dilation":
+        this.dilationInput.value = $event.from;
+        break;
+    }
+    this.chatService.setThresholdingComponent($slider.name, $event.from, $event.to);
+
+    // notify the pipeline of the changes
+    this.getData();
+  }
+
+  getData() {
+    this.pipeline.thresholding.hue.lower = this.hueInput.lower;
+    this.pipeline.thresholding.saturation.lower = this.saturationInput.lower;
+    this.pipeline.thresholding.value.lower = this.valueInput.lower;
+    this.pipeline.thresholding.hue.upper = this.hueInput.upper;
+    this.pipeline.thresholding.saturation.upper = this.saturationInput.upper;
+    this.pipeline.thresholding.value.upper = this.valueInput.upper;
+    this.pipeline.thresholding.erosion = this.erosionInput.value;
+    this.pipeline.thresholding.dilation = this.dilationInput.value;
+    
+    this.thresholdingChangeEvent.emit(this.pipeline.thresholding);
+  }
+
+  setStreamBorderStyle(style: string) {
+    this.pipelineService.setStreamBorderStyle(style);
   }
 
   setHSV(lower: any, upper: any) {
@@ -189,6 +217,14 @@ export class ThresholdingComponent implements OnInit {
     this.saturationInput.upper = upper.us;
     this.valueInput.upper = upper.uv;
 
+    this.hueSlider.lower = lower.lh;
+    this.saturationSlider.lower = lower.ls;
+    this.valueSlider.lower = lower.lv;
+
+    this.hueSlider.upper = upper.uh;
+    this.saturationSlider.upper = upper.us;
+    this.valueSlider.upper = upper.uv;
+
     this.chatService.setThresholdingComponent('hue', this.hueInput.lower, this.hueInput.upper);
     this.chatService.setThresholdingComponent('saturation', this.saturationInput.lower, this.saturationInput.upper);
     this.chatService.setThresholdingComponent('value', this.valueInput.lower, this.valueInput.upper);
@@ -199,20 +235,29 @@ export class ThresholdingComponent implements OnInit {
 
   setInclude(data: any) {
     console.log(data);
-    this.hueInput.lower = Math.min(this.hueInput.lower, data.lh);
-    this.saturationInput.lower = Math.min(this.saturationInput.lower, data.ls);
-    this.valueInput.lower = Math.min(this.valueInput.lower, data.lv);
+    if (data.lh < this.hueInput.lower) {
+      this.hueInput.lower = data.lh;
+      this.chatService.setComponent('lowerHue', this.hueInput.lower);
+    } else if (data.lh > this.hueInput.upper) {
+      this.hueInput.upper = data.lh;
+      this.chatService.setComponent('upperHue', this.hueInput.upper);
+    }
 
-    this.hueInput.upper = Math.max(this.hueInput.upper, data.lh);
-    this.saturationInput.upper = Math.max(this.saturationInput.upper, data.ls);
-    this.valueInput.upper = Math.max(this.valueInput.upper, data.lv);
+    if (data.ls < this.saturationInput.lower) {
+      this.saturationInput.lower = data.ls;
+      this.chatService.setComponent('lowerSaturation', this.saturationInput.lower);
+    } else if (data.ls > this.saturationInput.upper) {
+      this.saturationInput.upper = data.ls;
+      this.chatService.setComponent('upperSaturation', this.saturationInput.upper);
+    }
 
-    this.chatService.setComponent('lowerHue', this.hueInput.lower);
-    this.chatService.setComponent('lowerSaturation', this.saturationInput.lower);
-    this.chatService.setComponent('lowerValue', this.valueInput.lower);
-    this.chatService.setComponent('upperHue', this.hueInput.upper);
-    this.chatService.setComponent('upperSaturation', this.saturationInput.upper);
-    this.chatService.setComponent('upperValue', this.valueInput.upper);
+    if (data.lv < this.valueInput.lower) {
+      this.valueInput.lower = data.lv;
+      this.chatService.setComponent('lowerValue', this.valueInput.lower);
+    } else if (data.lv > this.valueInput.upper) {
+      this.valueInput.upper = data.lv;
+      this.chatService.setComponent('upperValue', this.valueInput.upper);
+    }
 
     // notify the pipeline of the changes
     this.getData();
@@ -220,20 +265,35 @@ export class ThresholdingComponent implements OnInit {
 
   setIgnore(data: any) {
     console.log(data);
-    this.hueInput.lower = Math.max(this.hueInput.lower, data.lh);
-    this.saturationInput.lower = Math.max(this.saturationInput.lower, data.ls);
-    this.valueInput.lower = Math.max(this.valueInput.lower, data.lv);
+    if (data.lh > this.hueInput.lower && data.lh < this.hueInput.upper) {
+      if (data.lh - this.hueInput.lower <= this.hueInput.upper - data.lh) {
+        this.hueInput.lower = data.lh;
+        this.chatService.setComponent('lowerHue', this.hueInput.lower);
+      } else {
+        this.hueInput.upper = data.lh;
+        this.chatService.setComponent('upperHue', this.hueInput.upper);
+      }
+    }
 
-    this.hueInput.upper = Math.min(this.hueInput.upper, data.uh);
-    this.saturationInput.upper = Math.min(this.saturationInput.upper, data.us);
-    this.valueInput.upper = Math.min(this.valueInput.upper, data.uv);
+    if (data.ls > this.saturationInput.lower && data.ls < this.saturationInput.upper) {
+      if (data.ls - this.saturationInput.lower <= this.saturationInput.upper - data.ls) {
+        this.saturationInput.lower = data.ls;
+        this.chatService.setComponent('lowerSaturation', this.saturationInput.lower);
+      } else {
+        this.saturationInput.upper = data.ls;
+        this.chatService.setComponent('upperSaturation', this.saturationInput.upper);
+      }
+    }
 
-    this.chatService.setComponent('lowerHue', this.hueInput.lower);
-    this.chatService.setComponent('lowerSaturation', this.saturationInput.lower);
-    this.chatService.setComponent('lowerValue', this.valueInput.lower);
-    this.chatService.setComponent('upperHue', this.hueInput.upper);
-    this.chatService.setComponent('upperSaturation', this.saturationInput.upper);
-    this.chatService.setComponent('upperValue', this.valueInput.upper);
+    if (data.lv > this.valueInput.lower && data.lv < this.valueInput.upper) {
+      if (data.lv - this.valueInput.lower <= this.valueInput.upper - data.lv) {
+        this.valueInput.lower = data.lv;
+        this.chatService.setComponent('lowerValue', this.valueInput.lower);
+      } else {
+        this.valueInput.upper = data.lv;
+        this.chatService.setComponent('upperValue', this.valueInput.upper);
+      }
+    }
 
     // notify the pipeline of the changes
     this.getData();

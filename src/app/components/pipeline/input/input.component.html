@@ -2,67 +2,67 @@
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Pipline Type</label>
         <div class="col-6">
-            <select2 class="select2" [value]="pipelineType" (valueChanged)="updateDropdown('pipelineType', $event.value)" [cssImport]="true" [options]="options"><option>Lemonlight Standard</option><option>GRIP</option></select2>
+            <select2 class="select2" [value]="pipelineType" (valueChanged)="onSelectChange('pipelineType', $event.value)" [cssImport]="true" [options]="options"><option>Lemonlight Standard</option><option>GRIP</option></select2>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Source Image</label>
         <div class="col-sm-6">
-            <select2 class="select2" [value]="sourceImage" (valueChanged)="updateDropdown('sourceImage', $event.value)" [cssImport]="true" [options]="options"><option>Camera</option><option>Snapshot</option></select2>
+            <select2 class="select2" [value]="sourceImage" (valueChanged)="onSelectChange('sourceImage', $event.value)" [cssImport]="true" [options]="options"><option>Camera</option><option>Snapshot</option></select2>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Resolution</label>
         <div class="col-sm-6">
-            <select2 class="select2" [value]="resolution" (valueChanged)="updateDropdown('resolution', $event.value)" [cssImport]="true" [options]="options"><option>640x480</option><option>320x240</option><option>160x120</option></select2>
+            <select2 class="select2" [value]="resolution" (valueChanged)="onSelectChange('resolution', $event.value)" [cssImport]="true" [options]="options"><option>640x480</option><option>320x240</option><option>160x120</option></select2>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">LEDs</label>
         <div class="col-sm-6">
-            <select2 class="select2" [value]="ledState" (valueChanged)="updateDropdown('ledState', $event.value)" [cssImport]="true" [options]="options"><option>On</option><option>Off</option></select2>
+            <select2 class="select2" [value]="ledState" (valueChanged)="onSelectChange('ledState', $event.value)" [cssImport]="true" [options]="options"><option>On</option><option>Off</option></select2>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Orientation</label>
         <div class="col-sm-6">
-            <select2 class="select2" [value]="orientation" (valueChanged)="updateDropdown('orientation', $event.value)" [cssImport]="true" [options]="options"><option>Normal</option><option>Upside-Down</option></select2>
+            <select2 class="select2" [value]="orientation" (valueChanged)="onSelectChange('orientation', $event.value)" [cssImport]="true" [options]="options"><option>Normal</option><option>Upside-Down</option></select2>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Exposure (ms)</label>
         <div class="col-sm-2">
-            <input name="exposure" [(ngModel)]="exposureInput.value" type="number" min="1" max="13" class="form-control" (change)="updateSlider(exposureInput, $event)" (keyup)="updateSlider(exposureInput, $event)">
+            <input name="exposure" [(ngModel)]="exposureInput.value" type="number" min="1" max="13" class="form-control" (change)="onInputChange(exposureInput, $event)" (keyup)="onInputChange(exposureInput, $event)">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="exposureSlider.value" min="1" max="13" hide_min_max="true" (onChange)="updateInput(exposureSlider, $event)"></ion-range-slider>
+            <ion-range-slider [from]="exposureSlider.value" min="1" max="13" hide_min_max="true" (onChange)="onSliderChange(exposureSlider, $event)"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Black Level Offset</label>
         <div class="col-sm-2">
-            <input name="blackLevel" [(ngModel)]="blackLevelInput.value" type="number" min="1" max="255" class="form-control" (change)="updateSlider(blackLevelInput, $event)" (keyup)="updateSlider(blackLevelInput, $event)">
+            <input name="blackLevel" [(ngModel)]="blackLevelInput.value" type="number" min="1" max="255" class="form-control" (change)="onInputChange(blackLevelInput, $event)" (keyup)="onInputChange(blackLevelInput, $event)">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="blackLevelSlider.value" min="1" max="255" hide_min_max="true" (onChange)="updateInput(blackLevelSlider, $event)"></ion-range-slider>
+            <ion-range-slider [from]="blackLevelSlider.value" min="1" max="255" hide_min_max="true" (onChange)="onSliderChange(blackLevelSlider, $event)"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Red Balance</label>
         <div class="col-sm-2">
-            <input name="redBalance" [(ngModel)]="redBalanceInput.value" type="number" min="1" max="255" class="form-control" (change)="updateSlider(readBalanceInput, $event)" (keyup)="updateSlider(redBalanceInput, $event)">
+            <input name="redBalance" [(ngModel)]="redBalanceInput.value" type="number" min="1" max="255" class="form-control" (change)="onInputChange(redBalanceInput, $event)" (keyup)="onInputChange(redBalanceInput, $event)">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="redBalanceSlider.value" min="1" max="255" hide_min_max="true" (onChange)="updateInput(redBalanceSlider, $event)"></ion-range-slider>
+            <ion-range-slider [from]="redBalanceSlider.value" min="1" max="255" hide_min_max="true" (onChange)="onSliderChange(redBalanceSlider, $event)"></ion-range-slider>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 col-form-label">Blue Balance</label>
         <div class="col-sm-2">
-            <input name="blueBalanceInput" [(ngModel)]="blueBalanceInput.value" type="number" min="1" max="255" class="form-control" (change)="updateSlider(blueBalanceInput, $event)" (keyup)="updateSlider(blueBalanceInput, $event)">
+            <input name="blueBalanceInput" [(ngModel)]="blueBalanceInput.value" type="number" min="1" max="255" class="form-control" (change)="onInputChange(blueBalanceInput, $event)" (keyup)="onInputChange(blueBalanceInput, $event)">
         </div>
         <div class="col-sm-7 offset-sm-1 col-form-label">
-            <ion-range-slider [from]="blueBalanceSlider.value" min="1" max="255" hide_min_max="true" (onChange)="updateInput(blueBalanceSlider, $event)"></ion-range-slider>
+            <ion-range-slider [from]="blueBalanceSlider.value" min="1" max="255" hide_min_max="true" (onChange)="onSliderChange(blueBalanceSlider, $event)"></ion-range-slider>
         </div>
     </div>
 </form>

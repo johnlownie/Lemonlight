@@ -27,14 +27,16 @@ export class AppComponent {
     }, 2500);
 
     this.chatService
-      .getMessages()
+      .getAckResponses()
       .subscribe((message: string) => {
+        console.log('Got message from server: ' + message);
         this.messages.push(message);
       });
   }
 
   sendMessage() {
-    console.log("New message from client to websocket: ", this.message);
+    this.message = 'Hello, server!';
+    console.log("Sending message to server: ", this.message);
     this.chatService.sendMessage(this.message);
     this.message = '';
   }
