@@ -110,3 +110,19 @@
 .data span {
     color: #517d38;
 }
+
+ .btn {
+     background-color: #181719;
+     border-radius: 0;
+     border-color: #181719;
+ }
+
+ .btn:hover, .btn:focus {
+    background-color: #181719;
+    border-color: #66bf0e;
+    color: #66bf0e;
+ }
+ 
+ .btn-dark:not(:disabled):not(.disabled).active:focus, .btn-dark:not(:disabled):not(.disabled):active:focus, .show>.btn-dark.dropdown-toggle:focus {
+     box-shadow: 0 0 0 0.2rem rgba(102,191,14,.5);
+ }

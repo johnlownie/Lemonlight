@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from "rxjs";
-import * as io from 'socket.io-client';
+import { Observable } from "rxjs";
+import { io } from 'socket.io-client';
 
 import { ApiService } from 'src/app/services/api.service';
 
@@ -12,9 +12,11 @@ export class ChatService {
   
   constructor(private apiService : ApiService) {
     this.socket = io(apiService.getSocketUrl());
+    console.log(this.socket);
   }
   
   public setInputComponent(key: string, value: any) {
+    console.log('setInputComponent - Key: ' + key + ' - Value: ' + value);
     this.socket.emit('set-input-component', key, value);
   }
   
@@ -27,10 +29,12 @@ export class ChatService {
   }
   
   public setOutputComponent(key: string, value: any) {
+    console.log('setOutputComponent - Key: ' + key + ' - Value: ' + value);
     this.socket.emit('set-output-component', key, value);
   }
 
   public setComponent(key: string, value: any) {
+    console.log('setComponent - Key: ' + key + ' - Value: ' + value);
     this.socket.emit('set-component', key, value);
   }
 
@@ -42,8 +46,16 @@ export class ChatService {
     this.socket.emit('new-message', message);
   }
 
+  public getAckResponses = () => {
+    return new Observable((observer) => {
+      this.socket.on('ack-response', (msg) => {
+        observer.next(msg);
+      });
+    });
+  }
+
   public getMessages = () => {
-    return Observable.create((observer) => {
+    return new Observable((observer) => {
       this.socket.on('json', (msg) => {
         observer.next(msg);
       });
@@ -51,7 +63,7 @@ export class ChatService {
   }
 
   public getDegrees = () => {
-    return Observable.create((observer) => {
+    return new Observable((observer) => {
       this.socket.on('degrees', (msg) => {
         observer.next(msg);
       });

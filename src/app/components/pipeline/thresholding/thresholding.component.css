@@ -1,6 +1,6 @@
 .row h2 {
     border-bottom: 1px solid #ccc; 
-    font-size: 1.3em;
+    font-size: 1.1em;
     line-height: 0.1em;
     margin: 10px 0 20px;
     padding-left: 40px;
@@ -12,13 +12,13 @@
      padding:0 10px; 
  }
 
- .btn {
+ .btn-dark {
      background-color: #181719;
      border-radius: 0;
      border-color: #181719;
  }
 
- .btn:hover, .btn:focus {
+ .btn-dark:hover, .btn-dark:focus {
     background-color: #181719;
     border-color: #66bf0e;
     color: #66bf0e;

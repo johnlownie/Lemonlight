@@ -24,8 +24,8 @@ export class ApiService {
   private apiUrl: string = this.host + ":3000";
   private pipelineUrl: string = this.apiUrl + "/pipelines/";
   private networkUrl: string = this.apiUrl + "/networks/";
-  private socketUrl: string = this.host + ":5801";
-  private streamUrl: string = this.socketUrl + "/video_feed";
+  private socketUrl: string = this.host + ":5801/test";
+  private streamUrl: string = this.host + ":5801/video_feed";
   private teamNumber: string = "0000";
   private ipAssignment: boolean = true;
   private ipAddress: string = "";
