@@ -1,30 +1,27 @@
 #!/usr/bin/env python
 
 # import the necessary packages
-import threading
 import argparse
-import datetime
-import engineio
-import imutils
-import json
-import logging
-import numpy as np
-import math
-import time
 import cv2
-import os
 import glob
+import imutils
+import logging
+import math
+import numpy as np
+import os
+import threading
+import time
 
-from imutils.video import FPS, VideoStream
 from flask import Flask, Response, render_template
 from flask_cors import CORS
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
+from imutils.video import FPS, VideoStream
 
 # initialize a flask object
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
-# CORS(app)
-# app.config['CORS_HEADERS'] = 'Content-Type'
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 socketio = SocketIO(app, cors_allowed_origins="*", logger=False)
 
 # initialize the output frame and a lock used to ensure thread-safe
@@ -52,7 +49,7 @@ videoFeed = "colour"
 
 # Input variables
 pipelineType = "limelight standard"
-sourceImage = "camera"
+sourceImage = "snapshot"
 ledState = "off"
 orientation = "normal"
 exposure = 0
@@ -127,162 +124,82 @@ fps = FPS().start()
 # let camera warmup
 time.sleep(2.0)
 
-# set input component value
-def set_input_component(component, value):
-    global pipelineType, sourceImage, width, height, ledState, orientation, exposure, blackLevel, redBalance, blueBalance
+# set routing
+@app.route("/")
+def index():
+    # return the rendered template
+    return render_template("index.html")
 
-    print("C: {} - V: {}".format(component, value))
+@app.route("/video_feed")
+def video_feed():
+    # return the response generated along with the specific media type (mime type)
+    return Response(generate(), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
-    if component == 'pipelineType':
-        pipelineType = value.lower()
-    elif component == 'sourceImage':
-        sourceImage = value.lower()
-    elif component == 'resolution':
-        (w, h) = value.split("x")
-        width = int(w)
-        height = int(h)
-        set_area_by_pixels()
-    elif component == 'ledState':
-        ledState = value.lower()
-    elif component == 'orientation':
-        orientation = value.lower()
-    elif component == 'exposure':
-        exposure = int(value)
-        vs.stream.set(cv2.CAP_PROP_EXPOSURE, exposure - 12)
-    elif component == 'blackLevel':
-        blackLevel = int(value)
-    elif component == 'redBalance':
-        redBalance = int(value)
-        vs.stream.set(cv2.CAP_PROP_WHITE_BALANCE_RED_V, redBalance - 12)
-    elif component == 'blueBalance':
-        blueBalance = int(value)
-        vs.stream.set(cv2.CAP_PROP_WHITE_BALANCE_BLUE_U, blueBalance - 12)
-    else:
-        print("No input component set: " + component)
+# set sockets to capture output from the angular application
+@socketio.on('connect', namespace='/test')
+def client_connect(auth):
+    print('Client connected - sending ack')
+    socketio.emit('ack-response', {'connect': True}, namespace='/test')
 
-# set thresholding component value
-def set_thresholding_component(component, value1, value2):
-    global lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilation
+@socketio.on('disconnect', namespace='/test')
+def client_disconnect():
+    print('Client disconnected')
 
-    print("C: {} - V1: {} - V2: {}".format(component, value1, value2))
+@socketio.on('new-message', namespace='/test')
+def handle_my_custom_event(json, methods=['GET', 'POST']):
+    print('Received: ' + str(json))
+    socketio.emit('ack-response', json, callback=messageReceived, namespace='/test')
 
-    if component == 'hue':
-        lowerHue = int(value1)
-        upperHue = int(value2)
-    elif component == 'saturation':
-        lowerSaturation = int(value1)
-        upperSaturation = int(value2)
-    elif component == 'value':
-        lowerValue = int(value1)
-        upperValue = int(value2)
-    elif component == 'erosion':
-        erosion = int(value1)
-    elif component == 'dilation':
-        dilation = int(value1)
-    else:
-        print("No thresholding component set: " + component)
+@socketio.on('set-input-component', namespace='/test')
+def set_input_component_event(component, value):
+    set_input_component(component, value)
 
-# set contour filtering component value
-def set_contour_filtering_component(component, value1, value2):
-    global sortMode, lowerArea, lowerFullness, lowerRatio, upperArea, upperFullness, upperRatio, directionFilter, smartSpeckle, targetGrouping, intersectionFilter
+@socketio.on('set-thresholding-component', namespace='/test')
+def set_thresholding_component_event(component, value1, value2):
+    set_thresholding_component(component, value1, value2)
 
-    print("C: {} - V1: {} - V2: {}".format(component, value1, value2))
+@socketio.on('set-contour-filtering-component', namespace='/test')
+def set_contour_filtering_component_event(component, value1, value2):
+    set_contour_filtering_component(component, value1, value2)
 
-    if component == 'sortMode':
-        sortMode = value1.lower()
-    elif component == 'area':
-        lowerArea = int(value1)
-        upperArea = int(value2)
-        set_area_by_pixels()
-    elif component == 'fullness':
-        lowerFullness = int(value1)
-        upperFullness = int(value2)
-    elif component == 'ration':
-        lowerRatio = int(value1)
-        upperRatio = int(value2)
-    elif component == 'directionFilter':
-        directionFilter = value1.lower()
-    elif component == 'smartSpeckle':
-        smartSpeckle = int(value1)
-    elif component == 'targetGrouping':
-        targetGrouping = value1.lower()
-    elif component == 'intersectionFilter':
-        intersectionFilter = value1.lower()
-    else:
-        print("No contour filtering component set: " + component)
+@socketio.on('set-output-component', namespace='/test')
+def set_output_component_event(component, value):
+    set_output_component(component, value)
 
-# set output component value
-def set_output_component(component, value):
-    global targetingRegion, targetGrouping, crosshairMode, crosshair_x, crosshair_y, cx, cy
+@socketio.on('set-component', namespace='/test')
+def set_component_event(component, value):
+    set_component(component, value)
 
-    print("C: {} - V: {}".format(component, value))
+@socketio.on('convert-hsv', namespace='/test')
+def convert_hsv_event(s, b, g, r):
+    bounds = convert_hsv(s, b, g, r)
+    socketio.send(bounds, json=True, namespace='/test')
 
-    if component == 'targetingRegion':
-        targetingRegion = value.lower()
-    elif component == 'targetGrouping':
-        targetGrouping = value.lower()
-    elif component == 'crosshairMode':
-        crosshairMode = value.lower()
-    elif component == 'calibrateXY':
-        crosshair_x = cx
-        crosshair_y = cy
-    elif component == 'calibrateX':
-        crosshair_x = cx
-    elif component == 'calibrateY':
-        crosshair_y = cy
-    else:
-        print("No output component set: " + component)
+# generate the image frame to be sent to the angular application
+def generate():
+    # grab global references to the output frame and lock variables
+    global outputFrame, lock
 
-# set component value
-def set_component(component, value):
-    global videoFeed
+    # loop over frames from the output stream
+    while True:
+        # wait until the lock is acquired
+        with lock:
+            # check if the output frame is available, otherwise skip the iteration of the loop
+            if outputFrame is None:
+                print("Frame is none")
+                continue
 
-    print("C: {} - V: {}".format(component, value))
+            # encode the frame in JPEG format
+            (flag, encodedImage) = cv2.imencode(".jpg", outputFrame )
 
-    if component == 'videoFeed':
-        videoFeed = value.lower()
-    elif component == 'deleteSnapshot':
-        delete_snapshot()
-    elif component == 'takeSnapshot':
-        save_snapshot()
-    else:
-        print("No component set: " + component)
+            # ensure the frame was successfully encoded
+            if not flag:
+                continue
 
-# convert area to pixels
-def set_area_by_pixels():
-    global width, height, lowerArea, upperArea, lowerAreaInPixels, upperAreaInPixels, nx, ny
+        # yield the output frame in the byte format
+        yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
 
-    if sourceImage == 'snapshot':
-        frame = cv2.imread(snapshotFile)
-        (height, width, _) = frame.shape
-
-    lowerAreaInPixels = (width * height * lowerArea) / 100
-    upperAreaInPixels = (width * height * upperArea) / 100
-
-    print("W: {} - H: {} - LAIP: {} - UAIP: {}".format(width, height, lowerAreaInPixels, upperAreaInPixels))
-
-# convert commponent value
-def convert_hsv(s, b, g, r):
-    color = np.uint8([[[b, g, r]]])
-    hsvColor = cv2.cvtColor(color, cv2.COLOR_BGR2HSV)
-
-    hsvRange = (0, 0, 0)
-    if s == 'eyedropper':
-        hsvRange = (5, 10, 15)
-
-    lower = max(hsvColor[0][0][0] - hsvRange[0], 0), max(hsvColor[0][0][1] - hsvRange[1], 0), max(hsvColor[0][0][2] - hsvRange[2], 0)
-    upper = min(hsvColor[0][0][0] + hsvRange[0], 179), min(hsvColor[0][0][1] + hsvRange[1], 255), min(hsvColor[0][0][2] + hsvRange[2], 255)
-
-    data = { "wand": s, "lower": { "lh": str(lower[0]), "ls": str(lower[1]), "lv": str(lower[2]) }, "upper": { "uh": str(upper[0]), "us": str(upper[1]), "uv": str(upper[2]) } }
-    print(data)
-    return data
-
-def normalize_coordinates(px, py):
-    global width, height
-    x = (1/(width/2)) * (px - (width/2) - .5)
-    y = (1/(height/2)) * ((height/2) - .5 - py)
-    return x, y
-
+# grab a frame from the video stream
 def grab_frame():
     # grab global references to the video stream, output frame, and lock variables
     global vs, sourceImage, orientation, videoFeed, hfov, vfov, width, height, frame, resized, blurred, hsv, mask, erosion, dilation, outputFrame, lock, snapshotFile, targetGrouping, lowerAreaInPixels, upperAreaInPixels, cx, cy, vpw, vph
@@ -443,6 +360,7 @@ def grab_frame():
         fps.update()
         counter += 1
 
+# snapshot related functions
 def delete_snapshot():
     global snapshotFile
 
@@ -467,81 +385,164 @@ def save_snapshot():
     snapshotFile = os.path.join(imagePath, "snapshot" + time.strftime("%Y%m%d-%H%M%S") + ".jpg")
     cv2.imwrite(snapshotFile, sized)
 
-def generate():
-    # grab global references to the output frame and lock variables
-    global outputFrame, lock
+# normalize the image coordinates
+def normalize_coordinates(px, py):
+    global width, height
+    x = (1/(width/2)) * (px - (width/2) - .5)
+    y = (1/(height/2)) * ((height/2) - .5 - py)
+    return x, y
 
-    # loop over frames from the output stream
-    while True:
-        # wait until the lock is acquired
-        with lock:
-            # check if the output frame is available, otherwise skip the iteration of the loop
-            if outputFrame is None:
-                print("Frame is none")
-                continue
+# these set functions set variables based on input from the angular application
+# convert commponent blue green red value to hsv
+def convert_hsv(s, b, g, r):
+    color = np.uint8([[[b, g, r]]])
+    hsvColor = cv2.cvtColor(color, cv2.COLOR_BGR2HSV)
 
-            # encode the frame in JPEG format
-            (flag, encodedImage) = cv2.imencode(".jpg", outputFrame )
+    hsvRange = (0, 0, 0)
+    if s == 'eyedropper':
+        hsvRange = (5, 10, 15)
 
-            # ensure the frame was successfully encoded
-            if not flag:
-                continue
+    lower = max(hsvColor[0][0][0] - hsvRange[0], 0), max(hsvColor[0][0][1] - hsvRange[1], 0), max(hsvColor[0][0][2] - hsvRange[2], 0)
+    upper = min(hsvColor[0][0][0] + hsvRange[0], 179), min(hsvColor[0][0][1] + hsvRange[1], 255), min(hsvColor[0][0][2] + hsvRange[2], 255)
 
-        # yield the output frame in the byte format
-        yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
+    data = { "wand": s, "lower": { "lh": str(lower[0]), "ls": str(lower[1]), "lv": str(lower[2]) }, "upper": { "uh": str(upper[0]), "us": str(upper[1]), "uv": str(upper[2]) } }
+    print(data)
+    return data
 
-# setup routing and sockets
-@app.route("/")
-def index():
-    # return the rendered template
-    return render_template("index.html")
+# convert area to pixels
+def set_area_by_pixels():
+    global width, height, lowerArea, upperArea, lowerAreaInPixels, upperAreaInPixels, nx, ny
 
-@app.route("/video_feed")
-def video_feed():
-    # return the response generated along with the specific media type (mime type)
-    return Response(generate(), mimetype = "multipart/x-mixed-replace; boundary=frame")
+    if sourceImage == 'snapshot':
+        frame = cv2.imread(snapshotFile)
+        (height, width, _) = frame.shape
 
-def messageReceived(methods=['GET', 'POST']):
-    print('Message was received!!')
+    lowerAreaInPixels = (width * height * lowerArea) / 100
+    upperAreaInPixels = (width * height * upperArea) / 100
 
-@socketio.on('connect', namespace='/test')
-def client_connect(auth):
-    print('Client connected - sending ack')
-    socketio.emit('ack-response', {'connect': True}, namespace='/test')
+    print("W: {} - H: {} - LAIP: {} - UAIP: {}".format(width, height, lowerAreaInPixels, upperAreaInPixels))
 
-@socketio.on('disconnect', namespace='/test')
-def client_disconnect():
-    print('Client disconnected')
+# set input component value
+def set_input_component(component, value):
+    global pipelineType, sourceImage, width, height, ledState, orientation, exposure, blackLevel, redBalance, blueBalance
 
-@socketio.on('new-message', namespace='/test')
-def handle_my_custom_event(json, methods=['GET', 'POST']):
-    print('Received: ' + str(json))
-    socketio.emit('ack-response', json, callback=messageReceived, namespace='/test')
+    print("C: {} - V: {}".format(component, value))
 
-@socketio.on('set-input-component', namespace='/test')
-def set_input_component_event(component, value):
-    set_input_component(component, value)
+    if component == 'pipelineType':
+        pipelineType = value.lower()
+    elif component == 'sourceImage':
+        sourceImage = value.lower()
+    elif component == 'resolution':
+        (w, h) = value.split("x")
+        width = int(w)
+        height = int(h)
+        set_area_by_pixels()
+    elif component == 'ledState':
+        ledState = value.lower()
+    elif component == 'orientation':
+        orientation = value.lower()
+    elif component == 'exposure':
+        exposure = int(value)
+        vs.stream.set(cv2.CAP_PROP_EXPOSURE, exposure - 12)
+    elif component == 'blackLevel':
+        blackLevel = int(value)
+    elif component == 'redBalance':
+        redBalance = int(value)
+        vs.stream.set(cv2.CAP_PROP_WHITE_BALANCE_RED_V, redBalance - 12)
+    elif component == 'blueBalance':
+        blueBalance = int(value)
+        vs.stream.set(cv2.CAP_PROP_WHITE_BALANCE_BLUE_U, blueBalance - 12)
+    else:
+        print("No input component set: " + component)
 
-@socketio.on('set-thresholding-component', namespace='/test')
-def set_thresholding_component_event(component, value1, value2):
-    set_thresholding_component(component, value1, value2)
+# set thresholding component value
+def set_thresholding_component(component, value1, value2):
+    global lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, erosion, dilation
 
-@socketio.on('set-contour-filtering-component', namespace='/test')
-def set_contour_filtering_component_event(component, value1, value2):
-    set_contour_filtering_component(component, value1, value2)
+    print("C: {} - V1: {} - V2: {}".format(component, value1, value2))
 
-@socketio.on('set-output-component', namespace='/test')
-def set_output_component_event(component, value):
-    set_output_component(component, value)
+    if component == 'hue':
+        lowerHue = int(value1)
+        upperHue = int(value2)
+    elif component == 'saturation':
+        lowerSaturation = int(value1)
+        upperSaturation = int(value2)
+    elif component == 'value':
+        lowerValue = int(value1)
+        upperValue = int(value2)
+    elif component == 'erosion':
+        erosion = int(value1)
+    elif component == 'dilation':
+        dilation = int(value1)
+    else:
+        print("No thresholding component set: " + component)
 
-@socketio.on('set-component', namespace='/test')
-def set_component_event(component, value):
-    set_component(component, value)
+# set contour filtering component value
+def set_contour_filtering_component(component, value1, value2):
+    global sortMode, lowerArea, lowerFullness, lowerRatio, upperArea, upperFullness, upperRatio, directionFilter, smartSpeckle, targetGrouping, intersectionFilter
 
-@socketio.on('convert-hsv', namespace='/test')
-def convert_hsv_event(s, b, g, r):
-    bounds = convert_hsv(s, b, g, r)
-    socketio.send(bounds, json=True, namespace='/test')
+    print("C: {} - V1: {} - V2: {}".format(component, value1, value2))
+
+    if component == 'sortMode':
+        sortMode = value1.lower()
+    elif component == 'area':
+        lowerArea = int(value1)
+        upperArea = int(value2)
+        set_area_by_pixels()
+    elif component == 'fullness':
+        lowerFullness = int(value1)
+        upperFullness = int(value2)
+    elif component == 'ration':
+        lowerRatio = int(value1)
+        upperRatio = int(value2)
+    elif component == 'directionFilter':
+        directionFilter = value1.lower()
+    elif component == 'smartSpeckle':
+        smartSpeckle = int(value1)
+    elif component == 'targetGrouping':
+        targetGrouping = value1.lower()
+    elif component == 'intersectionFilter':
+        intersectionFilter = value1.lower()
+    else:
+        print("No contour filtering component set: " + component)
+
+# set output component value
+def set_output_component(component, value):
+    global targetingRegion, targetGrouping, crosshairMode, crosshair_x, crosshair_y, cx, cy
+
+    print("C: {} - V: {}".format(component, value))
+
+    if component == 'targetingRegion':
+        targetingRegion = value.lower()
+    elif component == 'targetGrouping':
+        targetGrouping = value.lower()
+    elif component == 'crosshairMode':
+        crosshairMode = value.lower()
+    elif component == 'calibrateXY':
+        crosshair_x = cx
+        crosshair_y = cy
+    elif component == 'calibrateX':
+        crosshair_x = cx
+    elif component == 'calibrateY':
+        crosshair_y = cy
+    else:
+        print("No output component set: " + component)
+
+# set component value
+def set_component(component, value):
+    global videoFeed
+
+    print("C: {} - V: {}".format(component, value))
+
+    if component == 'videoFeed':
+        videoFeed = value.lower()
+    elif component == 'deleteSnapshot':
+        delete_snapshot()
+    elif component == 'takeSnapshot':
+        save_snapshot()
+    else:
+        print("No component set: " + component)
+
 
 # check to see if this is the main thread of execution
 if __name__ == '__main__':
